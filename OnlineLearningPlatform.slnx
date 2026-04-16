@@ -1,0 +1,58 @@
+<Solution>
+  <Folder Name="/frontend/">
+    <Project Path="src/frontend/Admin.MVC/Admin.MVC.csproj" />
+    <Project Path="src/frontend/Student.MVC/Student.MVC.csproj" />
+    <Project Path="src/frontend/Teacher.MVC/Teacher.MVC.csproj" />
+  </Folder>
+  <Folder Name="/gateway/">
+    <Project Path="src/gateway/ApiGateway/ApiGateway.csproj" />
+  </Folder>
+  <Folder Name="/services/" />
+  <Folder Name="/services/chat-service/">
+    <Project Path="src/services/chat-service/Chat.API/Chat.API.csproj" />
+    <Project Path="src/services/chat-service/Chat.Application/Chat.Application.csproj" />
+    <Project Path="src/services/chat-service/Chat.Domain/Chat.Domain.csproj" />
+    <Project Path="src/services/chat-service/Chat.Infrastructure/Chat.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/course-service/">
+    <Project Path="src/services/course-service/Course.API/Course.API.csproj" />
+    <Project Path="src/services/course-service/Course.Application/Course.Application.csproj" />
+    <Project Path="src/services/course-service/Course.Domain/Course.Domain.csproj" />
+    <Project Path="src/services/course-service/Course.Infrastructure/Course.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/enrollment-service/">
+    <Project Path="src/services/enrollment-service/Enrollment.API/Enrollment.API.csproj" />
+    <Project Path="src/services/enrollment-service/Enrollment.Application/Enrollment.Application.csproj" />
+    <Project Path="src/services/enrollment-service/Enrollment.Domain/Enrollment.Domain.csproj" />
+    <Project Path="src/services/enrollment-service/Enrollment.Infrastructure/Enrollment.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/identity-service/">
+    <Project Path="src/services/identity-service/Identity.API/Identity.API.csproj" />
+    <Project Path="src/services/identity-service/Identity.Application/Identity.Application.csproj" />
+    <Project Path="src/services/identity-service/Identity.Domain/Identity.Domain.csproj" />
+    <Project Path="src/services/identity-service/Identity.Infrastructure/Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/notification-service/">
+    <Project Path="src/services/notification-service/Notification.API/Notification.API.csproj" />
+    <Project Path="src/services/notification-service/Notification.Application/Notification.Application.csproj" />
+    <Project Path="src/services/notification-service/Notification.Domain/Notification.Domain.csproj" />
+    <Project Path="src/services/notification-service/Notification.Infrastructure/Notification.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/review-service/">
+    <Project Path="src/services/review-service/Review.API/Review.API.csproj" />
+    <Project Path="src/services/review-service/Review.Application/Review.Application.csproj" />
+    <Project Path="src/services/review-service/Review.Domain/Review.Domain.csproj" />
+    <Project Path="src/services/review-service/Review.Infrastructure/Review.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/user-service/">
+    <Project Path="src/services/user-service/User.API/User.API.csproj" />
+    <Project Path="src/services/user-service/User.Application/User.Application.csproj" />
+    <Project Path="src/services/user-service/User.Domain/User.Domain.csproj" />
+    <Project Path="src/services/user-service/User.Infrastructure/User.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="src/tests/IntegrationTests/IntegrationTests.csproj" />
+    <Project Path="src/tests/UITests/UITests.csproj" />
+    <Project Path="src/tests/UnitTests/UnitTests.csproj" />
+  </Folder>
+</Solution>
