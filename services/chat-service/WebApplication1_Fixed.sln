@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11702.344 oobstable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1.csproj", "{19317912-AC4B-45A3-1276-85453B678B5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat_MVC", "..\Chat_MVC\Chat_MVC.csproj", "{E35F1EEE-0D3D-4E4A-A93B-7D6DB81AAFE6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19317912-AC4B-45A3-1276-85453B678B5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19317912-AC4B-45A3-1276-85453B678B5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19317912-AC4B-45A3-1276-85453B678B5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19317912-AC4B-45A3-1276-85453B678B5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E35F1EEE-0D3D-4E4A-A93B-7D6DB81AAFE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E35F1EEE-0D3D-4E4A-A93B-7D6DB81AAFE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E35F1EEE-0D3D-4E4A-A93B-7D6DB81AAFE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E35F1EEE-0D3D-4E4A-A93B-7D6DB81AAFE6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9AA6CF7E-A715-4DDF-9C61-ACAEBA58DF37}
+	EndGlobalSection
+EndGlobal
