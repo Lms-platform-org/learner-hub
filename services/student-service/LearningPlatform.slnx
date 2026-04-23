@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="LearningPlatform.StudentService.WebApp/LearningPlatform.StudentService.WebApp.csproj" Id="d732deca-a645-482c-9126-d1193d2fd1d9" />
+  <Project Path="LearningPlatform.StudentService/LearningPlatform.StudentService.csproj" />
+</Solution>

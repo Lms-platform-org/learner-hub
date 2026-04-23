@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinity Learning | Jai's Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --card: #16161a;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.3);
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+            --gold: #fdcb6e;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+            /* 🌌 Animated Background */
+            body::before {
+                content: '';
+                position: fixed;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle at center, #1a1a2e 0%, transparent 70%);
+                z-index: -1;
+                animation: pulse 15s infinite alternate;
+            }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 🎭 Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -1px;
+        }
+
+            .logo span {
+                color: var(--accent);
+            }
+
+        .user-pill {
+            background: var(--card);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 🔋 Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                border-color: var(--accent);
+            }
+
+        /* 📊 Progress Area */
+        .progress-section h2 {
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        #progressFiller {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), #a29bfe);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item span {
+            display: block;
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .stat-item b {
+            font-size: 24px;
+            color: var(--gold);
+        }
+
+        /* 🔍 Search Sidebar */
+        .search-box {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 10px 15px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+            flex: 1;
+            font-family: inherit;
+        }
+
+        .book-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+            .book-item:hover {
+                background: rgba(255,255,255,0.05);
+            }
+
+        .book-cover {
+            width: 50px;
+            height: 75px;
+            border-radius: 6px;
+            background: #333;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            button:hover {
+                background: #5649c0;
+                box-shadow: 0 0 15px var(--accent-glow);
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo">INFINITY<span>.LEARNING</span></div>
+            <div class="user-pill">
+                <div id="xpBadge" style="color:var(--gold); font-weight: 800;">0 XP</div>
+                <span>Jai Aggarwal</span>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Main Panel -->
+            <div class="progress-section">
+                <div class="card">
+                    <h2>C# Advanced Design Patterns</h2>
+                    <div class="stats">
+                        <div class="stat-item"><span>Current Progress</span><b id="progressText">0%</b></div>
+                        <div class="stat-item"><span>Rank</span><b>Pro Scholar</b></div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="progressFiller"></div>
+                    </div>
+                    <button onclick="completeLesson()">Complete Next Lesson (+10 XP)</button>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="discovery-section">
+                <div class="card">
+                    <h3 style="margin-top:0">Top Recommendations</h3>
+                    <div class="search-box">
+                        <input type="text" id="topicInput" placeholder="Search topics..." value="CSharp">
+                        <button onclick="searchBooks()">🔍</button>
+                    </div>
+                    <div id="bookList">
+                        <!-- Books will appear here -->
+                        <div style="color:var(--text-dim); font-size: 14px;">Searching for textbooks...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://localhost:7090/api/Student";
+        let currentLesson = parseInt(localStorage.getItem('savedLesson')) || 101;
+
+        function loadUIData() {
+            const savedPct = localStorage.getItem('savedPct') || '0';
+            const savedXP = localStorage.getItem('savedXP') || '0';
+            document.getElementById('progressFiller').style.width = savedPct + '%';
+            document.getElementById('progressText').innerText = savedPct + '%';
+            document.getElementById('xpBadge').innerText = savedXP + ' XP';
+        }
+
+        async function searchBooks() {
+            const topic = document.getElementById('topicInput').value;
+            const res = await fetch(`${API_URL}/discover-books?topic=${topic}`);
+            const books = await res.json();
+            const list = document.getElementById('bookList');
+            list.innerHTML = books.map(b => `
+                <div class="book-item">
+                    <div class="book-cover" style="background: url('https://covers.openlibrary.org/b/id/${b.cover_i}-M.jpg') center/cover;"></div>
+                    <div>
+                        <div style="font-weight:600; font-size:14px;">${b.title}</div>
+                        <div style="color:var(--text-dim); font-size:12px;">${b.author_name?.[0] || 'Unknown Author'}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function completeLesson() {
+            const res = await fetch(`${API_URL}/complete-lesson/1/${currentLesson}`, { method: 'POST' });
+            const data = await res.json();
+
+            document.getElementById('progressFiller').style.width = data.percentage + '%';
+            document.getElementById('progressText').innerText = data.percentage + '%';
+            document.getElementById('xpBadge').innerText = data.xp + ' XP';
+
+            localStorage.setItem('savedPct', data.percentage);
+            localStorage.setItem('savedXP', data.xp);
+            currentLesson++;
+            localStorage.setItem('savedLesson', currentLesson);
+
+            if (data.percentage === 100) alert("🎓 Course Master Achieved!");
+        }
+
+        loadUIData();
+        searchBooks();
+    </script>
+
+
+</body>
+</html>
