@@ -1,0 +1,121 @@
+@using LearningPlatform.StudentService.WebApp.Models.DTOs
+@model DashboardDto
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard</h2>
+    <span class="badge bg-warning text-dark fs-6">
+        <i class="bi bi-lightning-fill me-1"></i>Total XP: @Model.TotalXP
+    </span>
+</div>
+
+@* Continue Watching *@
+@if (Model.ContinueWatching.Any())
+{
+    <div class="mb-4">
+        <h5 class="fw-semibold mb-3"><i class="bi bi-play-circle-fill text-danger me-2"></i>Continue Watching</h5>
+        <div class="row g-3">
+            @foreach (var p in Model.ContinueWatching)
+            {
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small class="text-muted">Course progress</small>
+                            <small class="fw-bold">@p.Percentage%</small>
+                        </div>
+                        <div class="progress mb-2" style="height:8px;">
+                            <div class="progress-bar bg-danger" style="width:@p.Percentage%"></div>
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            Resume at @TimeSpan.FromSeconds(p.LastVideoTimestampSeconds).ToString(@"mm\:ss")
+                        </small>
+                        <a asp-controller="Progress" asp-action="Index"
+                           asp-route-courseId="@p.LastLessonId"
+                           class="btn btn-sm btn-outline-danger mt-2">
+                            <i class="bi bi-play-fill me-1"></i>Resume
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<div class="row g-4">
+
+    @* Stats *@
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <i class="bi bi-bookmark-fill display-5 text-warning"></i>
+            <h3 class="fw-bold mt-2">@Model.TotalBookmarks</h3>
+            <p class="text-muted mb-0">Total Bookmarks</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <i class="bi bi-journal-check display-5 text-success"></i>
+            <h3 class="fw-bold mt-2">@Model.EnrolledCourseIds.Count</h3>
+            <p class="text-muted mb-0">Enrolled Courses</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <i class="bi bi-lightning-fill display-5 text-warning"></i>
+            <h3 class="fw-bold mt-2">@Model.TotalXP</h3>
+            <p class="text-muted mb-0">Total XP Earned</p>
+        </div>
+    </div>
+
+    @* Recent Bookmarks *@
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h5 class="fw-semibold mb-3"><i class="bi bi-bookmark-fill text-warning me-2"></i>Recent Bookmarks</h5>
+            @if (!Model.RecentBookmarks.Any())
+            {
+                <p class="text-muted">No bookmarks yet.</p>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var b in Model.RecentBookmarks)
+                    {
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span>Course #@b.CourseId</span>
+                            <span class="badge bg-secondary">@b.Category</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+
+    @* Recommendations *@
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h5 class="fw-semibold mb-3"><i class="bi bi-stars text-primary me-2"></i>Recommended For You</h5>
+            @if (!Model.RecommendedCourses.Any())
+            {
+                <p class="text-muted">No recommendations yet — enroll in some courses first.</p>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var r in Model.RecommendedCourses)
+                    {
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span>Course #@r</span>
+                            <a asp-controller="Enrollment" asp-action="Enroll"
+                               asp-route-courseId="@r"
+                               class="btn btn-sm btn-outline-primary">Enroll</a>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+
+</div>

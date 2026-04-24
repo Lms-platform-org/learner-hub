@@ -1,0 +1,149 @@
+@using LearningPlatform.StudentService.WebApp.Models.DTOs
+@model PagedResponseDto<BookmarkDto>
+
+@{
+    ViewData["Title"] = "My Bookmarks";
+    var courses = Model.Data.Where(b => b.Type == "course").ToList();
+    var books = Model.Data.Where(b => b.Type == "book").ToList();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="bi bi-bookmark-fill me-2 text-warning"></i>My Bookmarks</h2>
+    <div class="d-flex gap-2">
+        <a asp-controller="Discovery" asp-action="Index" class="btn btn-outline-primary">
+            <i class="bi bi-compass me-2"></i>Discover Courses
+        </a>
+        <a asp-controller="Discovery" asp-action="Books" class="btn btn-outline-success">
+            <i class="bi bi-book me-2"></i>Browse Books
+        </a>
+    </div>
+</div>
+
+@if (!Model.Data.Any())
+{
+    <div class="text-center py-5">
+        <i class="bi bi-bookmark display-3 text-muted"></i>
+        <p class="lead text-muted mt-3">No bookmarks yet.</p>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <a asp-controller="Discovery" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-compass me-2"></i>Browse Courses
+            </a>
+            <a asp-controller="Discovery" asp-action="Books" class="btn btn-success">
+                <i class="bi bi-book me-2"></i>Browse Books
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    @* Course Bookmarks *@
+    @if (courses.Any())
+    {
+        <h5 class="fw-semibold mb-3">
+            <i class="bi bi-play-circle-fill text-primary me-2"></i>Bookmarked Courses
+            <span class="badge bg-primary ms-2">@courses.Count</span>
+        </h5>
+        <div class="row g-3 mb-4">
+            @foreach (var b in courses)
+            {
+                <div class="col-md-4">
+                    <div class="card p-3 border-start border-primary border-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-primary">Course #@b.CourseId</span>
+                            <span class="badge bg-secondary">@b.Category</span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(b.PersonalNote))
+                        {
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-chat-quote me-1"></i>@b.PersonalNote
+                            </p>
+                        }
+                        <div class="d-flex gap-2 mt-2">
+                            <a asp-controller="Progress" asp-action="Index"
+                               asp-route-courseId="@b.CourseId"
+                               class="btn btn-sm btn-outline-primary flex-grow-1">
+                                <i class="bi bi-play-fill me-1"></i>Continue
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@b.Id"
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Remove this bookmark?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @* Book Bookmarks *@
+    @if (books.Any())
+    {
+        <h5 class="fw-semibold mb-3">
+            <i class="bi bi-book-fill text-success me-2"></i>Bookmarked Books
+            <span class="badge bg-success ms-2">@books.Count</span>
+        </h5>
+        <div class="row g-3 mb-4">
+            @foreach (var b in books)
+            {
+                <div class="col-md-4">
+                    <div class="card p-3 border-start border-success border-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-success">Book</span>
+                            <span class="badge bg-secondary">@b.Category</span>
+                        </div>
+                        <h6 class="fw-bold mb-1">@b.BookTitle</h6>
+                        @if (!string.IsNullOrEmpty(b.BookAuthor))
+                        {
+                            <p class="text-muted small mb-1">
+                                <i class="bi bi-person me-1"></i>@b.BookAuthor
+                            </p>
+                        }
+                        @if (!string.IsNullOrEmpty(b.PersonalNote))
+                        {
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-chat-quote me-1"></i>@b.PersonalNote
+                            </p>
+                        }
+                        <div class="d-flex gap-2 mt-2">
+                            @if (!string.IsNullOrEmpty(b.BookKey))
+                            {
+                                <a href="https://openlibrary.org@b.BookKey" target="_blank"
+                                   class="btn btn-sm btn-outline-success flex-grow-1">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i>Read
+                                </a>
+                            }
+                            <a asp-action="Delete" asp-route-id="@b.Id"
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Remove this bookmark?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <nav class="mt-2">
+        <ul class="pagination justify-content-center">
+            @if (Model.Page > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(Model.Page - 1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            }
+            <li class="page-item active"><span class="page-link">@Model.Page</span></li>
+            @if (Model.Page * Model.PageSize < Model.TotalCount)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(Model.Page + 1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

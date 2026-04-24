@@ -1,0 +1,162 @@
+@using LearningPlatform.StudentService.WebApp.Models.DTOs
+@model PagedResponseDto<BookDto>
+
+@{
+    ViewData["Title"] = "Browse Books";
+    var topic = ViewBag.Topic as string;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="bi bi-book-fill me-2 text-success"></i>Browse Books</h2>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-compass me-2"></i>Browse Courses
+    </a>
+</div>
+
+<form asp-action="Books" method="get" class="mb-4">
+    <div class="input-group">
+        <input name="topic" value="@topic" class="form-control form-control-lg"
+               placeholder="Search books e.g. Python, Data Science, Algorithms..." />
+        <button class="btn btn-success" type="submit">
+            <i class="bi bi-search me-1"></i>Search
+        </button>
+    </div>
+</form>
+
+@if (string.IsNullOrEmpty(topic))
+{
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-search display-3"></i>
+        <p class="mt-3 lead">Search for books on any topic above</p>
+    </div>
+}
+else if (Model?.Data == null || !Model.Data.Any())
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>No books found for "@topic". Try a different topic.
+    </div>
+}
+else
+{
+    <p class="text-muted mb-3">
+        Showing <strong>@Model.Data.Count</strong> of <strong>@Model.TotalCount</strong>
+        books for "<strong>@topic</strong>"
+    </p>
+
+    <div class="row g-3">
+        @foreach (var book in Model.Data)
+        {
+            <div class="col-md-6">
+                <div class="card p-3 d-flex flex-row gap-3 align-items-start">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-book display-5 text-success"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold mb-1">@book.Title</h6>
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-person me-1"></i>@book.Authors
+                        </p>
+                        @if (book.FirstPublishYear.HasValue)
+                        {
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-calendar me-1"></i>@book.FirstPublishYear
+                            </p>
+                        }
+                        <div class="d-flex gap-2 mt-2">
+                            <a href="@book.OpenLibraryUrl" target="_blank"
+                               class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-box-arrow-up-right me-1"></i>Read
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-warning"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#bookBookmarkModal"
+                                    data-bookkey="@book.Key"
+                                    data-booktitle="@book.Title"
+                                    data-bookauthor="@book.Authors">
+                                <i class="bi bi-bookmark-plus me-1"></i>Bookmark
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (Model.Page > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?topic=@topic&page=@(Model.Page - 1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            }
+            <li class="page-item active"><span class="page-link">@Model.Page</span></li>
+            @if (Model.Page * Model.PageSize < Model.TotalCount)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?topic=@topic&page=@(Model.Page + 1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@* Book Bookmark Modal *@
+<div class="modal fade" id="bookBookmarkModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-bookmark-plus me-2 text-warning"></i>Bookmark Book
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-controller="Discovery" asp-action="BookmarkBook" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="bookKey" id="modalBookKey" />
+                    <input type="hidden" name="bookTitle" id="modalBookTitle" />
+                    <input type="hidden" name="bookAuthor" id="modalBookAuthor" />
+                    <p class="fw-semibold" id="modalBookTitleDisplay"></p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="general">General</option>
+                            <option value="python">Python</option>
+                            <option value="ml">Machine Learning</option>
+                            <option value="web">Web Development</option>
+                            <option value="database">Database</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Note <small class="text-muted">(optional)</small></label>
+                        <textarea name="note" class="form-control" rows="2"
+                                  placeholder="Why are you bookmarking this book?"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-bookmark-check me-1"></i>Save Bookmark
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('bookBookmarkModal').addEventListener('show.bs.modal', function (e) {
+            var btn = e.relatedTarget;
+            document.getElementById('modalBookKey').value = btn.getAttribute('data-bookkey');
+            document.getElementById('modalBookTitle').value = btn.getAttribute('data-booktitle');
+            document.getElementById('modalBookAuthor').value = btn.getAttribute('data-bookauthor');
+            document.getElementById('modalBookTitleDisplay').textContent = btn.getAttribute('data-booktitle');
+        });
+    </script>
+}

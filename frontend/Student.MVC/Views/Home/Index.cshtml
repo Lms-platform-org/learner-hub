@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center py-5">
+    <i class="bi bi-mortarboard-fill display-1 text-primary"></i>
+    <h1 class="display-4 fw-bold mt-3">Welcome to LearnHub</h1>
+    <p class="lead text-muted">Your personal learning platform — track progress, earn XP, and grow your skills.</p>
+    <div class="mt-4 d-flex justify-content-center gap-3">
+        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+        </a>
+        <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-person-circle me-2"></i>My Profile
+        </a>
+    </div>
+</div>
+
+<div class="row mt-5 g-4">
+    <div class="col-md-3">
+        <div class="card text-center p-4">
+            <i class="bi bi-bookmark-fill display-5 text-warning"></i>
+            <h5 class="mt-3">Bookmarks</h5>
+            <p class="text-muted small">Save courses and lessons for later</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-4">
+            <i class="bi bi-graph-up-arrow display-5 text-success"></i>
+            <h5 class="mt-3">Progress Tracking</h5>
+            <p class="text-muted small">Resume exactly where you left off</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-4">
+            <i class="bi bi-trophy-fill display-5 text-danger"></i>
+            <h5 class="mt-3">XP & Badges</h5>
+            <p class="text-muted small">Earn milestones as you learn</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-4">
+            <i class="bi bi-stars display-5 text-primary"></i>
+            <h5 class="mt-3">Recommendations</h5>
+            <p class="text-muted small">Personalized courses just for you</p>
+        </div>
+    </div>
+</div>
