@@ -11,5 +11,7 @@ namespace LearningPlatform.StudentService.DTOs
         public string? Bio { get; set; }
         public List<string> Skills { get; set; } = new();
         public string PreferredLevel { get; set; } = "Beginner";
+        public string? Email { get; set; }
+        public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
     }
 }

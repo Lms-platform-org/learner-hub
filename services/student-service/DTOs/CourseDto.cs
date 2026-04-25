@@ -1,4 +1,4 @@
-﻿namespace LearningPlatform.StudentService.DTOs
+namespace LearningPlatform.StudentService.DTOs
 {
     public class CourseDto
     {
@@ -8,5 +8,8 @@
         public string? Category { get; set; }
         public string? Level { get; set; }
         public int TotalLessons { get; set; }
+        public string? ThumbnailUrl { get; set; }  // course cover image
+        public string? InstructorName { get; set; } // teacher name
+        public string? VideoUrl { get; set; }        // direct video URL from Sudhish
     }
 }

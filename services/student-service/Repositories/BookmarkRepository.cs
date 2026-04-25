@@ -26,6 +26,24 @@ namespace LearningPlatform.StudentService.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
+        public async Task<Bookmark?> GetByCourseIdAsync(string studentId, int courseId)
+        {
+            return await _context.Bookmarks
+                .AsNoTracking()
+                .FirstOrDefaultAsync(b => b.StudentId == studentId
+                    && b.CourseId == courseId
+                    && b.Type == "course");
+        }
+
+        public async Task<Bookmark?> GetByBookKeyAsync(string studentId, string bookKey)
+        {
+            return await _context.Bookmarks
+                .AsNoTracking()
+                .FirstOrDefaultAsync(b => b.StudentId == studentId
+                    && b.BookKey == bookKey
+                    && b.Type == "book");
+        }
+
         public async Task DeleteAsync(Bookmark bookmark)
         {
             _context.Bookmarks.Remove(bookmark);

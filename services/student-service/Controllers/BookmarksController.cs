@@ -57,8 +57,28 @@ namespace LearningPlatform.StudentService.Controllers
         public async Task<IActionResult> Create([FromBody] BookmarkDto dto)
         {
             await _service.AddAsync(GetUserId(), dto);
-
             return Created("", ApiResponseDto<string>.Ok("Bookmark created"));
+        }
+
+        [HttpPost("toggle")]
+        public async Task<IActionResult> Toggle([FromBody] BookmarkDto dto)
+        {
+            var isBookmarked = await _service.ToggleAsync(GetUserId(), dto);
+            return Ok(ApiResponseDto<object>.Ok(new { isBookmarked }));
+        }
+
+        [HttpPost("check")]
+        public async Task<IActionResult> Check([FromBody] BookmarkDto dto)
+        {
+            var isBookmarked = await _service.IsBookmarkedAsync(GetUserId(), dto);
+            return Ok(ApiResponseDto<object>.Ok(new { isBookmarked }));
+        }
+
+        [HttpPatch("{id}/note")]
+        public async Task<IActionResult> UpdateNote(int id, [FromBody] UpdateNoteDto dto)
+        {
+            await _service.UpdateNoteAsync(GetUserId(), id, dto.Note);
+            return Ok(ApiResponseDto<string>.Ok("Note updated"));
         }
 
 

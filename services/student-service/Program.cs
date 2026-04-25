@@ -1,6 +1,7 @@
 using LearningPlatform.StudentService.Data;
 using LearningPlatform.StudentService.Services;
 using LearningPlatform.StudentService.Repositories;
+using LearningPlatform.StudentService.Validators;
 using Microsoft.EntityFrameworkCore;
 using Polly;
 using Polly.Extensions.Http;
@@ -8,21 +9,28 @@ using LearningPlatform.StudentService.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 
 namespace LearningPlatform.StudentService
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             var retryPolicy = HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+                .WaitAndRetryAsync(1, retryAttempt => TimeSpan.FromSeconds(1));
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddControllers();
+            
+            // FluentValidation Registration
+            builder.Services.AddValidatorsFromAssemblyContaining<BookmarkDtoValidator>();
+            builder.Services.AddFluentValidationAutoValidation();
+            
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
@@ -59,6 +67,7 @@ namespace LearningPlatform.StudentService
             {
                 client.BaseAddress = new Uri(
                     builder.Configuration["ServiceUrls:CourseService"] ?? "https://localhost:7081/");
+                client.Timeout = TimeSpan.FromSeconds(3);
             }).AddPolicyHandler(retryPolicy);
 
             builder.Services.AddHttpClient("ChatService", client =>
@@ -114,6 +123,9 @@ namespace LearningPlatform.StudentService
 
 
             var app = builder.Build();
+
+            // Seed database with test data
+            await DatabaseSeeder.SeedAsync(app.Services);
 
             if (app.Environment.IsDevelopment())
             {

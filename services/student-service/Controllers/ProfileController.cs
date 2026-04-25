@@ -1,4 +1,4 @@
-﻿using LearningPlatform.StudentService.DTOs;
+using LearningPlatform.StudentService.DTOs;
 using LearningPlatform.StudentService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,9 @@ namespace LearningPlatform.StudentService.Controllers
                     FullName = string.Empty,
                     Bio = null,
                     Skills = new List<string>(),
-                    PreferredLevel = "Beginner"
+                    PreferredLevel = "Beginner",
+                    Email = string.Empty,
+                    JoinedDate = DateTime.UtcNow
                 }));
             }
 
@@ -45,7 +47,9 @@ namespace LearningPlatform.StudentService.Controllers
                 FullName = profile.FullName,
                 Bio = profile.Bio,
                 Skills = profile.Skills,
-                PreferredLevel = profile.PreferredLevel
+                PreferredLevel = profile.PreferredLevel,
+                Email = string.Empty,
+                JoinedDate = profile.JoinedDate
             }));
         }
 

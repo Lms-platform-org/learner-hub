@@ -7,6 +7,8 @@ namespace LearningPlatform.StudentService.Repositories
     {
         Task AddAsync(Bookmark bookmark);
         Task<Bookmark?> GetByIdAsync(int id);
+        Task<Bookmark?> GetByCourseIdAsync(string studentId, int courseId);
+        Task<Bookmark?> GetByBookKeyAsync(string studentId, string bookKey);
         Task DeleteAsync(Bookmark bookmark);
         Task UpdateAsync(Bookmark bookmark);
         Task<List<Bookmark>> GetByStudentIdAsync(string studentId);
