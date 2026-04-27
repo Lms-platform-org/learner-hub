@@ -1,0 +1,174 @@
+@{
+    ViewData["Title"] = "Login";
+    Layout = null; // full-page layout
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login – LearnHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 1.5rem;
+        }
+        .login-wrap {
+            width: 100%; max-width: 460px;
+        }
+        .login-card {
+            background: rgba(255,255,255,0.97);
+            border-radius: 24px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .login-hero {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+        .login-hero .brand { font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 0.3rem; }
+        .login-hero p { opacity: 0.85; font-size: 0.95rem; }
+        .login-body { padding: 2rem; }
+        .field { margin-bottom: 1.3rem; }
+        .field label { display: block; font-weight: 600; font-size: 0.85rem; color: #374151; margin-bottom: 0.45rem; }
+        .field-wrap { position: relative; }
+        .field-icon { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 1rem; }
+        .field input {
+            width: 100%; padding: 0.72rem 1rem 0.72rem 2.5rem;
+            border: 2px solid #e5e7eb; border-radius: 12px;
+            font-size: 0.95rem; color: #1e293b;
+            transition: all 0.2s; outline: none;
+            background: #f9fafb;
+        }
+        .field input:focus { border-color: #6366f1; background: white; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+        .field input.error-field { border-color: #ef4444; }
+        .toggle-eye { position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9ca3af; }
+        .toggle-eye:hover { color: #6366f1; }
+        .hint { font-size: 0.78rem; color: #6b7280; margin-top: 0.35rem; }
+        .err-box { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1.2rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-login {
+            width: 100%; padding: 0.85rem;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border: none; border-radius: 12px;
+            color: white; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99,102,241,0.45); }
+        .btn-login:active { transform: translateY(0); }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: #d1d5db; font-size: 0.82rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+        .jwt-section { background: #f0f9ff; border: 2px dashed #bae6fd; border-radius: 12px; padding: 1rem; }
+        .jwt-section label { font-weight: 600; font-size: 0.82rem; color: #0369a1; display: block; margin-bottom: 0.4rem; }
+        .jwt-section textarea { width: 100%; border: 1px solid #bae6fd; border-radius: 8px; padding: 0.6rem; font-size: 0.78rem; color: #1e293b; background: white; resize: vertical; min-height: 70px; outline: none; font-family: monospace; }
+        .jwt-section textarea:focus { border-color: #0ea5e9; box-shadow: 0 0 0 2px rgba(14,165,233,0.15); }
+        .jwt-hint { font-size: 0.75rem; color: #0369a1; margin-top: 0.3rem; }
+        .login-footer { padding: 1.2rem 2rem; border-top: 1px solid #f3f4f6; text-align: center; font-size: 0.83rem; color: #6b7280; background: #fafafa; }
+        .login-footer a { color: #6366f1; font-weight: 600; text-decoration: none; }
+        .loading-dots::after { content: ''; animation: dots 1.2s infinite; }
+        @@keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+        @@keyframes slideIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        .login-card { animation: slideIn 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+        .demo-badge { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 0.25rem 0.7rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700; margin-left: 0.5rem; cursor: pointer; border: none; }
+    </style>
+</head>
+<body>
+<div class="login-wrap">
+    <div class="login-card">
+        <div class="login-hero">
+            <div class="brand"><i class="bi bi-mortarboard-fill"></i> LearnHub</div>
+            <p>Your personal learning dashboard</p>
+        </div>
+        <div class="login-body">
+            @if (TempData["Error"] != null)
+            {
+                <div class="err-box"><i class="bi bi-exclamation-circle-fill"></i> @TempData["Error"]</div>
+            }
+            <div id="client-error" class="err-box" style="display:none;"></div>
+
+            <form id="loginForm" method="post" asp-action="Submit" asp-controller="Login" novalidate>
+                <div class="field">
+                    <label for="name">Your Name</label>
+                    <div class="field-wrap">
+                        <i class="bi bi-person-fill field-icon"></i>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required autocomplete="name" />
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="email">Email Address</label>
+                    <div class="field-wrap">
+                        <i class="bi bi-envelope-fill field-icon"></i>
+                        <input type="email" id="email" name="email" placeholder="you@@example.com" required autocomplete="email" />
+                    </div>
+                </div>
+
+                <div class="divider"><span>Optional – JWT Token</span></div>
+
+                <div class="jwt-section" style="margin-bottom:1.3rem;">
+                    <label>
+                        JWT Bearer Token
+                        <button type="button" class="demo-badge" onclick="useDevToken()">Use Dev Token</button>
+                    </label>
+                    <textarea id="token" name="token" placeholder="Paste your JWT token here (optional – leave blank for dev mode)"></textarea>
+                    <div class="jwt-hint"><i class="bi bi-info-circle"></i> In dev mode the API uses a hardcoded student ID automatically.</div>
+                </div>
+
+                <button type="submit" class="btn-login" id="submitBtn">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In to Dashboard
+                </button>
+            </form>
+        </div>
+        <div class="login-footer">
+            <p>New here? Just enter your name & email to get started.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function useDevToken() {
+        document.getElementById('token').value = '';
+        document.getElementById('name').value = document.getElementById('name').value || 'John Developer';
+        document.getElementById('email').value = document.getElementById('email').value || 'john@learnhub.dev';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const errBox = document.getElementById('client-error');
+
+        if (name.length < 2) {
+            e.preventDefault();
+            errBox.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Please enter your full name.';
+            errBox.style.display = 'flex';
+            document.getElementById('name').focus();
+            return;
+        }
+        if (!email.includes('@@')) {
+            e.preventDefault();
+            errBox.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Please enter a valid email address.';
+            errBox.style.display = 'flex';
+            document.getElementById('email').focus();
+            return;
+        }
+
+        // Store in sessionStorage for global navbar use
+        sessionStorage.setItem('lh-name', name);
+        sessionStorage.setItem('lh-email', email);
+        const jwt = document.getElementById('token').value.trim();
+        if (jwt) sessionStorage.setItem('lh-jwt', jwt);
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-dots">Signing in</span>';
+    });
+</script>
+</body>
+</html>

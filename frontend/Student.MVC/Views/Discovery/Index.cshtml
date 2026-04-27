@@ -1,0 +1,273 @@
+@using LearningPlatform.StudentService.WebApp.Models.DTOs
+@model PagedResponseDto<CourseDto>
+@{
+    ViewData["Title"] = "Discover Courses";
+    var query = ViewBag.Query as string ?? "";
+    var courseFrontend = ViewBag.CourseFrontendUrl as string ?? "https://localhost:7081";
+    var totalPages = Model.TotalCount > 0 ? (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize) : 1;
+    var currentPage = Model.Page;
+}
+
+<style>
+    .discover-hero { margin-bottom: 2rem; }
+    .search-bar-wrap {
+        display: flex; gap: 0.7rem; margin-bottom: 2rem;
+        background: var(--card-bg); border: 2px solid var(--border);
+        border-radius: 14px; padding: 0.5rem 0.7rem; transition: border-color 0.2s;
+    }
+    body.dark .search-bar-wrap { background: var(--card-bg-dark); border-color: var(--border-dark); }
+    .search-bar-wrap:focus-within { border-color: var(--primary); }
+    .search-bar-wrap input {
+        flex: 1; border: none; outline: none; background: transparent;
+        font-size: 1rem; color: var(--text); font-weight: 500;
+    }
+    body.dark .search-bar-wrap input { color: var(--text-dark); }
+    .search-bar-wrap input::placeholder { color: var(--muted); }
+    .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1.3rem; }
+    .course-card {
+        border-radius: 16px; overflow: hidden;
+        background: var(--card-bg); border: 1px solid var(--border);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05); transition: all 0.25s;
+        display: flex; flex-direction: column;
+    }
+    body.dark .course-card { background: var(--card-bg-dark); border-color: var(--border-dark); }
+    .course-card:hover { transform: translateY(-5px); box-shadow: 0 14px 40px rgba(0,0,0,0.12); border-color: var(--primary); }
+    .course-thumb {
+        height: 150px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 2.5rem; position: relative; flex-shrink: 0;
+    }
+    .course-thumb img { width:100%; height:100%; object-fit:cover; }
+    .course-thumb-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.25); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; }
+    .course-card:hover .course-thumb-overlay { opacity:1; }
+    .course-body { padding: 1.1rem; flex: 1; display: flex; flex-direction: column; }
+    .course-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .course-desc { font-size: 0.8rem; color: var(--muted); flex: 1; margin-bottom: 0.8rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .course-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+    .course-footer { display: flex; gap: 0.5rem; margin-top: auto; }
+    .course-footer .btn-lh { flex: 1; justify-content: center; font-size: 0.82rem; padding: 0.5rem 0.7rem; }
+    .bm-btn { width: 38px; height: 38px; border-radius: 10px; border: 2px solid var(--border); background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; color: var(--muted); flex-shrink: 0; }
+    .bm-btn:hover, .bm-btn.bookmarked { border-color: #f59e0b; color: #f59e0b; background: rgba(245,158,11,0.08); }
+    .bm-btn.bookmarked i { font-weight: 900; }
+    body.dark .bm-btn { border-color: var(--border-dark); }
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .tab-btn { padding: 0.6rem 1.3rem; border-radius: 10px; border: 2px solid var(--border); background: transparent; font-weight: 600; font-size: 0.88rem; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+    .tab-btn.active, .tab-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(99,102,241,0.07); }
+    body.dark .tab-btn { border-color: var(--border-dark); }
+    .page-btn { width: 38px; height: 38px; border-radius: 10px; border: 2px solid var(--border); background: transparent; font-weight: 700; cursor: pointer; transition: all 0.2s; color: var(--text); display: flex; align-items: center; justify-content: center; }
+    .page-btn:hover, .page-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(99,102,241,0.08); }
+    body.dark .page-btn { border-color: var(--border-dark); color: var(--text-dark); }
+    .enroll-btn { position: relative; overflow: hidden; }
+    .enroll-btn.enrolling::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0.3); animation: pulse 0.8s infinite; }
+    @@keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
+    .no-results { text-align:center; padding: 4rem 1rem; color: var(--muted); }
+    .no-results i { font-size: 3rem; opacity: 0.3; display: block; margin-bottom: 1rem; }
+</style>
+
+<div class="discover-hero fade-up">
+    <h1>Discover <span class="text-gradient">Courses & Books</span></h1>
+    <p style="color:var(--muted);">Find your next learning adventure</p>
+</div>
+
+<!-- Search Bar -->
+<form method="get" asp-controller="Discovery" asp-action="Search" id="searchForm">
+    <div class="search-bar-wrap fade-up">
+        <i class="bi bi-search" style="color:var(--muted); font-size:1.1rem; align-self:center; padding:0 0.3rem;"></i>
+        <input type="text" name="query" id="searchInput" value="@query" placeholder="Search courses, topics, instructors..." autocomplete="off" />
+        <button type="submit" class="btn-lh btn-lh-primary" style="padding:0.55rem 1.2rem;">
+            <i class="bi bi-search"></i> Search
+        </button>
+        @if (!string.IsNullOrEmpty(query))
+        {
+            <a asp-controller="Discovery" asp-action="Index" class="btn-lh btn-lh-outline">
+                <i class="bi bi-x-lg"></i> Clear
+            </a>
+        }
+    </div>
+</form>
+
+<!-- Tabs -->
+<div class="tabs fade-up">
+    <button class="tab-btn active" id="tab-courses" onclick="switchTab('courses')"><i class="bi bi-play-circle-fill"></i> Courses (@Model.TotalCount)</button>
+    <a asp-controller="Discovery" asp-action="Books" class="tab-btn"><i class="bi bi-book-fill"></i> Books</a>
+</div>
+
+@if (!string.IsNullOrEmpty(query))
+{
+    <div style="margin-bottom:1.2rem; font-size:0.9rem; color:var(--muted);">
+        Showing results for: <strong style="color:var(--text);">"@query"</strong>
+        · @Model.TotalCount result(s)
+    </div>
+}
+
+<!-- Course Grid -->
+@if (Model.Data?.Any() == true)
+{
+    <div class="course-grid fade-up" id="courseGrid">
+        @foreach (var c in Model.Data)
+        {
+            <div class="course-card">
+                <div class="course-thumb">
+                    @if (!string.IsNullOrEmpty(c.ThumbnailUrl))
+                    {
+                        <img src="@c.ThumbnailUrl" alt="@c.Title" loading="lazy" />
+                    }
+                    else
+                    {
+                        <i class="bi bi-play-circle-fill"></i>
+                    }
+                    <div class="course-thumb-overlay">
+                        <i class="bi bi-play-fill" style="font-size:2.5rem; color:white;"></i>
+                    </div>
+                </div>
+                <div class="course-body">
+                    <div class="course-meta">
+                        @if (!string.IsNullOrEmpty(c.Category))
+                        {
+                            <span class="lh-badge lh-badge-primary">@c.Category</span>
+                        }
+                        @if (!string.IsNullOrEmpty(c.Level))
+                        {
+                            <span class="lh-badge lh-badge-success">@c.Level</span>
+                        }
+                        @if (c.TotalLessons > 0)
+                        {
+                            <span class="lh-badge" style="background:rgba(100,116,139,0.1); color:var(--muted);">
+                                <i class="bi bi-collection-fill"></i> @c.TotalLessons lessons
+                            </span>
+                        }
+                    </div>
+                    <div class="course-title">@(string.IsNullOrEmpty(c.Title) ? $"Course #{c.Id}" : c.Title)</div>
+                    @if (!string.IsNullOrEmpty(c.Description))
+                    {
+                        <div class="course-desc">@c.Description</div>
+                    }
+                    @if (!string.IsNullOrEmpty(c.InstructorName))
+                    {
+                        <div style="font-size:0.78rem; color:var(--muted); margin-bottom:0.6rem;">
+                            <i class="bi bi-person-fill"></i> @c.InstructorName
+                        </div>
+                    }
+                    <div class="course-footer">
+                        <button class="btn-lh btn-lh-primary enroll-btn"
+                                onclick="enrollCourse(this, @c.Id)"
+                                data-course-id="@c.Id">
+                            <i class="bi bi-plus-circle-fill"></i> Enroll
+                        </button>
+                        <a href="@courseFrontend/courses/@c.Id" target="_blank"
+                           class="btn-lh btn-lh-outline" title="View full course">
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                        <button class="bm-btn" data-bm-btn data-bm-type="course" data-bm-id="@c.Id"
+                                onclick="toggleBookmark(this, @c.Id, 'course')"
+                                title="Bookmark">
+                            <i class="bi bi-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <div class="d-flex justify-content-center gap-2 mt-4 fade-up">
+            @if (currentPage > 1)
+            {
+                <a href="?@(string.IsNullOrEmpty(query) ? "" : $"query={Uri.EscapeDataString(query)}&")page=@(currentPage - 1)" class="page-btn"><i class="bi bi-chevron-left"></i></a>
+            }
+            @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+            {
+                <a href="?@(string.IsNullOrEmpty(query) ? "" : $"query={Uri.EscapeDataString(query)}&")page=@i" class="page-btn @(i == currentPage ? "active" : "")">@i</a>
+            }
+            @if (currentPage < totalPages)
+            {
+                <a href="?@(string.IsNullOrEmpty(query) ? "" : $"query={Uri.EscapeDataString(query)}&")page=@(currentPage + 1)" class="page-btn"><i class="bi bi-chevron-right"></i></a>
+            }
+        </div>
+    }
+}
+else
+{
+    <div class="no-results fade-up">
+        <i class="bi bi-search"></i>
+        <p style="font-weight:700; font-size:1.1rem;">No courses found</p>
+        <p style="font-size:0.88rem;">@(string.IsNullOrEmpty(query) ? "The course service may be offline. Try again later." : $"No results for \"{query}\". Try different keywords.")</p>
+        @if (!string.IsNullOrEmpty(query))
+        {
+            <a asp-controller="Discovery" asp-action="Index" class="btn-lh btn-lh-primary mt-3"><i class="bi bi-arrow-left"></i> Browse All</a>
+        }
+    </div>
+}
+
+@section Scripts {
+<script>
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tab)?.classList.add('active');
+    }
+
+    async function toggleBookmark(btn, courseId, type) {
+        btn.disabled = true;
+        const isCurrentlyBm = BookmarkState.has(type, courseId);
+        try {
+            const r = await fetch('/Discovery/BookmarkAjax', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId: parseInt(courseId), type: type })
+            });
+            if (!r.ok) throw new Error();
+            const data = await r.json();
+            if (data.isBookmarked) {
+                BookmarkState.add(type, courseId);
+                showToast('Bookmarked!', 'success');
+            } else {
+                BookmarkState.remove(type, courseId);
+                showToast('Bookmark removed', 'info');
+            }
+        } catch {
+            showToast('Could not update bookmark', 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function enrollCourse(btn, courseId) {
+        btn.classList.add('enrolling');
+        btn.disabled = true;
+        try {
+            const r = await fetch('/Enrollment/EnrollAjax', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId })
+            });
+            const data = await r.json();
+            if (data.success) {
+                btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Enrolled';
+                btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                showToast('Successfully enrolled!', 'success');
+            } else {
+                showToast(data.message || 'Already enrolled or error occurred', 'warning');
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Already Enrolled';
+                btn.disabled = true;
+            }
+        } catch {
+            showToast('Enrollment failed. Try again.', 'error');
+            btn.disabled = false;
+        } finally {
+            btn.classList.remove('enrolling');
+        }
+    }
+
+    // Live search debounce
+    let searchTimer;
+    document.getElementById('searchInput').addEventListener('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            const q = this.value.trim();
+            if (q.length > 2) document.getElementById('searchForm').submit();
+        }, 600);
+    });
+</script>
+}

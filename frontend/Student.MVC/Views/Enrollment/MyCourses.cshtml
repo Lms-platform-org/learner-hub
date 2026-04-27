@@ -1,0 +1,260 @@
+@using LearningPlatform.StudentService.WebApp.Models.DTOs
+@model List<EnrolledCourseViewModel>
+@{
+    ViewData["Title"] = "My Courses";
+    var courseFrontend = ViewBag.CourseFrontendUrl as string ?? "https://localhost:7081";
+    var completed = Model?.Count(c => c.IsCompleted) ?? 0;
+    var inProgress = Model?.Count(c => c.IsStarted && !c.IsCompleted) ?? 0;
+    var notStarted = Model?.Count(c => !c.IsStarted) ?? 0;
+    var totalXP = Model?.Sum(c => c.XP) ?? 0;
+}
+
+<style>
+    .my-courses-hero { margin-bottom: 2rem; }
+    .filter-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .filter-tab { padding: 0.5rem 1.1rem; border-radius: 10px; border: 2px solid var(--border); background: transparent; font-weight: 600; font-size: 0.85rem; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+    .filter-tab.active { border-color: var(--primary); color: var(--primary); background: rgba(99,102,241,0.08); }
+    body.dark .filter-tab { border-color: var(--border-dark); }
+    .enrolled-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.3rem; }
+    .enrolled-card {
+        background: var(--card-bg); border: 1px solid var(--border);
+        border-radius: 16px; overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05); transition: all 0.25s;
+        display: flex; flex-direction: column;
+    }
+    body.dark .enrolled-card { background: var(--card-bg-dark); border-color: var(--border-dark); }
+    .enrolled-card:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(0,0,0,0.12); }
+    .enrolled-card.completed { border-top: 3px solid var(--success); }
+    .enrolled-card.in-progress { border-top: 3px solid var(--primary); }
+    .enrolled-card.not-started { border-top: 3px solid var(--muted); }
+    .card-thumb {
+        height: 130px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 2.5rem; position: relative;
+    }
+    .card-thumb img { width:100%; height:100%; object-fit:cover; }
+    .status-pill {
+        position: absolute; top: 10px; right: 10px;
+        padding: 0.25rem 0.7rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+    }
+    .card-content { padding: 1.1rem; flex: 1; display: flex; flex-direction: column; }
+    .card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.35rem; line-height: 1.4; }
+    .card-meta { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .progress-section { margin-bottom: 0.9rem; }
+    .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; font-size: 0.8rem; font-weight: 600; }
+    .xp-tag { display: inline-flex; align-items: center; gap: 0.3rem; background: linear-gradient(135deg,#f59e0b,#d97706); color: white; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .milestones-row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.8rem; }
+    .m-badge { padding: 0.2rem 0.55rem; border-radius: 10px; font-size: 0.68rem; font-weight: 700; background: rgba(245,158,11,0.12); color: #d97706; }
+    .card-actions { display: flex; gap: 0.5rem; margin-top: auto; }
+    .card-actions .btn-lh { flex: 1; justify-content: center; font-size: 0.82rem; padding: 0.5rem 0.6rem; }
+    .resume-label { font-size: 0.72rem; color: var(--muted); text-align: center; margin-top: 0.3rem; }
+    .empty-state { text-align:center; padding:4rem 1rem; color:var(--muted); }
+    .empty-state i { font-size:3rem; opacity:0.3; display:block; margin-bottom:1rem; }
+    .summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .summary-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem; text-align: center; }
+    body.dark .summary-box { background: var(--card-bg-dark); border-color: var(--border-dark); }
+    .summary-num { font-size: 1.8rem; font-weight: 800; }
+    .summary-lbl { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+</style>
+
+<div class="my-courses-hero fade-up">
+    <h1>My <span class="text-gradient">Courses</span></h1>
+    <p style="color:var(--muted);">Track your learning progress</p>
+</div>
+
+<!-- Summary -->
+<div class="summary-row fade-up">
+    <div class="summary-box">
+        <div class="summary-num" style="color:var(--primary);">@(Model?.Count ?? 0)</div>
+        <div class="summary-lbl">Total Enrolled</div>
+    </div>
+    <div class="summary-box">
+        <div class="summary-num" style="color:var(--success);">@completed</div>
+        <div class="summary-lbl">Completed</div>
+    </div>
+    <div class="summary-box">
+        <div class="summary-num" style="color:var(--warning);">@inProgress</div>
+        <div class="summary-lbl">In Progress</div>
+    </div>
+    <div class="summary-box">
+        <div class="summary-num" style="color:var(--muted);">@notStarted</div>
+        <div class="summary-lbl">Not Started</div>
+    </div>
+    <div class="summary-box">
+        <div class="summary-num" style="color:#f59e0b;">@totalXP</div>
+        <div class="summary-lbl">Total XP</div>
+    </div>
+</div>
+
+@if (Model?.Any() == true)
+{
+    <!-- Filter Tabs -->
+    <div class="filter-tabs fade-up">
+        <button class="filter-tab active" onclick="filterCourses('all', this)"><i class="bi bi-grid-fill"></i> All (@Model.Count)</button>
+        <button class="filter-tab" onclick="filterCourses('in-progress', this)"><i class="bi bi-play-circle-fill"></i> In Progress (@inProgress)</button>
+        <button class="filter-tab" onclick="filterCourses('completed', this)"><i class="bi bi-patch-check-fill"></i> Completed (@completed)</button>
+        <button class="filter-tab" onclick="filterCourses('not-started', this)"><i class="bi bi-circle"></i> Not Started (@notStarted)</button>
+    </div>
+
+    <div class="enrolled-grid fade-up" id="courseGrid">
+        @foreach (var c in Model)
+        {
+            var statusClass = c.IsCompleted ? "completed" : c.IsStarted ? "in-progress" : "not-started";
+            var statusLabel = c.IsCompleted ? "Completed" : c.IsStarted ? "In Progress" : "Not Started";
+            var statusColor = c.IsCompleted ? "var(--success)" : c.IsStarted ? "var(--primary)" : "var(--muted)";
+            <div class="enrolled-card @statusClass" data-status="@statusClass">
+                <div class="card-thumb">
+                    @if (!string.IsNullOrEmpty(c.ThumbnailUrl))
+                    {
+                        <img src="@c.ThumbnailUrl" alt="@c.Title" loading="lazy" />
+                    }
+                    else
+                    {
+                        <i class="bi bi-@(c.IsCompleted ? "patch-check-fill" : "play-circle-fill")"></i>
+                    }
+                    <span class="status-pill" style="background:@statusColor; color:white;">@statusLabel</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-title">@(string.IsNullOrEmpty(c.Title) ? $"Course #{c.CourseId}" : c.Title)</div>
+                    <div class="card-meta">
+                        @if (!string.IsNullOrEmpty(c.Category))
+                        { <span class="lh-badge lh-badge-primary">@c.Category</span> }
+                        @if (!string.IsNullOrEmpty(c.Level))
+                        { <span class="lh-badge lh-badge-success">@c.Level</span> }
+                        @if (c.TotalLessons > 0)
+                        { <span class="lh-badge" style="background:rgba(100,116,139,0.1);color:var(--muted);"><i class="bi bi-collection-fill"></i> @c.TotalLessons lessons</span> }
+                        @if (c.XP > 0)
+                        { <span class="xp-tag"><i class="bi bi-lightning-fill"></i> @c.XP XP</span> }
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span>Progress</span>
+                            <span style="color:var(--primary); font-size:0.88rem;">@c.Percentage%</span>
+                        </div>
+                        <div class="lh-progress">
+                            <div class="lh-progress-bar" data-pct="@c.Percentage" style="width:0; background:@(c.IsCompleted ? "linear-gradient(90deg,#10b981,#059669)" : "linear-gradient(90deg,var(--primary),var(--secondary))")"></div>
+                        </div>
+                    </div>
+
+                    <!-- Milestones -->
+                    @if (c.EarnedMilestones?.Any() == true)
+                    {
+                        <div class="milestones-row">
+                            @foreach (var m in c.EarnedMilestones.Take(3))
+                            {
+                                <span class="m-badge"><i class="bi bi-star-fill"></i> @m</span>
+                            }
+                        </div>
+                    }
+
+                    <!-- Resume info -->
+                    @if (c.IsStarted && !c.IsCompleted && c.LastVideoTimestampSeconds > 0)
+                    {
+                        <div style="font-size:0.75rem; color:var(--muted); margin-bottom:0.7rem;">
+                            <i class="bi bi-clock"></i> Resume at <strong>@c.ResumeTime</strong> · Lesson @c.LastLessonId
+                        </div>
+                    }
+                    @if (c.LastAccessed.HasValue)
+                    {
+                        <div style="font-size:0.72rem; color:var(--muted); margin-bottom:0.7rem;">
+                            Last studied: @c.LastAccessed.Value.ToString("MMM dd, yyyy")
+                        </div>
+                    }
+
+                    <!-- Actions -->
+                    <div class="card-actions">
+                        @if (!string.IsNullOrEmpty(c.VideoUrl))
+                        {
+                            <a href="@c.VideoUrl" target="_blank" class="btn-lh @(c.IsCompleted ? "btn-lh-outline" : "btn-lh-primary")">
+                                <i class="bi bi-@(c.IsCompleted ? "arrow-repeat" : "play-fill")"></i>
+                                @(c.IsCompleted ? "Rewatch" : c.IsStarted ? "Resume" : "Start")
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@courseFrontend/courses/@c.CourseId" target="_blank" class="btn-lh @(c.IsCompleted ? "btn-lh-outline" : "btn-lh-primary")">
+                                <i class="bi bi-@(c.IsCompleted ? "arrow-repeat" : "play-fill")"></i>
+                                @(c.IsCompleted ? "Rewatch" : c.IsStarted ? "Resume" : "Start")
+                            </a>
+                        }
+                        <button class="btn-lh btn-lh-outline"
+                                onclick="markComplete(@c.CourseId, @c.LastLessonId + 1, this)"
+                                @(c.IsCompleted ? "disabled" : "")
+                                title="Mark next lesson complete">
+                            <i class="bi bi-check-lg"></i>
+                        </button>
+                        <button class="bm-btn" data-bm-btn data-bm-type="course" data-bm-id="@c.CourseId"
+                                onclick="toggleCourseBm(this, @c.CourseId)" title="Bookmark">
+                            <i class="bi bi-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="empty-state fade-up">
+        <i class="bi bi-journal-x"></i>
+        <p style="font-weight:700; font-size:1.1rem;">No enrolled courses yet</p>
+        <p style="font-size:0.88rem;">Start your learning journey by discovering courses.</p>
+        <a asp-controller="Discovery" asp-action="Index" class="btn-lh btn-lh-primary mt-3">
+            <i class="bi bi-compass-fill"></i> Discover Courses
+        </a>
+    </div>
+}
+
+@section Scripts {
+<script>
+    function filterCourses(status, btn) {
+        document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.enrolled-card').forEach(card => {
+            if (status === 'all' || card.dataset.status === status) {
+                card.style.display = '';
+                card.style.animation = 'fadeUp 0.4s ease forwards';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    async function markComplete(courseId, lessonId, btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+        try {
+            const r = await fetch(`/api/progress/complete/${courseId}/${lessonId}`, { method: 'POST' });
+            if (r.ok) {
+                showToast('Lesson marked complete! +10 XP', 'success');
+                setTimeout(() => location.reload(), 1200);
+            } else {
+                showToast('Could not mark complete', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+            }
+        } catch {
+            showToast('Network error', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+        }
+    }
+
+    async function toggleCourseBm(btn, courseId) {
+        btn.disabled = true;
+        try {
+            const r = await fetch('/Discovery/BookmarkAjax', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId, type: 'course' })
+            });
+            const data = await r.json();
+            if (data.isBookmarked) { BookmarkState.add('course', courseId); showToast('Bookmarked!', 'success'); }
+            else { BookmarkState.remove('course', courseId); showToast('Removed from bookmarks', 'info'); }
+        } catch { showToast('Error', 'error'); }
+        finally { btn.disabled = false; }
+    }
+</script>
+}
