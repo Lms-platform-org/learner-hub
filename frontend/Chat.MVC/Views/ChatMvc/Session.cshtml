@@ -1,0 +1,170 @@
+﻿@model Chat_MVC.Models.ViewModels.ChatViewModel
+
+@{
+    Layout = null;
+    int lastId = Model.Messages.Any() ? Model.Messages.Max(m => m.Id) : 0;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Horizon Academic Chat</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    <div class="chat-layout">
+
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>Horizon</h2>
+                <span>Academic Premium System</span>
+            </div>
+
+            <div class="session-meta-box">
+                <div class="meta-label">Communication Window</div>
+                <div class="meta-value">Institutional Chat Session</div>
+                <div class="role-badge"><strong>@Model.CurrentUserRole</strong> Connected</div>
+            </div>
+
+            <div class="info-panel">
+                <h4>Session Activity</h4>
+                <p>This secured communication channel enables continuous academic discussion, assignment clarification, and formal teacher-student interaction in real time.</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>Live Status</h4>
+                <p>Messaging server active • responses synchronized • discussion thread open</p>
+            </div>
+        </aside>
+
+        <section class="chat-main">
+
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <h1>Chat Session Window</h1>
+                    <p>Premium academic collaboration environment</p>
+                </div>
+
+                <div class="chat-header-right">
+                    <div class="header-chip"><strong>@Model.CurrentUserRole Mode</strong></div>
+                    <button class="theme-toggle" onclick="toggleTheme()">☾</button>
+                </div>
+            </div>
+
+            <div id="messages" class="chat-messages">
+                @foreach (var m in Model.Messages)
+                {
+                    <div class="msg @(m.IsOwn ? "own" : "other")" data-id="@m.Id">
+                        <div class="chat-bubble">
+                            <small><strong>@m.SenderRole</strong></small>
+                            @m.Content
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="chat-compose">
+                <input id="msg" placeholder="Compose academic response..." autocomplete="off" />
+                <button type="button" onclick="send()">Send</button>
+            </div>
+
+        </section>
+    </div>
+
+    <script>
+            const sessionId = @Model.SessionId;
+            const role = "@Model.CurrentUserRole";
+            const input = document.getElementById("msg");
+            const messagesBox = document.getElementById("messages");
+
+            let lastMessageId = @lastId;
+
+            input.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    send();
+                }
+            });
+
+            async function send() {
+                const content = input.value.trim();
+                if (!content) return;
+
+                try {
+                    const res = await fetch("/chat/send", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            chatSessionId: sessionId,
+                            senderRole: role,
+                            content: content
+                        })
+                    });
+
+                    if (!res.ok) {
+                        alert("Failed to send");
+                        return;
+                    }
+
+                    input.value = "";
+                    await loadNewMessages();
+                }
+                catch {
+                    alert("Error sending message");
+                }
+            }
+
+            async function loadNewMessages() {
+                try {
+                    const res = await fetch(`/chat/session-messages/${sessionId}`);
+                    if (!res.ok) return;
+
+                    const messages = await res.json();
+                    let newestId = lastMessageId;
+
+                    messages.forEach(m => {
+                        if (m.id > lastMessageId) {
+
+                            const own = m.senderRole === role;
+
+                            messagesBox.insertAdjacentHTML("beforeend", `
+                                <div class="msg ${own ? 'own' : 'other'}" data-id="${m.id}">
+                                    <div class="chat-bubble">
+                                        <small><strong>${m.senderRole}</strong></small>
+                                        ${m.content}
+                                    </div>
+                                </div>
+                            `);
+
+                            if (m.id > newestId) newestId = m.id;
+                        }
+                    });
+
+                    lastMessageId = newestId;
+                    messagesBox.scrollTop = messagesBox.scrollHeight;
+                }
+                catch {
+                    console.log("Polling failed");
+                }
+            }
+
+            function toggleTheme() {
+                document.body.classList.toggle("dark-mode");
+                localStorage.setItem("academic_theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+            }
+
+            window.onload = function () {
+                if (localStorage.getItem("academic_theme") === "dark") {
+                    document.body.classList.add("dark-mode");
+                }
+                messagesBox.scrollTop = messagesBox.scrollHeight;
+            }
+
+            setInterval(loadNewMessages, 1000);
+    </script>
+
+</body>
+</html>

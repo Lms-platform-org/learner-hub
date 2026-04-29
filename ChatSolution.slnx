@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/frontend/" />
+  <Folder Name="/frontend/Chat.MVC/">
+    <Project Path="frontend/Chat.MVC/Chat_MVC.csproj" />
+  </Folder>
+  <Folder Name="/services/" />
+  <Folder Name="/services/chat-service/">
+    <Project Path="services/chat-service/WebApplication1.csproj" />
+  </Folder>
+</Solution>
