@@ -131,17 +131,17 @@
         .toast-exit { animation: toastOut 0.3s ease-in forwards; }
         /* Legacy CSS Variables for unmigrated MVC Views (e.g. Bookmarks, Discovery) */
         :root {
-            --bg: #f8fafc;
+            --bg: #F7F9F6;
             --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --text: #1e293b;
+            --border: #E3E8E5;
+            --text: #121d21;
             --muted: #64748b;
-            --primary: #059669;
-            --secondary: #0ea5e9;
-            --accent: #14b8a6; /* Teal instead of pink to match theme */
-            --danger: #ef4444;
+            --primary: #2E7D5B;
+            --secondary: #1a648c;
+            --accent: #2E7D5B; /* Matches primary brand color */
+            --danger: #ba1a1a;
             --warning: #f59e0b;
-            --success: #10b981;
+            --success: #176b4b;
             --card-bg-dark: #16211D;
             --border-dark: #23332D;
             --text-dark: #dfe4de;
@@ -172,26 +172,26 @@
     <div id="toast-container" class="fixed top-24 right-6 z-[9999] flex flex-col gap-3 pointer-events-none w-full max-w-sm"></div>
 
     <!-- TopAppBar (Exact code.html styling) -->
-    <header class="bg-emerald-950/40 dark:bg-[#0F1714] border-b border-emerald-900/30 dark:border-[#23332D] fixed top-0 z-50 flex justify-between items-center w-full px-6 py-3 transition-colors duration-300">
+    <header class="bg-[#F7F9F6] dark:bg-[#0F1714] border-b border-[#E3E8E5] dark:border-[#23332D] fixed top-0 z-50 flex justify-between items-center w-full px-6 py-3 transition-colors duration-300 shadow-[0_4px_12px_rgba(46,125,91,0.05)] dark:shadow-none">
         <div class="flex items-center gap-8">
-            <span class="text-xl font-bold font-serif text-emerald-50 dark:text-[#E6F1EC] tracking-tight">LearnHub</span>
+            <span class="text-xl font-bold font-serif text-[#2E7D5B] dark:text-[#E6F1EC] tracking-tight">LearnHub</span>
             <nav class="hidden md:flex items-center gap-6">
-                <a href="/Dashboard" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "text-emerald-300 dark:text-[#7dd9ab] font-bold" : "text-emerald-100/60 dark:text-[#A7B8B0] hover:text-emerald-100 transition-colors") font-serif text-sm">Dashboard</a>
-                <a href="/Enrollment/MyCourses" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Enrollment" ? "text-emerald-300 dark:text-[#7dd9ab] font-bold" : "text-emerald-100/60 dark:text-[#A7B8B0] hover:text-emerald-100 transition-colors") font-serif text-sm">My Courses</a>
-                <a href="/Discovery" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Discovery" ? "text-emerald-300 dark:text-[#7dd9ab] font-bold" : "text-emerald-100/60 dark:text-[#A7B8B0] hover:text-emerald-100 transition-colors") font-serif text-sm">Resources</a>
-                <a href="/Bookmarks" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Bookmarks" ? "text-emerald-300 dark:text-[#7dd9ab] font-bold" : "text-emerald-100/60 dark:text-[#A7B8B0] hover:text-emerald-100 transition-colors") font-serif text-sm flex items-center">
+                <a href="/Dashboard" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "text-[#2E7D5B] dark:text-[#7dd9ab] font-bold border-b-2 border-[#2E7D5B] dark:border-transparent py-2" : "text-slate-500 dark:text-[#A7B8B0] hover:text-[#2E7D5B] dark:hover:text-emerald-100 py-2 transition-colors") font-serif text-sm">Dashboard</a>
+                <a href="/Enrollment/MyCourses" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Enrollment" ? "text-[#2E7D5B] dark:text-[#7dd9ab] font-bold border-b-2 border-[#2E7D5B] dark:border-transparent py-2" : "text-slate-500 dark:text-[#A7B8B0] hover:text-[#2E7D5B] dark:hover:text-emerald-100 py-2 transition-colors") font-serif text-sm">My Courses</a>
+                <a href="/Discovery" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Discovery" ? "text-[#2E7D5B] dark:text-[#7dd9ab] font-bold border-b-2 border-[#2E7D5B] dark:border-transparent py-2" : "text-slate-500 dark:text-[#A7B8B0] hover:text-[#2E7D5B] dark:hover:text-emerald-100 py-2 transition-colors") font-serif text-sm">Resources</a>
+                <a href="/Bookmarks" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Bookmarks" ? "text-[#2E7D5B] dark:text-[#7dd9ab] font-bold border-b-2 border-[#2E7D5B] dark:border-transparent py-2" : "text-slate-500 dark:text-[#A7B8B0] hover:text-[#2E7D5B] dark:hover:text-emerald-100 py-2 transition-colors") font-serif text-sm flex items-center">
                     <span class="material-symbols-outlined text-[16px] mr-1">bookmark</span> Bookmarks
-                    <span id="nav-bookmark-badge" style="display:none;" class="bg-emerald-100 text-emerald-900 dark:bg-primary dark:text-on-primary text-[10px] px-2 py-0.5 rounded-full font-bold ml-1.5"></span>
+                    <span id="nav-bookmark-badge" style="display:none;" class="bg-[#2E7D5B] text-white dark:bg-primary dark:text-on-primary text-[10px] px-2 py-0.5 rounded-full font-bold ml-1.5"></span>
                 </a>
             </nav>
         </div>
         <div class="flex items-center gap-4">
-            <button id="darkToggle" onclick="toggleDark()" class="p-2 hover:bg-emerald-900/10 dark:hover:bg-[#1B2A24] transition-colors rounded-full text-emerald-900/60 dark:text-emerald-100/60 focus:outline-none">
+            <button id="darkToggle" onclick="toggleDark()" class="p-2 hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] transition-colors rounded-full text-[#2E7D5B] dark:text-emerald-100/60 focus:outline-none">
                 <span class="material-symbols-outlined" id="darkIcon">light_mode</span>
             </button>
             <div class="relative group">
                 <button class="flex items-center gap-2 focus:outline-none">
-                    <div class="h-8 w-8 rounded-full overflow-hidden border border-emerald-900/20 dark:border-emerald-900/30">
+                    <div class="h-8 w-8 rounded-full overflow-hidden border border-[#E3E8E5] dark:border-emerald-900/30">
                         <img src="https://ui-avatars.com/api/?name=Student&background=7dd9ab&color=003824" alt="Profile" id="nav-avatar" class="h-full w-full object-cover" />
                     </div>
                 </button>
@@ -249,8 +249,8 @@
     </main>
 
     <!-- Simple Footer -->
-    <footer class="bg-gray-100 dark:bg-surface-container-lowest border-t border-gray-300 dark:border-[#23332D] py-8 mt-auto transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 dark:text-on-surface-variant">
+    <footer class="bg-white dark:bg-surface-container-lowest border-t border-[#E3E8E5] dark:border-[#23332D] py-8 mt-auto transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 dark:text-on-surface-variant">
             <span>© 2026 LearnHub Academic Division. All rights reserved.</span>
             <div class="flex gap-6">
                 <a class="hover:text-gray-900 dark:hover:text-on-surface transition-colors" href="#">Privacy Policy</a>

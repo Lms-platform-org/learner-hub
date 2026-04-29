@@ -36,19 +36,10 @@ namespace LearningPlatform.StudentService.WebApp
                 app.UseHsts();
             }
 
-            // redirect to login on 401
+            // No redirect to login needed as auth is handled externally
             app.Use(async (context, next) =>
             {
-                try
-                {
-                    await next();
-                    if (context.Response.StatusCode == 401)
-                        context.Response.Redirect("/Login/Index");
-                }
-                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    context.Response.Redirect("/Login/Index");
-                }
+                await next();
             });
 
             app.UseHttpsRedirection();
@@ -59,7 +50,7 @@ namespace LearningPlatform.StudentService.WebApp
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Login}/{action=Index}/{id?}");
+                pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
             app.Run();
         }
