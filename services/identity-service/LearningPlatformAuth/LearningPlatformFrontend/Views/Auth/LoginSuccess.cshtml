@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Success";
+
+
+
+    ViewData["HideSidebar"] = true;
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card text-center">
+        <div
+            style="width: 80px; height: 80px; background: rgba(5, 150, 105, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+            <i class="bi bi-check-circle-fill" style="color: var(--accent-color); font-size: 3rem;"></i>
+        </div>
+
+        <h2 class="auth-title">Success!</h2>
+        <p class="auth-subtitle">@ViewData["Message"]</p>
+
+        <div class="mt-4 pt-4" style="border-top: 1px solid var(--border-color);">
+            <a href="/" class="btn-primary"
+                style="display: inline-block; width: auto; padding: 0.75rem 2rem; text-decoration: none;">Return
+                Home</a>
+        </div>
+    </div>
+</div>

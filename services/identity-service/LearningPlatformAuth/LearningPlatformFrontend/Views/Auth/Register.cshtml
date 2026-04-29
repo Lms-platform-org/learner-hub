@@ -1,0 +1,74 @@
+@model LearningPlatformFrontend.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_Layout";
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card" style="max-width: 450px;">
+        <div class="logo-container" style="justify-content: center; margin-bottom: 2rem;">
+            <div style="width: 40px; height: 40px; background: var(--accent-color); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-mortarboard-fill" style="color: white; font-size: 1.5rem;"></i>
+            </div>
+            <span class="logo-text" style="font-size: 1.5rem;">Scholar Central</span>
+        </div>
+
+        <h2 class="auth-title">Create Account</h2>
+        <p class="auth-subtitle">Join our community of learners</p>
+
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" style="font-size: 0.875rem;"></div>
+            
+            <div class="form-group">
+                <label asp-for="DisplayName" class="form-label">Full Name</label>
+                <input asp-for="DisplayName" class="form-control" placeholder="John Doe" />
+                <span asp-validation-for="DisplayName" class="text-danger" style="font-size: 0.75rem;"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email" class="form-label">Email Address</label>
+                <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                <span asp-validation-for="Email" class="text-danger" style="font-size: 0.75rem;"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                        <span asp-validation-for="Password" class="text-danger" style="font-size: 0.75rem;"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirm</label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••••" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger" style="font-size: 0.75rem;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Role" class="form-label">I am a...</label>
+                <select asp-for="Role" class="form-control">
+                    <option value="Student">Student</option>
+                    <option value="Teacher">Teacher</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger" style="font-size: 0.75rem;"></span>
+            </div>
+
+            <button type="submit" class="btn-primary mt-3">Register</button>
+        </form>
+
+        <div class="text-center mt-4">
+            <p class="text-muted" style="font-size: 0.875rem;">
+                Already have an account? 
+                <a asp-action="Login" style="color: var(--accent-color); font-weight: 600; text-decoration: none;">Sign In</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,141 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 style="font-size: 1.75rem; font-weight: 700;">Welcome back, @User.Identity?.Name!</h1>
+            <p class="text-muted">Pick up where you left off in your learning journey.</p>
+        </div>
+        <div class="d-flex gap-3">
+            <div class="text-end">
+                <p class="mb-0 fw-bold">32% Complete</p>
+                <div class="progress" style="height: 6px; width: 120px; background-color: var(--border-color);">
+                    <div class="progress-bar" style="width: 32%; background-color: var(--accent-color);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Main Video Section -->
+            <div class="video-section">
+                <div class="video-placeholder">
+                    <div style="width: 80px; height: 80px; background: rgba(52, 211, 153, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="bi bi-play-fill" style="color: var(--accent-color); font-size: 3rem; margin-left: 5px;"></i>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <span class="badge" style="background-color: rgba(52, 211, 153, 0.1); color: var(--accent-color); font-weight: 600; margin-bottom: 0.75rem; border: 1px solid rgba(52, 211, 153, 0.2);">PHILOSOPHY 402</span>
+                    <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 1rem;">04. Rousseau's General Will</h2>
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--border-color); overflow: hidden;">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alistair" alt="Dr. Alistair Thorne" style="width: 100%;">
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Dr. Alistair Thorne</p>
+                            <p class="mb-0 text-muted" style="font-size: 0.8rem;">Chair of Political Science</p>
+                        </div>
+                    </div>
+                    <p class="text-muted" style="line-height: 1.6;">
+                        In this lecture, we examine Jean-Jacques Rousseau's concept of the 'General Will' (volonté générale). 
+                        We investigate how this differs from the mere 'will of all' and its implications for modern democratic legitimacy.
+                    </p>
+                    <div class="d-flex gap-4 mt-4">
+                        <button class="btn btn-link p-0 text-decoration-none d-flex align-items-center gap-2" style="color: var(--text-color); font-weight: 600;">
+                            <i class="bi bi-file-earmark-arrow-down"></i> Resources
+                        </button>
+                        <button class="btn btn-link p-0 text-decoration-none d-flex align-items-center gap-2" style="color: var(--text-color); font-weight: 600;">
+                            <i class="bi bi-pencil-square"></i> My Notes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="curriculum-card d-flex align-items-center gap-3">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(52, 211, 153, 0.1); display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-file-text-fill" style="color: var(--accent-color); font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Lecture Transcript</p>
+                            <p class="mb-0 text-muted" style="font-size: 0.8rem;">PDF • 14 pages • 2.4MB</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="curriculum-card d-flex align-items-center gap-3">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(52, 211, 153, 0.1); display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-book-fill" style="color: var(--accent-color); font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Essential Reading</p>
+                            <p class="mb-0 text-muted" style="font-size: 0.8rem;">Book Excerpt • 45 pages</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="curriculum-card h-100">
+                <h4 style="font-weight: 700; margin-bottom: 1.5rem;">Curriculum</h4>
+                
+                <div class="mb-4">
+                    <p style="font-size: 0.75rem; color: var(--accent-color); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1rem;">Module 01: Foundations</p>
+                    <div class="lesson-item">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="text-muted fw-bold" style="font-size: 0.8rem;">01</span>
+                            <div>
+                                <p class="mb-0 fw-600" style="font-size: 0.9rem;">Introduction to Theory</p>
+                                <p class="mb-0 text-muted" style="font-size: 0.75rem;">12:05 • Completed</p>
+                            </div>
+                        </div>
+                        <i class="bi bi-check-circle-fill" style="color: var(--accent-color);"></i>
+                    </div>
+                    <div class="lesson-item">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="text-muted fw-bold" style="font-size: 0.8rem;">02</span>
+                            <div>
+                                <p class="mb-0 fw-600" style="font-size: 0.9rem;">The Hobbesian Leviathan</p>
+                                <p class="mb-0 text-muted" style="font-size: 0.75rem;">24:40 • Completed</p>
+                            </div>
+                        </div>
+                        <i class="bi bi-check-circle-fill" style="color: var(--accent-color);"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <p style="font-size: 0.75rem; color: var(--accent-color); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1rem;">Module 02: Enlightenment</p>
+                    <div class="lesson-item active" style="background: rgba(52, 211, 153, 0.05); margin: 0 -0.5rem; padding: 1rem 0.5rem; border-radius: 0.5rem; border: 1px solid var(--accent-color);">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="fw-bold" style="font-size: 0.8rem; color: var(--accent-color);">04</span>
+                            <div>
+                                <p class="mb-0 fw-bold" style="font-size: 0.9rem;">Rousseau's General Will</p>
+                                <p class="mb-0" style="font-size: 0.75rem; color: var(--accent-color);">48:50 • Currently Playing</p>
+                            </div>
+                        </div>
+                        <i class="bi bi-play-circle-fill" style="color: var(--accent-color);"></i>
+                    </div>
+                    <div class="lesson-item">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="text-muted fw-bold" style="font-size: 0.8rem;">05</span>
+                            <div>
+                                <p class="mb-0 fw-600" style="font-size: 0.9rem;">Critique of Inequality</p>
+                                <p class="mb-0 text-muted" style="font-size: 0.75rem;">28:12</p>
+                            </div>
+                        </div>
+                        <i class="bi bi-lock-fill" style="color: var(--text-muted);"></i>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline-secondary w-100 mt-4 d-flex align-items-center justify-content-between px-3 py-2" style="border-color: var(--border-color); color: var(--text-color); font-weight: 600;">
+                    View All 24 Lessons <i class="bi bi-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
