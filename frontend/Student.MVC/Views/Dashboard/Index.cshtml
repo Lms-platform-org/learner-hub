@@ -5,151 +5,122 @@
     var name = Context.Session.GetString("name") ?? "Student";
 }
 
-<style>
-    .dash-hero { margin-bottom: 2rem; }
-    .dash-hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.3rem; }
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1.2rem; margin-bottom: 2rem; }
-    .xp-bar-wrap { background: rgba(99,102,241,0.1); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem; }
-    .xp-icon { width: 56px; height: 56px; background: linear-gradient(135deg,#f59e0b,#d97706); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: white; flex-shrink: 0; }
-    .xp-details { flex: 1; }
-    .xp-number { font-size: 1.8rem; font-weight: 800; color: #f59e0b; }
-    .xp-label { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
-    .xp-next { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
-    .cw-card {
-        border-radius: 14px; padding: 1.1rem 1.3rem;
-        background: var(--card-bg); border: 1px solid var(--border);
-        display: flex; align-items: center; gap: 1rem;
-        transition: all 0.2s; margin-bottom: 0.9rem;
-        text-decoration: none; color: inherit;
-    }
-    body.dark .cw-card { background: var(--card-bg-dark); border-color: var(--border-dark); }
-    .cw-card:hover { border-color: var(--primary); transform: translateX(4px); text-decoration: none; color: inherit; }
-    .cw-icon { width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg,var(--primary),var(--secondary)); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; flex-shrink: 0; }
-    .cw-info { flex: 1; min-width: 0; }
-    .cw-title { font-weight: 700; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cw-meta { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-    .cw-pct { font-weight: 800; font-size: 1rem; color: var(--primary); flex-shrink: 0; }
-    .rec-chip {
-        display: inline-flex; align-items: center; gap: 0.4rem;
-        padding: 0.5rem 1rem; border-radius: 12px;
-        border: 2px solid var(--border); font-weight: 600; font-size: 0.85rem;
-        cursor: pointer; transition: all 0.2s; text-decoration: none; color: inherit;
-        background: var(--card-bg);
-    }
-    body.dark .rec-chip { background: var(--card-bg-dark); border-color: var(--border-dark); }
-    .rec-chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); text-decoration: none; }
-    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
-    .empty-state i { font-size: 3rem; opacity: 0.35; display: block; margin-bottom: 1rem; }
-    .section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
-    body.dark .section-card { background: var(--card-bg-dark); border-color: var(--border-dark); }
-    .milestone-badge { display: inline-flex; align-items: center; gap: 0.3rem; background: linear-gradient(135deg,#f59e0b,#d97706); color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin: 0.2rem; }
-</style>
-
-<!-- Hero -->
-<div class="dash-hero fade-up">
-    <h1>Good morning, <span class="text-gradient" id="hero-name">@name</span> 👋</h1>
-    <p style="color:var(--muted); font-size:0.95rem;">Here's your learning overview for today</p>
+<!-- Hero Section -->
+<div class="mb-stack-lg animate-[fadeUp_0.5s_ease_forwards]">
+    <h1 class="font-h1 text-h1 text-on-surface mb-2 tracking-tight flex items-center gap-3">
+        Good morning, <span class="text-primary" id="hero-name">@name</span> 
+        <span class="text-h2">👋</span>
+    </h1>
+    <p class="font-body-lg text-on-surface-variant">Here's your academic overview for today</p>
 </div>
 
 <!-- XP Bar -->
 @if (Model.TotalXP > 0)
 {
-<div class="xp-bar-wrap fade-up">
-    <div class="xp-icon"><i class="bi bi-lightning-fill"></i></div>
-    <div class="xp-details">
-        <div class="xp-number" id="xp-number">@Model.TotalXP <span style="font-size:1rem; font-weight:600;">XP</span></div>
-        <div class="xp-label">Total Experience Points earned</div>
-        <div class="xp-next">
-            @{
-                var level = Model.TotalXP < 500 ? "Beginner" : Model.TotalXP < 1500 ? "Intermediate" : "Advanced";
-                var nextXp = Model.TotalXP < 500 ? 500 : Model.TotalXP < 1500 ? 1500 : 5000;
-                var pct = Math.Min((int)((double)Model.TotalXP / nextXp * 100), 100);
-            }
-            Level: <strong>@level</strong> · @(nextXp - Model.TotalXP) XP to next level
+    var level = Model.TotalXP < 500 ? "Beginner" : Model.TotalXP < 1500 ? "Intermediate" : "Advanced";
+    var nextXp = Model.TotalXP < 500 ? 500 : Model.TotalXP < 1500 ? 1500 : 5000;
+    var pct = Math.Min((int)((double)Model.TotalXP / nextXp * 100), 100);
+
+    <div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 rounded-2xl p-6 mb-8 flex items-center gap-6 animate-[fadeUp_0.6s_ease_forwards]">
+        <div class="w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-500/20">
+            <span class="material-symbols-outlined text-[32px]">bolt</span>
+        </div>
+        <div class="flex-1">
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-amber-600 dark:text-amber-500 font-serif" id="xp-number">@Model.TotalXP</span>
+                <span class="text-amber-700/70 dark:text-amber-500/70 font-bold text-sm tracking-wider">XP</span>
+            </div>
+            <div class="text-sm font-medium text-amber-800/80 dark:text-amber-200/60 mt-1">Total Experience Points earned</div>
+            <div class="text-xs text-amber-700/60 dark:text-amber-400/50 mt-1">
+                Level: <strong class="text-amber-800 dark:text-amber-300">@level</strong> · @(nextXp - Model.TotalXP) XP to next level
+            </div>
+        </div>
+        <div class="w-40 shrink-0">
+            <div class="text-xs font-bold text-amber-800 dark:text-amber-400 text-right mb-1.5">@pct%</div>
+            <div class="h-2.5 bg-amber-200/50 dark:bg-amber-900/40 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-1000 ease-out" style="width: @pct%"></div>
+            </div>
         </div>
     </div>
-    <div style="width:140px; flex-shrink:0;">
-        <div style="font-size:0.75rem; color:var(--muted); margin-bottom:4px; text-align:right;">@pct%</div>
-        <div class="lh-progress"><div class="lh-progress-bar" data-pct="@pct" style="width:0"></div></div>
-    </div>
-</div>
 }
 
-<!-- Stats -->
+<!-- Stats Grid -->
 @if (Model.EnrolledCount > 0 || Model.CompletedCount > 0 || Model.InProgressCount > 0 || Model.TotalBookmarks > 0)
 {
-<div class="stat-grid">
-    <div class="stat-card" style="border-left-color:#6366f1;">
-        <div class="stat-icon" style="background:rgba(99,102,241,0.12); color:#6366f1;"><i class="bi bi-journal-check"></i></div>
-        <div>
-            <div class="stat-number" style="color:#6366f1;">@Model.EnrolledCount</div>
-            <div class="stat-label">Courses Enrolled</div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-10">
+        <!-- Enrolled -->
+        <div class="bg-gray-100 dark:bg-[#1B2A24] p-8 rounded-lg border border-gray-200 dark:border-[#23332D] shadow-sm">
+            <span class="block text-3xl font-h2 text-primary font-bold mb-1">@Model.EnrolledCount</span>
+            <span class="text-sm font-label-sm text-gray-500 dark:text-on-surface-variant">COURSES ENROLLED</span>
+        </div>
+        
+        <!-- Completed -->
+        <div class="bg-gray-100 dark:bg-[#1B2A24] p-8 rounded-lg border border-gray-200 dark:border-[#23332D] shadow-sm">
+            <span class="block text-3xl font-h2 text-primary font-bold mb-1">@Model.CompletedCount</span>
+            <span class="text-sm font-label-sm text-gray-500 dark:text-on-surface-variant">COMPLETED</span>
+        </div>
+
+        <!-- In Progress -->
+        <div class="bg-gray-100 dark:bg-[#1B2A24] p-8 rounded-lg border border-gray-200 dark:border-[#23332D] shadow-sm">
+            <span class="block text-3xl font-h2 text-primary font-bold mb-1">@Model.InProgressCount</span>
+            <span class="text-sm font-label-sm text-gray-500 dark:text-on-surface-variant">IN PROGRESS</span>
+        </div>
+
+        <!-- Bookmarks -->
+        <div class="bg-gray-100 dark:bg-[#1B2A24] p-8 rounded-lg border border-gray-200 dark:border-[#23332D] shadow-sm">
+            <span class="block text-3xl font-h2 text-primary font-bold mb-1">@Model.TotalBookmarks</span>
+            <span class="text-sm font-label-sm text-gray-500 dark:text-on-surface-variant">BOOKMARKS</span>
         </div>
     </div>
-    <div class="stat-card" style="border-left-color:#10b981;">
-        <div class="stat-icon" style="background:rgba(16,185,129,0.12); color:#10b981;"><i class="bi bi-patch-check-fill"></i></div>
-        <div>
-            <div class="stat-number" style="color:#10b981;">@Model.CompletedCount</div>
-            <div class="stat-label">Completed</div>
-        </div>
-    </div>
-    <div class="stat-card" style="border-left-color:#f59e0b;">
-        <div class="stat-icon" style="background:rgba(245,158,11,0.12); color:#f59e0b;"><i class="bi bi-play-circle-fill"></i></div>
-        <div>
-            <div class="stat-number" style="color:#f59e0b;">@Model.InProgressCount</div>
-            <div class="stat-label">In Progress</div>
-        </div>
-    </div>
-    <div class="stat-card" style="border-left-color:#ec4899;">
-        <div class="stat-icon" style="background:rgba(236,72,153,0.12); color:#ec4899;"><i class="bi bi-bookmark-fill"></i></div>
-        <div>
-            <div class="stat-number" style="color:#ec4899;">@Model.TotalBookmarks</div>
-            <div class="stat-label">Bookmarks</div>
-        </div>
-    </div>
-</div>
 }
 
-<div class="row g-4">
-    <!-- Left: Continue Watching -->
-    <div class="col-lg-7">
-        <div class="section-card">
-            <div class="section-title">
-                <i class="bi bi-play-circle-fill" style="color:var(--primary);"></i>
-                Continue Watching
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column: Continue Watching -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <div class="bg-white dark:bg-[#16211D] border border-gray-200 dark:border-[#23332D] rounded-2xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">play_circle</span>
+                    Continue Watching
+                </h2>
                 @if (Model.ContinueWatching?.Any() == true)
                 {
-                    <span class="lh-badge lh-badge-primary ms-auto">@Model.ContinueWatching.Count courses</span>
+                    <span class="bg-primary/10 text-primary border border-primary/20 text-xs font-bold px-2 py-1 rounded-md">@Model.ContinueWatching.Count courses</span>
                 }
             </div>
 
             @if (Model.ContinueWatching?.Any() == true)
             {
-                @foreach (var p in Model.ContinueWatching)
-                {
-                    <a href="/Enrollment/MyCourses" class="cw-card">
-                        <div class="cw-icon"><i class="bi bi-play-fill"></i></div>
-                        <div class="cw-info">
-                            <div class="cw-title">Course #@p.LastLessonId</div>
-                            <div class="cw-meta">
-                                <span class="lh-badge lh-badge-warning me-1">In Progress</span>
-                                Lesson @p.LastLessonId · @(TimeSpan.FromSeconds(p.LastVideoTimestampSeconds).ToString(@"mm\:ss")) resume point
+                <div class="space-y-4">
+                    @foreach (var p in Model.ContinueWatching)
+                    {
+                        <a href="/Enrollment/MyCourses" class="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#23332D] bg-gray-50/50 dark:bg-[#0F1714]/50 hover:border-primary/50 dark:hover:border-primary/50 transition-colors group">
+                            <div class="w-14 h-14 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                                <span class="material-symbols-outlined">play_arrow</span>
                             </div>
-                            <div class="lh-progress mt-2" style="height:5px;">
-                                <div class="lh-progress-bar" data-pct="@p.Percentage" style="width:0;"></div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-gray-900 dark:text-[#E6F1EC] truncate font-serif">Course #@p.LastLessonId</h3>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded">In Progress</span>
+                                    <span class="text-xs text-gray-500 dark:text-[#A7B8B0]">Lesson @p.LastLessonId · @(TimeSpan.FromSeconds(p.LastVideoTimestampSeconds).ToString(@"mm\:ss"))</span>
+                                </div>
+                                <div class="h-1.5 w-full bg-gray-200 dark:bg-[#23332D] rounded-full mt-3 overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full transition-all duration-1000" style="width: @p.Percentage%"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="cw-pct">@p.Percentage%</div>
-                    </a>
-                }
+                            <div class="text-lg font-bold text-primary shrink-0 ml-4">@p.Percentage%</div>
+                        </a>
+                    }
+                </div>
             }
             else
             {
-                <div class="empty-state">
-                    <i class="bi bi-play-circle"></i>
-                    <p>No courses in progress.</p>
-                    <a asp-controller="Discovery" asp-action="Index" class="btn-lh btn-lh-primary mt-2">
-                        <i class="bi bi-compass-fill"></i> Explore Courses
+                <div class="text-center py-12 px-4 border border-dashed border-gray-200 dark:border-[#23332D] rounded-xl bg-gray-50 dark:bg-[#0F1714]/50">
+                    <span class="material-symbols-outlined text-4xl text-gray-300 dark:text-[#313632] mb-3">play_circle</span>
+                    <p class="text-gray-500 dark:text-[#A7B8B0] text-sm mb-4">No courses currently in progress.</p>
+                    <a asp-controller="Discovery" asp-action="Index" class="inline-flex items-center gap-2 bg-white dark:bg-[#16211D] text-gray-800 dark:text-[#E6F1EC] border border-gray-200 dark:border-[#23332D] px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-50 dark:hover:bg-[#1B2A24] transition-colors shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">explore</span> Explore Courses
                     </a>
                 </div>
             }
@@ -158,79 +129,100 @@
         <!-- Milestones -->
         @if (Model.Milestones?.Any() == true)
         {
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-trophy-fill" style="color:#f59e0b;"></i> Earned Milestones</div>
-                <div>
+            <div class="bg-white dark:bg-[#16211D] border border-gray-200 dark:border-[#23332D] rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] flex items-center gap-2 mb-4">
+                    <span class="material-symbols-outlined text-amber-500">emoji_events</span>
+                    Earned Milestones
+                </h2>
+                <div class="flex flex-wrap gap-2">
                     @foreach (var m in Model.Milestones)
                     {
-                        <span class="milestone-badge"><i class="bi bi-star-fill"></i> @m</span>
+                        <div class="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-sm">
+                            <span class="material-symbols-outlined text-[14px]">star</span>
+                            @m
+                        </div>
                     }
                 </div>
             </div>
         }
     </div>
 
-    <!-- Right: Quick Actions + Recommendations -->
-    <div class="col-lg-5">
+    <!-- Right Column: Quick Actions + Recommendations -->
+    <div class="space-y-8">
+        
         <!-- Quick Actions -->
-        <div class="section-card" style="margin-bottom:1.5rem;">
-            <div class="section-title"><i class="bi bi-lightning-fill" style="color:var(--warning);"></i> Quick Actions</div>
-            <div class="d-flex flex-column gap-2">
-                <a asp-controller="Discovery" asp-action="Index" class="cw-card" style="margin-bottom:0;">
-                    <div class="cw-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="bi bi-compass-fill"></i></div>
-                    <div class="cw-info">
-                        <div class="cw-title">Discover Courses</div>
-                        <div class="cw-meta">Browse &amp; search courses</div>
+        <div class="bg-white dark:bg-[#16211D] border border-gray-200 dark:border-[#23332D] rounded-2xl p-6 shadow-sm">
+            <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-amber-500">bolt</span>
+                Quick Actions
+            </h2>
+            <div class="space-y-3">
+                <a asp-controller="Discovery" asp-action="Index" class="flex items-center gap-4 p-3 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-[#23332D] hover:bg-gray-50 dark:hover:bg-[#0F1714] transition-all group">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">explore</span>
                     </div>
-                    <i class="bi bi-chevron-right" style="color:var(--muted);"></i>
+                    <div class="flex-1">
+                        <div class="font-bold text-sm text-gray-900 dark:text-[#E6F1EC]">Discover Courses</div>
+                        <div class="text-xs text-gray-500 dark:text-[#A7B8B0]">Browse & search catalog</div>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-300 dark:text-[#313632] group-hover:text-primary transition-colors">chevron_right</span>
                 </a>
-                <a asp-controller="Discovery" asp-action="Books" class="cw-card" style="margin-bottom:0;">
-                    <div class="cw-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);"><i class="bi bi-book-fill"></i></div>
-                    <div class="cw-info">
-                        <div class="cw-title">Browse Books</div>
-                        <div class="cw-meta">Open Library integration</div>
+                
+                <a asp-controller="Discovery" asp-action="Books" class="flex items-center gap-4 p-3 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-[#23332D] hover:bg-gray-50 dark:hover:bg-[#0F1714] transition-all group">
+                    <div class="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">menu_book</span>
                     </div>
-                    <i class="bi bi-chevron-right" style="color:var(--muted);"></i>
+                    <div class="flex-1">
+                        <div class="font-bold text-sm text-gray-900 dark:text-[#E6F1EC]">Browse Books</div>
+                        <div class="text-xs text-gray-500 dark:text-[#A7B8B0]">Open Library integration</div>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-300 dark:text-[#313632] group-hover:text-primary transition-colors">chevron_right</span>
                 </a>
-                <a asp-controller="Bookmarks" asp-action="Index" class="cw-card" style="margin-bottom:0;">
-                    <div class="cw-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);"><i class="bi bi-bookmark-fill"></i></div>
-                    <div class="cw-info">
-                        <div class="cw-title">My Bookmarks</div>
-                        <div class="cw-meta">@Model.TotalBookmarks saved items</div>
+
+                <a asp-controller="Bookmarks" asp-action="Index" class="flex items-center gap-4 p-3 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-[#23332D] hover:bg-gray-50 dark:hover:bg-[#0F1714] transition-all group">
+                    <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">bookmark</span>
                     </div>
-                    <i class="bi bi-chevron-right" style="color:var(--muted);"></i>
+                    <div class="flex-1">
+                        <div class="font-bold text-sm text-gray-900 dark:text-[#E6F1EC]">My Bookmarks</div>
+                        <div class="text-xs text-gray-500 dark:text-[#A7B8B0]">@Model.TotalBookmarks saved items</div>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-300 dark:text-[#313632] group-hover:text-primary transition-colors">chevron_right</span>
                 </a>
             </div>
         </div>
 
         <!-- Recommendations -->
-        <div class="section-card">
-            <div class="section-title"><i class="bi bi-stars" style="color:var(--secondary);"></i> Recommended For You</div>
+        <div class="bg-white dark:bg-[#16211D] border border-gray-200 dark:border-[#23332D] rounded-2xl p-6 shadow-sm">
+            <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-blue-500">auto_awesome</span>
+                Recommended
+            </h2>
+            
             @if (Model.RecommendedCourseIds?.Any() == true)
             {
-                <div style="display:flex; flex-wrap:wrap; gap:0.6rem;">
+                <div class="flex flex-wrap gap-2 mb-5">
                     @foreach (var id in Model.RecommendedCourseIds.Take(6))
                     {
-                        <a asp-controller="Discovery" asp-action="Index" class="rec-chip">
-                            <i class="bi bi-play-circle-fill" style="color:var(--primary);"></i>
+                        <a asp-controller="Discovery" asp-action="Index" class="flex items-center gap-1.5 bg-gray-50 dark:bg-[#0F1714] border border-gray-200 dark:border-[#23332D] hover:border-primary dark:hover:border-primary text-gray-700 dark:text-[#A7B8B0] hover:text-primary dark:hover:text-primary px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">play_circle</span>
                             Course #@id
                         </a>
                     }
                 </div>
-                <div class="mt-3">
-                    <a asp-controller="Discovery" asp-action="Index" class="btn-lh btn-lh-outline" style="width:100%; justify-content:center;">
-                        <i class="bi bi-arrow-right"></i> See All Courses
-                    </a>
-                </div>
+                <a asp-controller="Discovery" asp-action="Index" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-gray-200 dark:border-[#23332D] text-gray-600 dark:text-[#A7B8B0] font-bold text-sm hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors">
+                    See All Courses <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </a>
             }
             else
             {
-                <div class="empty-state" style="padding:1.5rem 0;">
-                    <i class="bi bi-stars" style="font-size:2rem; opacity:0.3;"></i>
-                    <p style="font-size:0.85rem;">Complete courses to unlock personalized picks.</p>
+                <div class="text-center py-8 px-4">
+                    <span class="material-symbols-outlined text-4xl text-gray-300 dark:text-[#313632] mb-2">auto_awesome</span>
+                    <p class="text-gray-500 dark:text-[#A7B8B0] text-xs">Complete courses to unlock personalized picks.</p>
                 </div>
             }
         </div>
+
     </div>
 </div>
 

@@ -7,17 +7,18 @@
 
 <style>
     .profile-hero { margin-bottom: 2rem; position: relative; }
-    .profile-cover { height: 180px; border-radius: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); position: relative; overflow: hidden; margin-bottom: 4rem; }
-    .profile-cover::after { content:''; position:absolute; inset:0; background: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.2; }
-    .profile-avatar-wrap { position: absolute; bottom: -3.5rem; left: 2rem; display: flex; align-items: flex-end; gap: 1.5rem; }
+    .profile-cover { height: 180px; border-radius: 20px; background: linear-gradient(135deg, #022c22, #064e3b); position: relative; overflow: hidden; }
+    body.dark .profile-cover { background: linear-gradient(135deg, #0F1714, #1B2A24); border: 1px solid var(--border-dark); }
+    .profile-cover::after { content:''; position:absolute; inset:0; background: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.1; }
+    .profile-avatar-wrap { display: flex; flex-direction: column; align-items: flex-start; margin-top: -4rem; padding-left: 2rem; margin-bottom: 2.5rem; position: relative; z-index: 10; gap: 0.5rem; }
     .profile-avatar { width: 120px; height: 120px; border-radius: 50%; background: var(--card-bg); border: 5px solid var(--bg); display: flex; align-items: center; justify-content: center; font-size: 3.5rem; color: var(--primary); box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 2; position: relative; }
     body.dark .profile-avatar { background: var(--card-bg-dark); border-color: var(--bg-dark); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .profile-avatar-badge { position: absolute; bottom: 5px; right: 5px; width: 30px; height: 30px; background: var(--success); border-radius: 50%; border: 3px solid var(--bg); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; }
     body.dark .profile-avatar-badge { border-color: var(--bg-dark); }
-    .profile-title { flex: 1; padding-bottom: 0.5rem; }
-    .profile-title h1 { font-size: 1.8rem; font-weight: 800; margin: 0; color: var(--text); }
+    .profile-title { flex: 1; padding-top: 0.5rem; }
+    .profile-title h1 { font-size: 2rem; font-weight: 800; margin: 0; color: var(--text); line-height: 1.2; font-family: 'Newsreader', serif; }
     body.dark .profile-title h1 { color: var(--text-dark); }
-    .profile-title p { color: var(--muted); margin: 0; font-size: 0.95rem; font-weight: 500; }
+    .profile-title p { color: var(--muted); margin: 0; font-size: 0.95rem; font-weight: 600; margin-top: 0.2rem; }
     
     .profile-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
     @@media (min-width: 992px) { .profile-grid { grid-template-columns: 2fr 1fr; } }
@@ -29,11 +30,30 @@
     
     .form-group { margin-bottom: 1.3rem; }
     .form-group label { display: block; font-size: 0.88rem; font-weight: 600; color: var(--muted); margin-bottom: 0.4rem; }
-    .form-control { width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: 10px; background: transparent; color: var(--text); font-size: 0.95rem; transition: all 0.2s; outline: none; }
-    body.dark .form-control { border-color: var(--border-dark); color: var(--text-dark); }
-    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+    .form-control { width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: 10px; background: var(--card-bg); color: var(--text); font-size: 0.95rem; transition: all 0.2s; outline: none; }
+    body.dark .form-control { background: var(--card-bg-dark); border-color: var(--border-dark); color: var(--text-dark); }
+    .form-control:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+    body.dark .form-control:focus { background: var(--card-bg-dark); }
     .form-control::placeholder { color: #cbd5e1; }
     body.dark .form-control::placeholder { color: #475569; }
+    
+    /* Handle Autofill */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+        -webkit-text-fill-color: var(--text) !important;
+        -webkit-box-shadow: 0 0 0 30px var(--card-bg) inset !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+    body.dark input:-webkit-autofill,
+    body.dark input:-webkit-autofill:hover, 
+    body.dark input:-webkit-autofill:focus, 
+    body.dark input:-webkit-autofill:active {
+        -webkit-text-fill-color: var(--text-dark) !important;
+        -webkit-box-shadow: 0 0 0 30px var(--card-bg-dark) inset !important;
+    }
+
     textarea.form-control { resize: vertical; min-height: 100px; }
     
     .skills-display { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
