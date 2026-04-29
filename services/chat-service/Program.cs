@@ -49,6 +49,7 @@ namespace WebApplication1
 
             app.UseSerilogRequestLogging();
             app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<ApiResponseWrapperMiddleware>();
 
             if (app.Environment.IsDevelopment())
             {

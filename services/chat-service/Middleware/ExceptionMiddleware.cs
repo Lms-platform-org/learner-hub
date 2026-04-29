@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using WebApplication1.Common;
 using WebApplication1.Exceptions;
 using Serilog;
 
@@ -33,14 +34,15 @@ namespace WebApplication1.Middleware
 
             if (ex is NotFoundException)
                 status = HttpStatusCode.NotFound;
-
             else if (ex is BadRequestException)
                 status = HttpStatusCode.BadRequest;
 
-            var response = new
-            {
-                error = ex.Message
-            };
+            var response = new ApiResponse<object>(
+                false,
+                "Request failed",
+                null,
+                ex.Message
+            );
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)status;

@@ -28,7 +28,6 @@ namespace Chat_MVC.Controllers
             {
                 if (string.IsNullOrWhiteSpace(studentId) || string.IsNullOrWhiteSpace(teacherId))
                     return BadRequest("StudentId or TeacherId missing from form.");
-
                 var response = await _httpClient.PostAsJsonAsync("api/chat/request-session",
                     new CreateSessionRequest
                     {
@@ -36,10 +35,11 @@ namespace Chat_MVC.Controllers
                         TeacherId = teacherId
                     });
 
-                var errorBody = await response.Content.ReadAsStringAsync();
-
                 if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
                     return BadRequest($"API ERROR: {errorBody}");
+                }
 
                 var result = await response.Content.ReadFromJsonAsync<ChatSessionResponse>();
 
@@ -83,12 +83,16 @@ namespace Chat_MVC.Controllers
         {
             var response = await _httpClient.PostAsJsonAsync("api/chat/send-message", request);
 
-            var errorBody = await response.Content.ReadAsStringAsync();
-
             if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
                 return BadRequest(errorBody);
+            }
 
             var result = await response.Content.ReadFromJsonAsync<MessageResponse>();
+
+            if (result == null)
+                return BadRequest("Message response null from API");
 
             return Ok(result);
         }
