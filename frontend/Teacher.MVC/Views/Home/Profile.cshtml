@@ -1,0 +1,180 @@
+@{
+    ViewData["Title"] = "Teacher Profile";
+}
+
+<div class="flex justify-between items-end mb-10">
+    <div>
+        <h1 class="text-4xl font-serif font-bold text-on-surface tracking-tight">Teacher Profile</h1>
+        <p class="text-on-surface-variant mt-2 max-w-2xl">Manage your academic credentials, bio, and personal institutional information.</p>
+    </div>
+    <button class="flex items-center gap-2 bg-primary text-on-primary px-8 py-3.5 rounded-full font-bold hover:bg-primary-container transition-all shadow-lg shadow-primary/20" id="btn-save-profile">
+        <span class="material-symbols-outlined">save</span>
+        <span>Save Changes</span>
+    </button>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Left Column: Avatar and Identity Card -->
+    <div class="lg:col-span-4 space-y-8">
+        <div class="bg-surface-container border border-outline-variant/30 rounded-[2.5rem] p-10 text-center shadow-sm">
+            <div class="relative w-40 h-40 mx-auto mb-8">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=60" alt="Avatar" class="w-full h-full rounded-full object-cover border-4 border-surface shadow-xl" id="profile-avatar">
+                <button class="absolute bottom-1 right-1 w-12 h-12 bg-primary text-on-primary rounded-full border-4 border-surface flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined">photo_camera</span>
+                </button>
+            </div>
+            <h2 class="text-2xl font-serif font-bold text-on-surface" id="display-name">Dr. Sarah Jenkins</h2>
+            <p class="text-sm font-medium text-primary uppercase tracking-widest mt-2" id="display-role">Senior Professor</p>
+            
+            <div class="grid grid-cols-2 gap-4 mt-10 pt-10 border-t border-outline-variant/20">
+                <div class="text-left">
+                    <p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">Joined Faculty</p>
+                    <p class="text-lg font-serif font-bold">April 2024</p>
+                </div>
+                <div class="text-left">
+                    <p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">Total Courses</p>
+                    <p class="text-lg font-serif font-bold">14</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-surface-container border border-outline-variant/30 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 class="text-lg font-serif font-bold mb-6">Account Verification</h3>
+            <div class="space-y-4">
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-primary/5 border border-primary/20">
+                    <span class="material-symbols-outlined text-primary">verified</span>
+                    <span class="text-sm font-medium">Verified Educator Status</span>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-secondary/5 border border-secondary/20">
+                    <span class="material-symbols-outlined text-secondary">security</span>
+                    <span class="text-sm font-medium">Enhanced Security Active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Personal & Academic Details -->
+    <div class="lg:col-span-8 space-y-8">
+        <div class="bg-surface-container border border-outline-variant/30 rounded-[2.5rem] p-10 shadow-sm">
+            <h3 class="text-xl font-serif font-bold mb-10 pb-4 border-b border-outline-variant/20">Institutional Information</h3>
+            
+            <form id="profile-form" class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Full Name</label>
+                        <input type="text" id="fullName" value="Dr. Sarah Jenkins" class="w-full bg-surface-container-low border-2 border-outline-variant/30 rounded-2xl px-6 py-4 text-on-surface focus:border-primary focus:ring-0 transition-all outline-none">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Institutional Email</label>
+                        <input type="email" id="email" value="sarah.jenkins@scholarly.edu" class="w-full bg-surface-container-low border-2 border-outline-variant/30 rounded-2xl px-6 py-4 text-on-surface focus:border-primary focus:ring-0 transition-all outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Professional Biography</label>
+                    <textarea id="bio" rows="4" class="w-full bg-surface-container-low border-2 border-outline-variant/30 rounded-2xl px-6 py-4 text-on-surface focus:border-primary focus:ring-0 transition-all outline-none resize-none">Dedicated educator with 15+ years of experience in theoretical physics and quantum mechanics. Currently leading research into topological insulators and non-linear dynamics.</textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Teaching Level</label>
+                        <select id="preferredLevel" class="w-full bg-surface-container-low border-2 border-outline-variant/30 rounded-2xl px-6 py-4 text-on-surface focus:border-primary focus:ring-0 transition-all outline-none appearance-none">
+                            <option value="Undergraduate">Undergraduate</option>
+                            <option value="Graduate" selected>Graduate</option>
+                            <option value="Postgraduate">Postgraduate</option>
+                        </select>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Joining Date</label>
+                        <input type="date" id="joinedDate" value="2024-04-12" class="w-full bg-surface-container-low border-2 border-outline-variant/30 rounded-2xl px-6 py-4 text-on-surface focus:border-primary focus:ring-0 transition-all outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Academic Expertise</label>
+                    <div class="bg-surface-container-low border-2 border-outline-variant/30 rounded-[1.5rem] p-4 flex flex-wrap gap-3">
+                        <div id="skills-tags" class="flex flex-wrap gap-3">
+                            <span class="flex items-center gap-2 bg-surface-container-high border border-outline-variant px-4 py-2 rounded-full text-xs font-bold transition-all hover:border-primary">
+                                Quantum Mechanics <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-red-400">close</span>
+                            </span>
+                            <span class="flex items-center gap-2 bg-surface-container-high border border-outline-variant px-4 py-2 rounded-full text-xs font-bold transition-all hover:border-primary">
+                                Theoretical Physics <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-red-400">close</span>
+                            </span>
+                        </div>
+                        <input type="text" id="skill-input" placeholder="Add specialty..." class="bg-transparent border-none focus:ring-0 text-sm flex-1 min-w-[150px]">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-surface-container border border-outline-variant/30 rounded-[2.5rem] p-10 shadow-sm">
+            <h3 class="text-xl font-serif font-bold mb-8">Security Configuration</h3>
+            <div class="flex items-center justify-between p-6 rounded-[2rem] bg-surface-container-high border border-outline-variant/30">
+                <div class="flex items-center gap-6">
+                    <div class="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+                        <span class="material-symbols-outlined text-3xl">key</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold">Password Management</h4>
+                        <p class="text-xs text-on-surface-variant mt-1">Last updated 3 months ago</p>
+                    </div>
+                </div>
+                <button class="px-6 py-3 border-2 border-outline-variant rounded-full text-sm font-bold hover:bg-surface-container-high transition-all">Reset Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const saveBtn = document.getElementById("btn-save-profile");
+            const fullNameInput = document.getElementById("fullName");
+            const displayName = document.getElementById("display-name");
+
+            saveBtn.addEventListener("click", () => {
+                const originalContent = saveBtn.innerHTML;
+                saveBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span><span>Saving...</span>';
+                saveBtn.disabled = true;
+
+                setTimeout(() => {
+                    displayName.innerText = fullNameInput.value;
+                    saveBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check</span><span>Saved</span>';
+                    saveBtn.classList.replace('bg-primary', 'bg-emerald-500');
+                    
+                    setTimeout(() => {
+                        saveBtn.innerHTML = originalContent;
+                        saveBtn.classList.replace('bg-emerald-500', 'bg-primary');
+                        saveBtn.disabled = false;
+                    }, 2000);
+                }, 1000);
+            });
+
+            // Skills tag logic
+            const skillInput = document.getElementById("skill-input");
+            const skillsTags = document.getElementById("skills-tags");
+
+            skillInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && skillInput.value.trim() !== "") {
+                    e.preventDefault();
+                    const tag = document.createElement("span");
+                    tag.className = "flex items-center gap-2 bg-surface-container-high border border-outline-variant px-4 py-2 rounded-full text-xs font-bold transition-all hover:border-primary animate-in fade-in zoom-in duration-300";
+                    tag.innerHTML = `${skillInput.value} <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-red-400">close</span>`;
+                    
+                    tag.querySelector("span").addEventListener("click", () => {
+                        tag.remove();
+                    });
+
+                    skillsTags.appendChild(tag);
+                    skillInput.value = "";
+                }
+            });
+
+            document.querySelectorAll("#skills-tags span .material-symbols-outlined").forEach(icon => {
+                icon.addEventListener("click", (e) => {
+                    e.target.closest('span.flex').remove();
+                });
+            });
+        });
+    </script>
+}
