@@ -28,17 +28,17 @@ namespace LearningPlatform.StudentService.Controllers
             _logger.LogInformation("Fetching profile");
 
             var profile = await _service.GetAsync(GetUserId());
+            var userEmail = GetEmail(); // Get the actual email from claims
 
             if (profile == null)
             {
-                // return empty profile on first visit — student fills it in
                 return Ok(ApiResponseDto<object>.Ok(new ProfileDto
                 {
                     FullName = string.Empty,
                     Bio = null,
                     Skills = new List<string>(),
                     PreferredLevel = "Beginner",
-                    Email = string.Empty,
+                    Email = userEmail,  // ← Use actual email
                     JoinedDate = DateTime.UtcNow
                 }));
             }
@@ -49,7 +49,7 @@ namespace LearningPlatform.StudentService.Controllers
                 Bio = profile.Bio,
                 Skills = profile.Skills,
                 PreferredLevel = profile.PreferredLevel,
-                Email = string.Empty,
+                Email = userEmail,  // ← Use actual email
                 JoinedDate = profile.JoinedDate
             }));
         }
