@@ -12,8 +12,7 @@ namespace LearningPlatform.StudentService.Controllers
                       ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userId))
-                return "e5b04ec4-a881-4d41-9d05-fa8ccc892de1";
-                //throw new UnauthorizedAccessException("User not authenticated");
+                throw new UnauthorizedAccessException("User not authenticated");
 
             return userId;
         }

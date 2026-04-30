@@ -61,5 +61,12 @@ namespace LearningPlatform.StudentService.Controllers
 
             return Ok(ApiResponseDto<string>.Ok("Profile updated"));
         }
+
+        [HttpPost("seed/{studentId}")]
+        public async Task<IActionResult> Seed(string studentId, [FromBody] ProfileDto dto)
+        {
+            await _service.SaveAsync(studentId, dto);
+            return Ok(ApiResponseDto<string>.Ok("Student profile created"));
+        }
     }
 }

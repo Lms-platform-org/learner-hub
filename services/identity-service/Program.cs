@@ -135,6 +135,11 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+builder.Services.AddHttpClient("StudentApi", client =>
+{
+    client.BaseAddress = new Uri(configuration["StudentApi:BaseUrl"] ?? "https://localhost:7090/");
+});
+
 var app = builder.Build();
 
 

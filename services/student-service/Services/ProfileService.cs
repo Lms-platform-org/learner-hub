@@ -55,6 +55,7 @@ namespace LearningPlatform.StudentService.Services
             {
                 StudentId = studentId,
                 FullName = dto.FullName.Trim(),
+                Role = dto.Role?.Trim() ?? "Student",
                 Bio = dto.Bio?.Trim(),
                 Skills = dto.Skills?.Where(s => !string.IsNullOrWhiteSpace(s))
                                     .Select(s => s.Trim())

@@ -4,6 +4,8 @@ using LearningPlatformAuth.Responses;
 using LearningPlatformAuth.Exceptions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace LearningPlatformAuth.Services
 {
@@ -13,13 +15,17 @@ namespace LearningPlatformAuth.Services
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly ILogger<AuthService> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IAuthRepository repo, ITokenService tokenService, IMapper mapper, ILogger<AuthService> logger)
+        public AuthService(IAuthRepository repo, ITokenService tokenService, IMapper mapper, ILogger<AuthService> logger, IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _repo = repo;
             _tokenService = tokenService;
             _mapper = mapper;
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         public async Task<object> RegisterAsync(RegisterRequest model)
@@ -39,6 +45,25 @@ namespace LearningPlatformAuth.Services
             {
                 _logger.LogError("User creation failed in repository for email: {Email}", model.Email);
                 throw new BadRequestException("User creation failed");
+            }
+
+            if (model.Role == "Student")
+            {
+                try
+                {
+                    var client = _httpClientFactory.CreateClient("StudentApi");
+                    await client.PostAsJsonAsync(
+                        $"api/profile/seed/{user.Id}",
+                        new
+                        {
+                            FullName = user.DisplayName ?? user.Email ?? "",
+                            Role = model.Role
+                        });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Student profile bootstrap failed for user {UserId}", user.Id);
+                }
             }
 
             var message = model.Role == "Teacher"

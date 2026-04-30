@@ -58,13 +58,7 @@ namespace LearningPlatformFrontend.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                if (result.Roles.Contains("Admin"))
-                {
-                    return RedirectToAction("Dashboard", "Admin");
-                }
-
-                ViewData["Message"] = "You have successfully logged in to The Horizon.";
-                return Redirect(_configuration["AppUrls:StudentMvcBaseUrl"] ?? "https://localhost:7009/");
+                return Redirect($"{_configuration["AppUrls:StudentMvcBaseUrl"] ?? "https://localhost:7009/"}?name={Uri.EscapeDataString(result.Name ?? model.Email)}&token={Uri.EscapeDataString(result.Token ?? "")}");
             }
 
             ModelState.AddModelError("", result.Message ?? "Invalid login attempt");

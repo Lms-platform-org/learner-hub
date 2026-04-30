@@ -7,6 +7,7 @@ namespace LearningPlatform.StudentService.DTOs
         [Required]
         [MaxLength(100)]
         public string FullName { get; set; } = string.Empty;
+        public string Role { get; set; } = "Student";
         [MaxLength(300)]
         public string? Bio { get; set; }
         public List<string> Skills { get; set; } = new();

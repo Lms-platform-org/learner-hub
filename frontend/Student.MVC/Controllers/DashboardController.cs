@@ -13,8 +13,17 @@ namespace LearningPlatform.StudentService.WebApp.Controllers
             _service = service;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? token = null, string? name = null)
         {
+            if (!string.IsNullOrWhiteSpace(token))
+                HttpContext.Session.SetString("jwt", token);
+
+            if (!string.IsNullOrWhiteSpace(name))
+                HttpContext.Session.SetString("name", name);
+
+            if (!string.IsNullOrWhiteSpace(token) || !string.IsNullOrWhiteSpace(name))
+                return RedirectToAction(nameof(Index));
+
             var data = await _service.GetAsync();
 
             var allMilestones = data?.ContinueWatching?

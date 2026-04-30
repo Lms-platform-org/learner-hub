@@ -16,6 +16,7 @@ namespace LearningPlatform.StudentService.Repositories
             else
             {
                 existing.FullName = p.FullName;
+                existing.Role = p.Role;
                 existing.Bio = p.Bio;
                 existing.Skills = p.Skills;
                 existing.PreferredLevel = p.PreferredLevel;
