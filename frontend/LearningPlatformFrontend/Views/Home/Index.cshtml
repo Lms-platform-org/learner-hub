@@ -41,8 +41,10 @@
             <div class="hero-actions">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <a asp-controller="Home" asp-action="Dashboard" class="btn-primary"
-                        style="width: auto; padding: 1rem 2.5rem; font-size: 1.1rem;">Start Learning</a>
+                    <a href="https://localhost:7009/Dashboard" class="btn-primary"
+                           style="width: auto; padding: 1rem 2.5rem; font-size: 1.1rem;">
+                        Start Learning
+                    </a>
                 }
                 else
                 {
