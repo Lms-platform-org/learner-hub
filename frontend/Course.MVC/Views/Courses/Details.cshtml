@@ -1,0 +1,340 @@
+@model Courses.Models.DTOs.CourseReadDTO
+
+@{
+    ViewData["Title"] = Model.Title;
+    var comments = ViewBag.Comments as IEnumerable<Courses.Models.DTOs.CommentResponseDto>;
+    bool isEnrolled = ViewBag.IsEnrolled ?? false;
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var currentUserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+
+    // For development: if the user is enrolled or if they are the mock user 'jayraj'
+    if (!isEnrolled && (currentUserId == "jayraj" || currentUserEmail == "jayraj"))
+    {
+        isEnrolled = true;
+    }
+    
+    // Check if the user is the instructor
+    bool isInstructor = User.IsInRole("Teacher") && 
+                       (Model.InstructorId == currentUserId || Model.InstructorId == currentUserEmail || Model.InstructorId == "jayraj");
+}
+
+<div class="container">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success border-0 bg-success bg-opacity-10 text-success rounded-4 mb-4 shadow-sm">
+            <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger rounded-4 mb-4 shadow-sm">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> @TempData["Error"]
+        </div>
+    }
+
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <span class="badge-academic mb-3 d-inline-block">Module Overview</span>
+            <h1 class="display-font text-white" style="font-size: 3.5rem; line-height: 1;">@Model.Title</h1>
+            <div class="d-flex flex-wrap gap-4 mt-4 text-muted small fw-bold text-uppercase letter-spacing-1">
+                <span><i class="fa-solid fa-user-tie text-success me-2"></i>Instructor ID: @Model.InstructorId</span>
+                <span><i class="fa-solid fa-folder-open text-success me-2"></i>@Model.Category</span>
+                <span><i class="fa-solid fa-clock text-success me-2"></i>@Model.Duration</span>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end mt-4 mt-md-0">
+            <div class="glass-panel d-inline-block p-4 text-center">
+                <span class="display-5 fw-bold text-white mb-0">@Model.Price.ToString("C")</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-5">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="premium-card mb-5 border-opacity-10">
+                <h4 class="display-font text-white mb-4">Course Specification</h4>
+                <p class="text-muted lead" style="white-space: pre-line; line-height: 1.8; font-size: 1.1rem;">@Model.Description</p>
+            </div>
+
+            <div class="d-flex align-items-center mb-4 gap-3">
+                <h4 class="display-font text-white mb-0">Curriculum Content</h4>
+                <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3">@Model.Videos.Count() Sessions</span>
+            </div>
+
+            @if (isEnrolled || isInstructor)
+            {
+                @if (Model.Videos.Any())
+                {
+                    <div class="d-grid gap-3 mb-5">
+                        @foreach (var video in Model.Videos)
+                        {
+                            <div class="premium-card p-3 d-flex align-items-center bg-opacity-50" style="background: rgba(255,255,255,0.02);">
+                                <div class="bg-success bg-opacity-10 text-success rounded-3 p-3 me-4">
+                                    <i class="fa-solid fa-play fs-4"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 text-white fw-bold">Academic Session Clip</h6>
+                                    <p class="text-muted small mb-0 opacity-50 text-truncate" style="max-width: 300px;">@video.VideoUrl</p>
+                                </div>
+                                <button type="button" 
+                                        onclick="playVideo('@video.VideoUrl', '@Model.Title.Replace("'", "\\'")')" 
+                                        class="btn-outline-premium btn-sm py-2 px-4 fs-xsmall">
+                                    INITIALIZE <i class="fa-solid fa-circle-play ms-2"></i>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="glass-panel p-5 text-center mb-5 opacity-50">
+                        <i class="fa-solid fa-video-slash fa-3x mb-3 text-muted"></i>
+                        <p class="text-muted mb-0">No active sessions have been uploaded for this repository.</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="premium-card p-5 text-center mb-5 border-opacity-25" style="border-style: dashed;">
+                    <div class="mb-4">
+                        <span class="display-4 text-muted opacity-25"><i class="fa-solid fa-lock"></i></span>
+                    </div>
+                    <h5 class="display-font text-white mb-3">Module Credentials Required</h5>
+                    <p class="text-muted mb-4">Please complete the enrollment process to access scholarly materials.</p>
+                    <button class="btn-premium px-5" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                        ACQUIRE ACCESS
+                    </button>
+                </div>
+            }
+
+            <!-- Discussion Section -->
+            <div class="discussion-section mt-5">
+                <div class="d-flex align-items-center mb-4 gap-3">
+                    <h4 class="display-font text-white mb-0">Academic Discussion</h4>
+                    <span class="badge-academic">@(comments?.Count() ?? 0) Responses</span>
+                </div>
+                
+                <div class="premium-card mb-5 bg-opacity-10" style="background: rgba(255,255,255,0.02);">
+                    <form asp-action="AddComment" method="post">
+                        <input type="hidden" name="courseId" value="@Model.Id" />
+                        <div class="mb-4">
+                            <textarea name="content" class="form-control border-0 text-white" rows="3" 
+                                      style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1.2rem;"
+                                      placeholder="Contribute to the scholarly discourse..."></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn-premium px-5 py-3">
+                                POST RESPONSE <i class="fa-solid fa-paper-plane ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="chat-window p-4 rounded-4" style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); max-height: 600px; overflow-y: auto;">
+                    @if (comments != null && comments.Any())
+                    {
+                        <div class="d-flex flex-column gap-4">
+                            @foreach (var comment in comments)
+                            {
+                                bool isStudent = comment.UserRole == "Student";
+                                <div class="d-flex @(isStudent ? "justify-content-end" : "justify-content-start")">
+                                    <div style="max-width: 80%;">
+                                        <div class="d-flex align-items-center mb-2 gap-2 @(isStudent ? "flex-row-reverse" : "")">
+                                            <span class="text-muted x-small fw-bold text-uppercase">@comment.UserName</span>
+                                            <span class="text-muted opacity-25 x-small">@comment.CreatedAt.ToString("h:mm tt")</span>
+                                        </div>
+                                        <div class="@(isStudent ? "bubble-student" : "bubble-teacher") shadow-lg">
+                                            @comment.Content
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5 opacity-20">
+                            <p class="mb-0 italic small">Communication channel empty. Be the first to initialize discourse.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 140px;">
+                @if (isEnrolled)
+                {
+                    <div class="premium-card mb-4 bg-success bg-opacity-10 border-success border-opacity-25 text-center">
+                        <h6 class="text-success fw-bold mb-0 text-uppercase letter-spacing-1">
+                            <i class="fa-solid fa-circle-check me-2"></i>Access Authorized
+                        </h6>
+                    </div>
+                }
+                else if (isInstructor)
+                {
+                    <div class="premium-card mb-4 bg-primary bg-opacity-10 border-primary border-opacity-25 text-center">
+                        <h6 class="text-white fw-bold mb-3 text-uppercase letter-spacing-1">
+                            <i class="fa-solid fa-user-tie text-success me-2"></i>Faculty Access
+                        </h6>
+                        <div class="d-grid gap-2">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-outline-premium text-decoration-none py-2 fs-xsmall">
+                                <i class="fa-solid fa-edit me-2"></i> MODIFY MODULE
+                            </a>
+                            <button type="button" class="btn-premium py-2 fs-xsmall" data-bs-toggle="modal" data-bs-target="#addVideoModal">
+                                <i class="fa-solid fa-plus me-2"></i> ADD SESSION
+                            </button>
+                        </div>
+                    </div>
+                }
+                else if (!User.Identity.IsAuthenticated || User.IsInRole("Student"))
+                {
+                    <div class="premium-card mb-4 text-center">
+                        <button type="button" class="btn-premium btn-lg w-100 py-3 mb-3" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                            <i class="fa-solid fa-graduation-cap me-2"></i> ENROLL NOW
+                        </button>
+                        <p class="text-muted x-small mb-0 opacity-50">LIFETIME REPOSITORY PERSISTENCE</p>
+                    </div>
+                }
+
+                <div class="premium-card">
+                    <h6 class="display-font text-white mb-4">Module Distribution</h6>
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-outline-secondary border-opacity-10 text-white rounded-3 py-2 text-start small">
+                            <i class="fa-brands fa-twitter me-3 text-info"></i> Broadcast on Twitter
+                        </button>
+                        <button class="btn btn-outline-secondary border-opacity-10 text-white rounded-3 py-2 text-start small">
+                            <i class="fa-brands fa-facebook-f me-3 text-primary"></i> Share on Network
+                        </button>
+                        <button class="btn btn-outline-secondary border-opacity-10 text-white rounded-3 py-2 text-start small">
+                            <i class="fa-brands fa-linkedin-in me-3 text-primary"></i> Professional Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Player Modal -->
+<div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content glass-panel border-0 overflow-hidden">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-white display-font small" id="videoModalLabel">Session Stream</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="ratio ratio-16x9">
+                    <iframe id="videoPlayerFrame" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Video Modal -->
+<div class="modal fade" id="addVideoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass-panel border-0 p-4">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title display-font text-white">Initialize New Session</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form asp-action="AddVideo" method="post">
+          <div class="modal-body">
+              <input type="hidden" name="courseId" value="@Model.Id" />
+              <div class="mb-3">
+                  <label class="form-label text-muted small fw-bold text-uppercase mb-2">Session URL Address</label>
+                  <input type="url" name="videoUrl" class="form-control border-0 text-white" 
+                         style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px;" 
+                         placeholder="https://repository.stream/..." required />
+              </div>
+          </div>
+          <div class="modal-footer border-0">
+              <button type="submit" class="btn-premium px-5 py-3">SAVE SESSION</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass-panel border-0 p-4">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title display-font text-white">Access Acquisition</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="text-center mb-5 bg-black bg-opacity-20 py-4 rounded-4">
+              <span class="text-muted small fw-bold text-uppercase">Authorized Amount</span>
+              <h1 class="display-font text-white mb-0" style="font-size: 3rem;">@Model.Price.ToString("C")</h1>
+          </div>
+          
+          <form id="enrollmentForm" asp-action="Enroll" method="post">
+              <input type="hidden" name="courseId" value="@Model.Id" />
+              <div class="mb-4">
+                  <label class="form-label text-muted small fw-bold text-uppercase mb-2">Payment Credential</label>
+                  <input type="text" class="form-control border-0 text-white" 
+                         style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px;" 
+                         placeholder="XXXX XXXX XXXX XXXX" required>
+              </div>
+              <div class="row g-4 mb-4">
+                  <div class="col-6">
+                      <input type="text" class="form-control border-0 text-white" 
+                             style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px;" 
+                             placeholder="MM/YY" required>
+                  </div>
+                  <div class="col-6">
+                      <input type="text" class="form-control border-0 text-white" 
+                             style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px;" 
+                             placeholder="CVV" required>
+                  </div>
+              </div>
+              <button type="submit" class="btn-premium w-100 py-3 mt-3">CONFIRM AUTHORIZATION</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function getYouTubeEmbedUrl(url) {
+        let videoId = '';
+        if (url.includes('youtube.com/watch?v=')) {
+            videoId = url.split('v=')[1].split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0];
+        } else if (url.includes('youtube.com/embed/')) {
+            return url;
+        }
+        if (videoId) {
+            return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        }
+        return url;
+    }
+
+    function playVideo(url, title) {
+        const embedUrl = getYouTubeEmbedUrl(url);
+        const modal = new bootstrap.Modal(document.getElementById('videoPlayerModal'));
+        const frame = document.getElementById('videoPlayerFrame');
+        const label = document.getElementById('videoModalLabel');
+        label.innerText = title;
+        frame.src = embedUrl;
+        document.getElementById('videoPlayerModal').addEventListener('hidden.bs.modal', function () {
+            frame.src = "";
+        }, { once: true });
+        modal.show();
+    }
+</script>
+
+<style>
+    .letter-spacing-1 { letter-spacing: 1.5px; }
+    .x-small { font-size: 0.7rem; }
+    .fs-xsmall { font-size: 0.75rem; }
+    .italic { font-style: italic; }
+</style>

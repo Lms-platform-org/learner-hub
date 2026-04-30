@@ -1,0 +1,105 @@
+@model Courses.Models.DTOs.CourseWriteDTO
+
+@{
+    ViewData["Title"] = "Update Course";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="fw-bold mb-1">Update <span class="text-primary">Course</span></h2>
+                            <p class="text-muted small">ID: #@ViewBag.Id | Created: @(ViewBag.CreatedAt is DateTime dt ? dt.ToShortDateString() : "N/A")</p>
+                        </div>
+                        <span class="badge @(ViewBag.Status == "Published" ? "bg-success text-white" : "bg-warning text-dark") rounded-pill px-4 py-2">
+                            <i class="fa-solid @(ViewBag.Status == "Published" ? "fa-check-circle" : "fa-clock") me-2"></i>
+                            @ViewBag.Status
+                        </span>
+                    </div>
+                    
+                    <form asp-action="Edit" asp-route-id="@ViewBag.Id" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                        
+                        <div class="row g-4">
+                            <!-- Left Column -->
+                            <div class="col-lg-8">
+                                <div class="mb-4">
+                                    <label asp-for="Title" class="form-label fw-bold small text-uppercase">Course Title</label>
+                                    <input asp-for="Title" class="form-control border-0 bg-light py-3 px-4 shadow-none" required />
+                                    <span asp-validation-for="Title" class="text-danger small"></span>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label asp-for="Description" class="form-label fw-bold small text-uppercase">Description</label>
+                                    <textarea asp-for="Description" class="form-control border-0 bg-light py-3 px-4 shadow-none" rows="8" required></textarea>
+                                    <span asp-validation-for="Description" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="ThumbnailUrl" class="form-label fw-bold small text-uppercase">Thumbnail Image URL</label>
+                                    <input asp-for="ThumbnailUrl" class="form-control border-0 bg-light py-3 px-4 shadow-none" placeholder="https://example.com/image.jpg" />
+                                    <span asp-validation-for="ThumbnailUrl" class="text-danger small"></span>
+                                    @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+                                    {
+                                        <div class="mt-2 text-center p-2 bg-light rounded">
+                                            <p class="small text-muted mb-2">Preview:</p>
+                                            <img src="@Model.ThumbnailUrl" class="img-fluid rounded shadow-sm" style="max-height: 150px;" alt="Thumbnail Preview" onerror="this.src='/images/placeholder.jpg'" />
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-lg-4">
+                                <div class="card bg-light border-0 p-4 rounded-4 mb-4">
+                                    <h5 class="fw-bold mb-3 small text-uppercase">Course Details</h5>
+                                    
+                                    <div class="mb-3">
+                                        <label asp-for="Category" class="form-label fw-bold small">Category</label>
+                                        <select asp-for="Category" class="form-select border-0 py-2" required>
+                                            <option value="Web Development">Web Development</option>
+                                            <option value="Data Science">Data Science</option>
+                                            <option value="Design">Design</option>
+                                            <option value="Business">Business</option>
+                                            <option value="Marketing">Marketing</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Price" class="form-label fw-bold small">Price ($)</label>
+                                        <input asp-for="Price" type="number" step="0.01" class="form-control border-0 py-2" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Duration" class="form-label fw-bold small">Duration</label>
+                                        <input asp-for="Duration" class="form-control border-0 py-2" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="StartDate" class="form-label fw-bold small">Start Date</label>
+                                        <input asp-for="StartDate" type="date" class="form-control border-0 py-2" required value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+                                    </div>
+
+                                    <hr class="my-4 opacity-10">
+
+                                    <div class="form-check form-switch mb-0">
+                                        <input class="form-check-input" type="checkbox" asp-for="IsPublished" id="isPublishedSwitch">
+                                        <label class="form-check-label fw-bold small" for="isPublishedSwitch">Published to Catalog</label>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg rounded-pill py-3 fw-bold shadow-sm">Save All Changes</button>
+                                    <a asp-action="TeacherDashboard" class="btn btn-outline-secondary btn-lg rounded-pill py-3 fw-bold small">Discard Changes</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
