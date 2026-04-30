@@ -41,15 +41,26 @@ namespace TeacherDashboardApi.Controllers
             return Ok(growth);
         }
 
-        // GET: api/TeacherCoursesApi/subject-distribution
-        [HttpGet("subject-distribution")]
-        public async Task<ActionResult<IEnumerable<SubjectDistributionDTO>>> GetSubjectDistribution()
+        // GET: api/TeacherCoursesApi/course-revenue
+        [HttpGet("course-revenue")]
+        public async Task<ActionResult<CourseRevenueDataDTO>> GetCourseRevenue()
         {
             var teacherId = User.Identity?.Name;
             if (string.IsNullOrEmpty(teacherId)) return Unauthorized();
 
-            var distribution = await _teacherService.GetSubjectDistributionAsync(teacherId);
-            return Ok(distribution);
+            var revenueData = await _teacherService.GetCourseRevenueStatsAsync(teacherId);
+            return Ok(revenueData);
+        }
+
+        // GET: api/TeacherCoursesApi/top-enrolled-courses
+        [HttpGet("top-enrolled-courses")]
+        public async Task<ActionResult<IEnumerable<TopEnrolledCourseDTO>>> GetTopEnrolledCourses()
+        {
+            var teacherId = User.Identity?.Name;
+            if (string.IsNullOrEmpty(teacherId)) return Unauthorized();
+
+            var courses = await _teacherService.GetTopEnrolledCoursesAsync(teacherId);
+            return Ok(courses);
         }
 
         // GET: api/TeacherCoursesApi/courses

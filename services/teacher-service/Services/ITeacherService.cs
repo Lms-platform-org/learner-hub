@@ -8,7 +8,8 @@ namespace TeacherDashboardApi.Services
     {
         Task<InstructorStatsDTO> GetInstructorStatsAsync(string teacherId);
         Task<EnrollmentGrowthDTO> GetEnrollmentGrowthAsync(string teacherId, string period);
-        Task<IEnumerable<SubjectDistributionDTO>> GetSubjectDistributionAsync(string teacherId);
+        Task<IEnumerable<TopEnrolledCourseDTO>> GetTopEnrolledCoursesAsync(string teacherId);
+        Task<CourseRevenueDataDTO> GetCourseRevenueStatsAsync(string teacherId);
         Task<IEnumerable<TeacherCourseListItemDTO>> GetTeacherCoursesForDashboardAsync(string teacherId);
     }
 }

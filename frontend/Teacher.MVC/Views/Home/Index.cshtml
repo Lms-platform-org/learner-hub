@@ -27,6 +27,13 @@
     </div>
 
     <div class="stat-card">
+        <h3>Total Revenue</h3>
+        <div class="value" id="stat-revenue">$0</div>
+        <div class="sub-value positive" id="stat-revenue-growth"><i class="fa-solid fa-arrow-trend-up"></i> +$0.0k this month</div>
+        <i class="fa-solid fa-money-bill-wave bg-icon"></i>
+    </div>
+
+    <div class="stat-card">
         <h3>Active Courses</h3>
         <div class="value" id="stat-courses">14</div>
         <div class="sub-value neutral" id="stat-courses-growth"><i class="fa-solid fa-hourglass-half"></i> 2 pending reviews</div>
@@ -38,12 +45,7 @@
 <div class="charts-grid">
     <div class="chart-card">
         <div class="chart-card-header">
-            <h3>Enrollment Growth</h3>
-            <div class="chart-tabs">
-                <button class="chart-tab">Daily</button>
-                <button class="chart-tab active">Weekly</button>
-                <button class="chart-tab">Monthly</button>
-            </div>
+            <h3>Course Revenue</h3>
         </div>
         <div class="canvas-wrapper" style="height: 300px; position: relative;">
             <canvas id="enrollmentChart"></canvas>
@@ -52,9 +54,9 @@
 
     <div class="chart-card">
         <div class="chart-card-header">
-            <h3>Subject Distribution</h3>
+            <h3>Top Enrolled Courses</h3>
         </div>
-        <div class="subject-list" id="subject-distribution-list">
+        <div class="subject-list" id="top-enrolled-courses-list">
             <!-- Populated by JS -->
         </div>
         <button class="btn-full-report">View Full Report</button>
@@ -105,14 +107,14 @@
                     totalRevenue: 42400,
                     activeCourses: 14,
                     studentGrowthPercentage: 12.0,
-                    revenueGrowthThisMonth: 4200,
                     pendingReviews: 2
                 },
-                distribution: [
-                    { subjectName: "Theoretical Physics", percentage: 42 },
-                    { subjectName: "Quantum Computing", percentage: 28 },
-                    { subjectName: "Advanced Calculus", percentage: 15 },
-                    { subjectName: "Ethics in AI", percentage: 15 }
+                topCourses: [
+                    { courseTitle: "Quantum Mechanics III", enrollmentCount: 1240, enrollmentPercentage: 42 },
+                    { courseTitle: "AI Ethics", enrollmentCount: 854, enrollmentPercentage: 28 },
+                    { courseTitle: "Advanced Thermodynamics", enrollmentCount: 412, enrollmentPercentage: 15 },
+                    { courseTitle: "Linear Algebra", enrollmentCount: 300, enrollmentPercentage: 10 },
+                    { courseTitle: "Intro to Physics", enrollmentCount: 150, enrollmentPercentage: 5 }
                 ],
                 courses: [
                     { id: 1, title: "Quantum Mechanics III: Advanced Fields", category: "Physics", studentCount: 1240, status: "Published", updatedText: "Updated 2 days ago" },
@@ -121,27 +123,23 @@
                     { id: 4, title: "Advanced Thermodynamics", category: "Chemistry", studentCount: 412, status: "Published", updatedText: "Updated 3 weeks ago" }
                 ],
                 chart: [
-                    { label: "MON", value: 150 },
-                    { label: "TUE", value: 220 },
-                    { label: "WED", value: 200 },
-                    { label: "THU", value: 320 },
-                    { label: "FRI", value: 280 },
-                    { label: "SAT", value: 410 },
-                    { label: "SUN", value: 350 }
+                    { courseTitle: "Quantum Mechanics", revenue: 42000 },
+                    { courseTitle: "AI Ethics", revenue: 25000 },
+                    { courseTitle: "Linear Algebra", revenue: 18000 },
+                    { courseTitle: "Thermodynamics", revenue: 12000 },
+                    { courseTitle: "Topology", revenue: 5000 }
                 ]
             };
 
             // Render everything
             populateStats(fallbackData.stats);
-            populateDistribution(fallbackData.distribution);
+            populateTopCourses(fallbackData.topCourses);
             populateCourses(fallbackData.courses);
             renderChart(fallbackData.chart);
 
             // Try fetching real data from local API
             try {
-                // Note: In real case, would fetch from: http://localhost:5063/api/TeacherCoursesApi/stats
-                // e.g., const stats = await fetch('http://localhost:5063/api/TeacherCoursesApi/stats').then(res => res.json());
-                // For this demo, the fallback ensures accuracy with the image.
+                // Note: In real case, would fetch from: http://localhost:5063/api/TeacherCoursesApi/top-enrolled-courses
             } catch (error) {
                 console.warn("API connection unavailable, using simulated preview data.");
             }
@@ -150,21 +148,22 @@
         function populateStats(stats) {
             document.getElementById("stat-students").innerText = stats.totalStudents.toLocaleString();
             document.getElementById("stat-rating").innerText = stats.courseRating.toFixed(2);
+            document.getElementById("stat-revenue").innerText = `$${(stats.totalRevenue / 1000).toFixed(1)}k`;
             document.getElementById("stat-courses").innerText = stats.activeCourses;
         }
 
-        function populateDistribution(dist) {
-            const list = document.getElementById("subject-distribution-list");
+        function populateTopCourses(courses) {
+            const list = document.getElementById("top-enrolled-courses-list");
             list.innerHTML = "";
-            dist.forEach(item => {
+            courses.forEach(item => {
                 list.innerHTML += `
                     <div class="subject-item">
                         <div class="subject-info">
-                            <span>${item.subjectName}</span>
-                            <strong>${item.percentage}%</strong>
+                            <span>${item.courseTitle} <small style="color: var(--text-secondary)">(${item.enrollmentCount})</small></span>
+                            <strong>${item.enrollmentPercentage}%</strong>
                         </div>
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: ${item.percentage}%"></div>
+                            <div class="progress-bar-fill" style="width: ${item.enrollmentPercentage}%"></div>
                         </div>
                     </div>
                 `;
@@ -215,10 +214,10 @@
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: dataPoints.map(d => d.label),
+                    labels: dataPoints.map(d => d.courseTitle || d.label),
                     datasets: [{
-                        label: 'Enrolled Students',
-                        data: dataPoints.map(d => d.value),
+                        label: 'Revenue ($)',
+                        data: dataPoints.map(d => d.revenue || d.value),
                         backgroundColor: '#2d4635',
                         hoverBackgroundColor: '#52b788',
                         borderRadius: 6,

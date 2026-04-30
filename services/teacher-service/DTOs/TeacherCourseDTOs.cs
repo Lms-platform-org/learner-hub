@@ -66,8 +66,18 @@ namespace TeacherDashboardApi.DTOs
         public decimal TotalRevenue { get; set; }
         public int ActiveCourses { get; set; }
         public double StudentGrowthPercentage { get; set; }
-        public decimal RevenueGrowthThisMonth { get; set; }
         public int PendingReviews { get; set; }
+    }
+
+    public class CourseRevenuePointDTO
+    {
+        public string CourseTitle { get; set; } = string.Empty;
+        public decimal Revenue { get; set; }
+    }
+
+    public class CourseRevenueDataDTO
+    {
+        public List<CourseRevenuePointDTO> Data { get; set; } = new();
     }
 
     public class EnrollmentGrowthPointDTO
@@ -85,7 +95,15 @@ namespace TeacherDashboardApi.DTOs
     public class SubjectDistributionDTO
     {
         public string SubjectName { get; set; } = string.Empty;
+        public int CourseCount { get; set; }
         public double Percentage { get; set; }
+    }
+
+    public class TopEnrolledCourseDTO
+    {
+        public string CourseTitle { get; set; } = string.Empty;
+        public int EnrollmentCount { get; set; }
+        public double EnrollmentPercentage { get; set; }
     }
 
     public class TeacherCourseListItemDTO

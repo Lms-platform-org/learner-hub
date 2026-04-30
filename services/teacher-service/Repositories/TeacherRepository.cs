@@ -30,7 +30,7 @@ namespace TeacherDashboardApi.Repositories
                 .Include(c => c.Videos)
                 .FirstOrDefaultAsync(c => c.Id == courseId && c.InstructorId == teacherId);
         }
-
+        
         public async Task<Course> CreateCourseAsync(Course course)
         {
             _context.Courses.Add(course);

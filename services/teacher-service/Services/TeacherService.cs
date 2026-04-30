@@ -37,7 +37,6 @@ namespace TeacherDashboardApi.Services
             // Simulated Data for things not in DB
             double courseRating = 4.92; // Simulated as per image
             double studentGrowthPercentage = 12.0; // Simulated +12%
-            decimal revenueGrowthThisMonth = 4200; // Simulated +$4.2k
             int pendingReviews = 2; // Simulated
 
             return new InstructorStatsDTO
@@ -47,9 +46,22 @@ namespace TeacherDashboardApi.Services
                 TotalRevenue = totalRevenue,
                 ActiveCourses = activeCourses,
                 StudentGrowthPercentage = studentGrowthPercentage,
-                RevenueGrowthThisMonth = revenueGrowthThisMonth,
                 PendingReviews = pendingReviews
             };
+        }
+
+        public async Task<CourseRevenueDataDTO> GetCourseRevenueStatsAsync(string teacherId)
+        {
+            var courses = await _repository.GetCoursesByTeacherAsync(teacherId);
+            var enrollments = await _repository.GetEnrollmentsByTeacherAsync(teacherId);
+
+            var data = courses.Select(c => new CourseRevenuePointDTO
+            {
+                CourseTitle = c.Title,
+                Revenue = c.Price * enrollments.Count(e => e.CourseId == c.Id)
+            }).OrderByDescending(x => x.Revenue).Take(7).ToList();
+
+            return new CourseRevenueDataDTO { Data = data };
         }
 
         public async Task<EnrollmentGrowthDTO> GetEnrollmentGrowthAsync(string teacherId, string period)
@@ -89,31 +101,35 @@ namespace TeacherDashboardApi.Services
             };
         }
 
-        public async Task<IEnumerable<SubjectDistributionDTO>> GetSubjectDistributionAsync(string teacherId)
+        public async Task<IEnumerable<TopEnrolledCourseDTO>> GetTopEnrolledCoursesAsync(string teacherId)
         {
             var courses = await _repository.GetCoursesByTeacherAsync(teacherId);
+            var enrollments = await _repository.GetEnrollmentsByTeacherAsync(teacherId);
             
             if (!courses.Any())
             {
-                return Enumerable.Empty<SubjectDistributionDTO>();
+                return Enumerable.Empty<TopEnrolledCourseDTO>();
             }
 
-            var categoryGroups = courses
-                .GroupBy(c => c.Category)
-                .Select(g => new
-                {
-                    Category = string.IsNullOrEmpty(g.Key) ? "General" : g.Key,
-                    Count = g.Count()
-                })
-                .ToList();
-
-            int totalCourses = courses.Count();
-
-            return categoryGroups.Select(g => new SubjectDistributionDTO
+            var courseEnrollmentCounts = courses.Select(c => new
             {
-                SubjectName = g.Category,
-                Percentage = Math.Round((double)g.Count / totalCourses * 100, 2)
-            }).OrderByDescending(s => s.Percentage);
+                Course = c,
+                Count = enrollments.Count(e => e.CourseId == c.Id)
+            }).ToList();
+
+            int totalEnrollments = enrollments.Count();
+
+            return courseEnrollmentCounts
+                .OrderByDescending(x => x.Count)
+                .Take(5)
+                .Select(x => new TopEnrolledCourseDTO
+                {
+                    CourseTitle = x.Course.Title,
+                    EnrollmentCount = x.Count,
+                    EnrollmentPercentage = totalEnrollments > 0 
+                        ? Math.Round((double)x.Count / totalEnrollments * 100, 2) 
+                        : 0
+                });
         }
 
         public async Task<IEnumerable<TeacherCourseListItemDTO>> GetTeacherCoursesForDashboardAsync(string teacherId)
