@@ -146,10 +146,9 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseRouting();
+app.UseCors("AllowRazorPages");
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors("AllowRazorPages");
 
 app.MapControllers();
 

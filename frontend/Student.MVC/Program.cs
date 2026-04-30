@@ -14,7 +14,7 @@ namespace LearningPlatform.StudentService.WebApp
 
             builder.Services.AddHttpClient("StudentAPI", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7090/");
+                client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7090/");
                 client.Timeout = TimeSpan.FromSeconds(5);
             });
 

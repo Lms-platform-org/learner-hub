@@ -125,6 +125,8 @@ namespace LearningPlatform.StudentService
                 };
             });
 
+            builder.Services.AddAuthorization();
+
 
             var app = builder.Build();
 

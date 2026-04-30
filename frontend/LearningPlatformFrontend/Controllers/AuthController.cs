@@ -4,16 +4,19 @@ using LearningPlatformFrontend.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace LearningPlatformFrontend.Controllers
 {
     public class AuthController : Controller
     {
         private readonly ApiService _apiService;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(ApiService apiService)
+        public AuthController(ApiService apiService, IConfiguration configuration)
         {
             _apiService = apiService;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -61,7 +64,7 @@ namespace LearningPlatformFrontend.Controllers
                 }
 
                 ViewData["Message"] = "You have successfully logged in to The Horizon.";
-                return View("LoginSuccess");
+                return Redirect(_configuration["AppUrls:StudentMvcBaseUrl"] ?? "https://localhost:7009/");
             }
 
             ModelState.AddModelError("", result.Message ?? "Invalid login attempt");
