@@ -1,0 +1,36 @@
+@model LearningPlatform.StudentService.WebApp.Models.BookmarkViewModel
+
+@{
+    ViewData["Title"] = "Add Bookmark";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h4 class="fw-bold mb-4"><i class="bi bi-bookmark-plus me-2 text-warning"></i>Add Bookmark</h4>
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="CourseId" class="form-label fw-semibold">Course ID</label>
+                    <input asp-for="CourseId" class="form-control" placeholder="Enter course ID" />
+                    <span asp-validation-for="CourseId" class="text-danger small"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Category" class="form-label fw-semibold">Category</label>
+                    <input asp-for="Category" class="form-control" placeholder="e.g. python, ml, web" />
+                    <span asp-validation-for="Category" class="text-danger small"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PersonalNote" class="form-label fw-semibold">Personal Note</label>
+                    <textarea asp-for="PersonalNote" class="form-control" rows="3"
+                              placeholder="What did you find useful here?"></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>Save
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

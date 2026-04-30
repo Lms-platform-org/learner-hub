@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - The Horizon</title>
+    <meta name="description" content="Premium Learning Workspace" />
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#101411",
+                        "on-secondary": "#003549",
+                        "on-surface": "#dfe4de",
+                        "inverse-on-surface": "#2d322e",
+                        "surface-container-lowest": "#0a0f0c",
+                        "surface-container-highest": "#313632",
+                        "surface-container": "#1c211d",
+                        "on-secondary-fixed-variant": "#004c68",
+                        "surface-tint": "#7dd9ab",
+                        "surface": "#101411",
+                        "secondary": "#88cff7",
+                        "outline-variant": "#3e4942",
+                        "on-secondary-fixed": "#001e2c",
+                        "outline": "#88938b",
+                        "on-error": "#690005",
+                        "primary-fixed": "#99f5c6",
+                        "on-primary": "#003824",
+                        "inverse-primary": "#006c49",
+                        "on-tertiary-container": "#531017",
+                        "secondary-container": "#006386",
+                        "on-surface-variant": "#bec9c0",
+                        "on-tertiary-fixed-variant": "#7a2d32",
+                        "tertiary-container": "#d57578",
+                        "error-container": "#93000a",
+                        "surface-bright": "#353a37",
+                        "on-primary-container": "#00311f",
+                        "primary-container": "#45a178",
+                        "primary": "#7dd9ab",
+                        "on-tertiary": "#5c171d",
+                        "on-primary-fixed-variant": "#005236",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed": "#ffdad9",
+                        "primary-fixed-dim": "#7dd9ab",
+                        "on-secondary-container": "#a2dcff",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#3f020b",
+                        "tertiary-fixed-dim": "#ffb3b3",
+                        "on-background": "#dfe4de",
+                        "secondary-fixed": "#c3e8ff",
+                        "surface-variant": "#313632",
+                        "tertiary": "#ffb3b3",
+                        "background": "#101411",
+                        "on-primary-fixed": "#002113",
+                        "secondary-fixed-dim": "#88cff7",
+                        "surface-container-high": "#262b28",
+                        "surface-container-low": "#181d1a",
+                        "inverse-surface": "#dfe4de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "unit": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Newsreader"],
+                        "body-lg": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "h3": ["Newsreader"],
+                        "h1": ["Newsreader"],
+                        "label-sm": ["Manrope"],
+                        "sans": ["Manrope", "sans-serif"],
+                        "serif": ["Newsreader", "serif"]
+                    },
+                    "fontSize": {
+                        "h2": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+                        "h3": ["28px", {"lineHeight": "1.3", "letterSpacing": "0", "fontWeight": "500"}],
+                        "h1": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark {
+            background-color: #0F1714;
+            color: #dfe4de;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #313632; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #88938b; }
+        
+        /* Toast animations */
+        @@keyframes toastIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+        @@keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100%); } }
+        .toast-enter { animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .toast-exit { animation: toastOut 0.3s ease-in forwards; }
+        /* Legacy CSS Variables for unmigrated MVC Views (e.g. Bookmarks, Discovery) */
+        :root {
+            --bg: #F7F9F6;
+            --card-bg: #ffffff;
+            --border: #E3E8E5;
+            --text: #121d21;
+            --muted: #64748b;
+            --primary: #2E7D5B;
+            --secondary: #1a648c;
+            --accent: #2E7D5B; /* Matches primary brand color */
+            --danger: #ba1a1a;
+            --warning: #f59e0b;
+            --success: #176b4b;
+            --card-bg-dark: #16211D;
+            --border-dark: #23332D;
+            --text-dark: #dfe4de;
+        }
+        .dark {
+            --bg: #0F1714;
+            --card-bg: #1B2A24;
+            --border: #23332D;
+            --text: #dfe4de;
+            --muted: #A7B8B0;
+            --primary: #7dd9ab;
+            --secondary: #88cff7;
+            --accent: #5eead4; /* Soft teal instead of pink */
+            --danger: #ffb4ab;
+            --warning: #fcd34d;
+            --success: #6ee7b7;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-primary selection:text-on-primary min-h-screen flex flex-col">
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-24 right-6 z-[9999] flex flex-col gap-3 pointer-events-none w-full max-w-sm"></div>
+
+    <!-- TopAppBar (Exact code.html styling) -->
+    <header class="bg-[#F7F9F6] dark:bg-[#0F1714] border-b border-[#E3E8E5] dark:border-[#23332D] fixed top-0 z-50 flex justify-between items-center w-full px-6 py-3 transition-colors duration-300 shadow-[0_4px_12px_rgba(46,125,91,0.05)] dark:shadow-none">
+        <div class="flex items-center gap-8">
+            <span class="text-xl font-bold font-serif text-[#2E7D5B] dark:text-[#E6F1EC] tracking-tight">The Horizon</span>
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="/Dashboard" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "text-[#2E7D5B] dark:text-[#7dd9ab] font-bold border-b-2 border-[#2E7D5B] dark:border-transparent py-2" : "text-slate-500 dark:text-[#A7B8B0] hover:text-[#2E7D5B] dark:hover:text-emerald-100 py-2 transition-colors") font-serif text-sm">Dashboard</a>
+                <a href="/Enrollment/MyCourses" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Enrollment" ? "text-[#2E7D5B] dark:text-[#7dd9ab] font-bold border-b-2 border-[#2E7D5B] dark:border-transparent py-2" : "text-slate-500 dark:text-[#A7B8B0] hover:text-[#2E7D5B] dark:hover:text-emerald-100 py-2 transition-colors") font-serif text-sm">My Courses</a>
+                <a href="/Discovery" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Discovery" ? "text-[#2E7D5B] dark:text-[#7dd9ab] font-bold border-b-2 border-[#2E7D5B] dark:border-transparent py-2" : "text-slate-500 dark:text-[#A7B8B0] hover:text-[#2E7D5B] dark:hover:text-emerald-100 py-2 transition-colors") font-serif text-sm">Resources</a>
+                <a href="/Bookmarks" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Bookmarks" ? "text-[#2E7D5B] dark:text-[#7dd9ab] font-bold border-b-2 border-[#2E7D5B] dark:border-transparent py-2" : "text-slate-500 dark:text-[#A7B8B0] hover:text-[#2E7D5B] dark:hover:text-emerald-100 py-2 transition-colors") font-serif text-sm flex items-center">
+                    <span class="material-symbols-outlined text-[16px] mr-1">bookmark</span> Bookmarks
+                    <span id="nav-bookmark-badge" style="display:none;" class="bg-[#2E7D5B] text-white dark:bg-primary dark:text-on-primary text-[10px] px-2 py-0.5 rounded-full font-bold ml-1.5"></span>
+                </a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <button id="darkToggle" onclick="toggleDark()" class="p-2 hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] transition-colors rounded-full text-[#2E7D5B] dark:text-emerald-100/60 focus:outline-none">
+                <span class="material-symbols-outlined" id="darkIcon">light_mode</span>
+            </button>
+            <div class="relative group">
+                <button class="flex items-center gap-2 focus:outline-none">
+                    <div class="h-8 w-8 rounded-full overflow-hidden border border-[#E3E8E5] dark:border-emerald-900/30">
+                        <img src="https://ui-avatars.com/api/?name=Student&background=7dd9ab&color=003824" alt="Profile" id="nav-avatar" class="h-full w-full object-cover" />
+                    </div>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-[#16211D] border border-gray-200 dark:border-[#23332D] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden">
+                    <div class="px-4 py-3 border-b border-gray-200 dark:border-[#23332D] bg-gray-50 dark:bg-[#0F1714]">
+                        <div class="font-bold text-sm text-gray-900 dark:text-[#E6F1EC]" id="nav-user-name">Student</div>
+                        <div class="text-xs text-gray-500 dark:text-[#A7B8B0]" id="nav-user-email">student@example.com</div>
+                    </div>
+                    <div class="py-1">
+                        <a href="/Profile" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-[#A7B8B0] hover:bg-gray-100 dark:hover:bg-[#1B2A24] transition-colors"><span class="material-symbols-outlined text-[18px]">person</span> Profile</a>
+                        <a href="/Login/Logout" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-[#1B2A24] transition-colors"><span class="material-symbols-outlined text-[18px]">logout</span> Logout</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile menu button -->
+            <button class="md:hidden p-2 text-emerald-900/60 dark:text-[#A7B8B0]" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden fixed top-[60px] left-0 w-full bg-white dark:bg-[#16211D] border-b border-gray-200 dark:border-[#23332D] z-40 shadow-xl">
+        <div class="px-4 py-3 flex flex-col gap-2">
+            <a href="/Dashboard" class="block px-3 py-2 rounded-lg text-gray-700 dark:text-[#A7B8B0] hover:bg-gray-100 dark:hover:bg-[#1B2A24]">Dashboard</a>
+            <a href="/Enrollment/MyCourses" class="block px-3 py-2 rounded-lg text-gray-700 dark:text-[#A7B8B0] hover:bg-gray-100 dark:hover:bg-[#1B2A24]">My Courses</a>
+            <a href="/Discovery" class="block px-3 py-2 rounded-lg text-gray-700 dark:text-[#A7B8B0] hover:bg-gray-100 dark:hover:bg-[#1B2A24]">Resources</a>
+            <a href="/Bookmarks" class="block px-3 py-2 rounded-lg text-gray-700 dark:text-[#A7B8B0] hover:bg-gray-100 dark:hover:bg-[#1B2A24]">Bookmarks</a>
+        </div>
+    </div>
+
+    <!-- Alerts from TempData -->
+    <div id="tempdata-alerts" class="w-full max-w-7xl mx-auto px-margin-desktop mt-24 mb-4">
+        @if (TempData["Success"] != null)
+        {
+            <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 px-4 py-3 rounded-lg flex items-center gap-3">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span class="flex-1 font-medium text-sm">@TempData["Success"]</span>
+                <button onclick="this.parentElement.remove()" class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-200"><span class="material-symbols-outlined text-[18px]">close</span></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg flex items-center gap-3">
+                <span class="material-symbols-outlined">error</span>
+                <span class="flex-1 font-medium text-sm">@TempData["Error"]</span>
+                <button onclick="this.parentElement.remove()" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"><span class="material-symbols-outlined text-[18px]">close</span></button>
+            </div>
+        }
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-margin-desktop pb-20 @(TempData["Success"] == null && TempData["Error"] == null ? "pt-24" : "")">
+        @RenderBody()
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="bg-white dark:bg-surface-container-lowest border-t border-[#E3E8E5] dark:border-[#23332D] py-8 mt-auto transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 dark:text-on-surface-variant">
+            <span>© 2026 The Horizon Academic Division. All rights reserved.</span>
+            <div class="flex gap-6">
+                <a class="hover:text-gray-900 dark:hover:text-on-surface transition-colors" href="#">Privacy Policy</a>
+                <a class="hover:text-gray-900 dark:hover:text-on-surface transition-colors" href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ── DARK MODE TOGGLE ──
+        function toggleDark() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('lh-theme', isDark ? 'dark' : 'light');
+            updateDarkIcon(isDark);
+        }
+        function updateDarkIcon(isDark) {
+            const icon = document.getElementById('darkIcon');
+            if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+        }
+        (function () {
+            // Check local storage or system preference
+            const savedTheme = localStorage.getItem('lh-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+            
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            updateDarkIcon(isDark);
+        })();
+
+        // ── SESSION INFO ──
+        (function () {
+            const name = sessionStorage.getItem('lh-name') || '';
+            const email = sessionStorage.getItem('lh-email') || '';
+            const n = document.getElementById('nav-user-name');
+            const e = document.getElementById('nav-user-email');
+            const avatar = document.getElementById('nav-avatar');
+            
+            if (n && name) {
+                n.textContent = name;
+                if (avatar) avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=7dd9ab&color=003824`;
+            }
+            if (e && email) e.textContent = email;
+        })();
+
+        // ── TOAST SYSTEM ──
+        function showToast(message, type = 'info', duration = 3500) {
+            const container = document.getElementById('toast-container');
+            const id = 'toast-' + Date.now();
+            
+            let bgClass = 'bg-white dark:bg-[#16211D] border-gray-200 dark:border-[#23332D]';
+            let iconClass = 'text-primary';
+            let iconName = 'info';
+            
+            if (type === 'success') { iconName = 'check_circle'; iconClass = 'text-emerald-500'; }
+            else if (type === 'error') { iconName = 'error'; iconClass = 'text-red-500'; }
+            else if (type === 'warning') { iconName = 'warning'; iconClass = 'text-amber-500'; }
+
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = `toast-enter pointer-events-auto flex items-center gap-3 p-4 rounded-xl border shadow-lg ${bgClass}`;
+            div.innerHTML = `
+                <span class="material-symbols-outlined ${iconClass}">${iconName}</span>
+                <span class="flex-1 text-sm font-medium text-gray-800 dark:text-[#E6F1EC]">${message}</span>
+                <button onclick="dismissToast('${id}')" class="text-gray-400 hover:text-gray-600 dark:hover:text-[#A7B8B0]">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            `;
+            container.appendChild(div);
+            setTimeout(() => dismissToast(id), duration);
+        }
+        
+        function dismissToast(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.remove('toast-enter');
+            el.classList.add('toast-exit');
+            setTimeout(() => el.remove(), 300);
+        }
+
+        // ── GLOBAL BOOKMARK STATE ──
+        const BookmarkState = {
+            set: new Set(),
+            count: 0,
+            async load() {
+                try {
+                    const r = await fetch('/Bookmarks/GetAllAjax', { headers: this._headers() });
+                    if (!r.ok) return;
+                    const json = await r.json();
+                    const items = json?.data ?? [];
+                    this.set.clear();
+                    items.forEach(b => {
+                        if (b.courseId) this.set.add('course-' + b.courseId);
+                        if (b.bookKey) this.set.add('book-' + b.bookKey);
+                    });
+                    this.count = json?.totalCount ?? items.length;
+                    this._updateUI();
+                } catch (e) { console.warn('Bookmark load skipped', e); }
+            },
+            _headers() {
+                const jwt = sessionStorage.getItem('lh-jwt') || '';
+                return jwt ? { 'Authorization': 'Bearer ' + jwt } : {};
+            },
+            has(type, id) { return this.set.has(type + '-' + id); },
+            add(type, id) { this.set.add(type + '-' + id); this.count++; this._updateUI(); },
+            remove(type, id) { this.set.delete(type + '-' + id); this.count = Math.max(0, this.count - 1); this._updateUI(); },
+            _updateUI() {
+                const badge = document.getElementById('nav-bookmark-badge');
+                if (badge) {
+                    badge.textContent = this.count;
+                    badge.style.display = this.count > 0 ? 'inline-flex' : 'none';
+                }
+                
+                // Update bookmark buttons if they exist
+                document.querySelectorAll('[data-bm-btn]').forEach(btn => {
+                    const type = btn.dataset.bmType;
+                    const id = btn.dataset.bmId;
+                    const bookmarked = this.has(type, id);
+                    
+                    if (bookmarked) {
+                        btn.classList.add('bookmarked');
+                        const icon = btn.querySelector('i.bi');
+                        if (icon) { icon.classList.remove('bi-bookmark'); icon.classList.add('bi-bookmark-fill'); }
+                        
+                        const matIcon = btn.querySelector('.material-symbols-outlined');
+                        if (matIcon) matIcon.style.fontVariationSettings = "'FILL' 1";
+                        
+                        const txt = btn.querySelector('.bm-text');
+                        if (txt) txt.textContent = 'Saved';
+                    } else {
+                        btn.classList.remove('bookmarked');
+                        const icon = btn.querySelector('i.bi');
+                        if (icon) { icon.classList.remove('bi-bookmark-fill'); icon.classList.add('bi-bookmark'); }
+                        
+                        const matIcon = btn.querySelector('.material-symbols-outlined');
+                        if (matIcon) matIcon.style.fontVariationSettings = "'FILL' 0";
+                        
+                        const txt = btn.querySelector('.bm-text');
+                        if (txt) txt.textContent = 'Save';
+                    }
+                });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => { BookmarkState.load(); });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

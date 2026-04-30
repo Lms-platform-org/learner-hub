@@ -1,0 +1,80 @@
+@using LearningPlatform.StudentService.WebApp.Models.DTOs
+@model StudentProgress
+
+@{
+    ViewData["Title"] = "Progress";
+}
+
+<h2 class="fw-bold mb-4"><i class="bi bi-graph-up-arrow me-2 text-success"></i>Course Progress</h2>
+
+<div class="row g-4">
+
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h5 class="fw-semibold mb-3">Overall Progress</h5>
+            <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted">Completion</span>
+                <span class="fw-bold">@Model.Percentage%</span>
+            </div>
+            <div class="progress mb-3" style="height:12px;">
+                <div class="progress-bar bg-success" style="width:@Model.Percentage%"></div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <div class="text-center">
+                    <h4 class="fw-bold text-warning mb-0">@Model.XP</h4>
+                    <small class="text-muted">XP Earned</small>
+                </div>
+                <div class="text-center">
+                    <h4 class="fw-bold text-info mb-0">@Model.LastLessonId</h4>
+                    <small class="text-muted">Last Lesson</small>
+                </div>
+                <div class="text-center">
+                    <h4 class="fw-bold text-danger mb-0">
+                        @TimeSpan.FromSeconds(Model.LastVideoTimestampSeconds).ToString(@"mm\:ss")
+                    </h4>
+                    <small class="text-muted">Resume At</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h5 class="fw-semibold mb-3"><i class="bi bi-trophy-fill text-warning me-2"></i>Earned Badges</h5>
+            @if (!Model.EarnedMilestones.Any())
+            {
+                <p class="text-muted">No badges yet — complete lessons to earn XP!</p>
+            }
+            else
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var badge in Model.EarnedMilestones)
+                    {
+                        <span class="badge bg-warning text-dark fs-6 p-2">
+                            <i class="bi bi-award-fill me-1"></i>@badge
+                        </span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card p-4">
+            <h5 class="fw-semibold mb-3">Actions</h5>
+            <div class="d-flex gap-2">
+                <a asp-action="Complete"
+                   asp-route-courseId="@ViewBag.CourseId"
+                   asp-route-lessonId="@(Model.LastLessonId + 1)"
+                   class="btn btn-success">
+                    <i class="bi bi-check-circle-fill me-2"></i>Complete Next Lesson
+                </a>
+                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>

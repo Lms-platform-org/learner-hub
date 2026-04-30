@@ -1,0 +1,234 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<style>
+    .hero {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        padding: 6rem 0;
+        border-radius: 16px;
+        margin-bottom: 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+
+    .feature-card {
+        text-align: center;
+        padding: 2rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stats-card {
+        text-align: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    body.dark-mode .stats-card {
+        background: #1e293b;
+    }
+
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        color: white;
+        padding: 4rem 0;
+        border-radius: 16px;
+        text-align: center;
+        margin: 4rem 0;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+
+    @@media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero animate-slide-up">
+    <div class="hero-content">
+        <h1>Welcome to LearnHub</h1>
+        <p>Discover, learn, and master new skills with world-class courses and books</p>
+        <div class="d-flex gap-3 flex-wrap">
+            <a asp-controller="Discovery" asp-action="Index" class="btn btn-light btn-lg">
+                <i class="bi bi-compass-fill"></i> Explore Courses
+            </a>
+            <a asp-controller="Discovery" asp-action="Books" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-book-fill"></i> Browse Books
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">500+</div>
+            <p class="text-muted mb-0">Courses Available</p>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">10K+</div>
+            <p class="text-muted mb-0">Active Students</p>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">95%</div>
+            <p class="text-muted mb-0">Satisfaction Rate</p>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">24/7</div>
+            <p class="text-muted mb-0">Support Available</p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<h2 class="mb-4 text-center">Why Choose LearnHub?</h2>
+<div class="row mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="bi bi-lightning-fill"></i>
+            </div>
+            <h5>Learn Fast</h5>
+            <p class="text-muted">Structured courses designed to help you learn efficiently and effectively</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="bi bi-award-fill"></i>
+            </div>
+            <h5>Get Certified</h5>
+            <p class="text-muted">Earn recognized certificates upon completion of courses</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <h5>Join Community</h5>
+            <p class="text-muted">Connect with thousands of learners and experts worldwide</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="bi bi-bookmark-fill"></i>
+            </div>
+            <h5>Save Favorites</h5>
+            <p class="text-muted">Bookmark courses and books to access them anytime</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <h5>Track Progress</h5>
+            <p class="text-muted">Monitor your learning journey with detailed progress analytics</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="bi bi-chat-dots-fill"></i>
+            </div>
+            <h5>Get Support</h5>
+            <p class="text-muted">Chat with instructors and get help whenever you need it</p>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section">
+    <h2>Ready to Start Learning?</h2>
+    <p>Join thousands of students already learning on LearnHub</p>
+    <a asp-controller="Discovery" asp-action="Index" class="btn btn-primary btn-lg">
+        <i class="bi bi-play-circle-fill"></i> Start Learning Now
+    </a>
+</div>

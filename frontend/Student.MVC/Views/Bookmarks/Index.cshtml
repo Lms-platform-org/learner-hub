@@ -1,0 +1,308 @@
+@using LearningPlatform.StudentService.WebApp.Models.DTOs
+@model PagedResponseDto<BookmarkDto>
+
+@{
+    ViewData["Title"] = "My Bookmarks";
+    var courses = Model.Data?.Where(b => b.Type == "course").ToList() ?? new List<BookmarkDto>();
+    var books = Model.Data?.Where(b => b.Type == "book").ToList() ?? new List<BookmarkDto>();
+}
+
+<style>
+    .bm-hero { margin-bottom: 2rem; }
+    .bm-hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.3rem; }
+    .filter-bar {
+        background: var(--card-bg); border: 1px solid var(--border);
+        border-radius: 14px; padding: 1rem; margin-bottom: 2rem;
+        display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    body.dark .filter-bar { background: var(--card-bg-dark); border-color: var(--border-dark); }
+    .filter-input {
+        flex: 1; min-width: 200px;
+        border: 2px solid var(--border); border-radius: 10px;
+        padding: 0.5rem 1rem; background: transparent; color: var(--text); outline: none;
+        transition: border-color 0.2s;
+    }
+    body.dark .filter-input { border-color: var(--border-dark); color: var(--text-dark); }
+    .filter-input:focus { border-color: var(--secondary); }
+    .filter-select {
+        border: 2px solid var(--border); border-radius: 10px;
+        padding: 0.5rem 1rem; background: transparent; color: var(--text); outline: none;
+        cursor: pointer; transition: border-color 0.2s;
+    }
+    body.dark .filter-select { border-color: var(--border-dark); color: var(--text-dark); background: var(--card-bg-dark); }
+    .filter-select:focus { border-color: var(--secondary); }
+    
+    .bm-section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+    .bm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.2rem; margin-bottom: 3rem; }
+    .bm-card {
+        background: var(--card-bg); border: 1px solid var(--border);
+        border-radius: 16px; padding: 1.2rem; transition: all 0.25s;
+        display: flex; flex-direction: column; position: relative;
+    }
+    body.dark .bm-card { background: var(--card-bg-dark); border-color: var(--border-dark); }
+    .bm-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-color: var(--secondary); }
+    .bm-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; }
+    .bm-card-title { font-weight: 700; font-size: 1.05rem; line-height: 1.3; }
+    .bm-card-meta { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .bm-note-area {
+        background: rgba(139,92,246,0.05); border: 1px dashed rgba(139,92,246,0.3);
+        border-radius: 10px; padding: 0.8rem; margin-bottom: 1rem; flex: 1;
+    }
+    body.dark .bm-note-area { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.2); }
+    .bm-note-label { font-size: 0.72rem; font-weight: 700; color: var(--secondary); margin-bottom: 0.3rem; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+    .bm-note-input {
+        width: 100%; background: transparent; border: none; outline: none;
+        resize: none; font-size: 0.85rem; color: var(--text); min-height: 60px;
+    }
+    body.dark .bm-note-input { color: var(--text-dark); }
+    .bm-actions { display: flex; gap: 0.5rem; }
+    .bm-actions .btn-lh { flex: 1; justify-content: center; font-size: 0.82rem; padding: 0.5rem; }
+    .btn-bookmark-golden { 
+        width: 38px; height: 38px; border-radius: 10px; 
+        background: rgba(245,158,11,0.08); border: 2px solid #f59e0b; color: #f59e0b; 
+        display: flex; align-items: center; justify-content: center; 
+        cursor: pointer; transition: all 0.2s; flex-shrink: 0; 
+    }
+    .btn-bookmark-golden i { font-weight: 900; }
+    .btn-bookmark-golden:hover { 
+        background: transparent; border-color: var(--muted); color: var(--muted); transform: scale(1.05);
+    }
+    .empty-state { text-align: center; padding: 4rem 1rem; color: var(--muted); }
+    .empty-state i { font-size: 3rem; opacity: 0.3; display: block; margin-bottom: 1rem; }
+</style>
+
+<div class="bm-hero fade-up">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h1>My <span class="text-gradient">Bookmarks</span></h1>
+            <p style="color:var(--muted);">Saved courses and books for later</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Discovery" asp-action="Index" class="btn-lh btn-lh-primary"><i class="bi bi-compass-fill"></i> Discover</a>
+        </div>
+    </div>
+</div>
+
+@if (Model.Data?.Any() != true)
+{
+    <div class="empty-state fade-up">
+        <i class="bi bi-bookmark-x"></i>
+        <p style="font-weight:700; font-size:1.1rem;">No bookmarks yet</p>
+        <p style="font-size:0.88rem;">Start exploring and bookmark items to save them here.</p>
+        <a asp-controller="Discovery" asp-action="Index" class="btn-lh btn-lh-primary mt-3">Explore Now</a>
+    </div>
+}
+else
+{
+    <!-- Filter Bar -->
+    <div class="filter-bar fade-up">
+        <i class="bi bi-funnel-fill" style="color:var(--muted);"></i>
+        <input type="text" id="filterText" class="filter-input" placeholder="Search saved items..." onkeyup="applyFilter()">
+        <select id="filterType" class="filter-select" onchange="applyFilter()">
+            <option value="all">All Types</option>
+            <option value="course">Courses Only</option>
+            <option value="book">Books Only</option>
+        </select>
+        <select id="filterCategory" class="filter-select" onchange="applyFilter()">
+            <option value="all">All Categories</option>
+            <option value="python">Python</option>
+            <option value="web">Web</option>
+            <option value="ml">Machine Learning</option>
+            <option value="general">General</option>
+        </select>
+    </div>
+
+    <!-- Courses -->
+    @if (courses.Any())
+    {
+        <div class="bm-type-section" data-section-type="course">
+            <div class="bm-section-title fade-up">
+                <i class="bi bi-play-circle-fill" style="color:var(--primary);"></i> Saved Courses
+                <span class="lh-badge lh-badge-primary ms-2" id="courseCount">@courses.Count</span>
+            </div>
+            <div class="bm-grid" id="courseGrid">
+                @foreach (var c in courses)
+                {
+                    <div class="bm-card fade-up bm-item" data-type="course" data-category="@(c.Category?.ToLower() ?? "")">
+                        <div class="bm-card-header">
+                            <div>
+                                <div class="bm-card-title">Course #@c.CourseId</div>
+                                <div class="bm-card-meta">
+                                    <span class="lh-badge lh-badge-primary">@c.Category</span>
+                                </div>
+                            </div>
+                            <div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+                                <i class="bi bi-play-fill"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bm-note-area">
+                            <label class="bm-note-label"><i class="bi bi-pencil-square"></i> Personal Note</label>
+                            <textarea class="bm-note-input" placeholder="Add a note about why you saved this..."
+                                      data-id="@c.Id" onchange="saveNote(@c.Id, this)">@c.PersonalNote</textarea>
+                        </div>
+                        
+                        <div class="bm-actions">
+                            <a asp-controller="Progress" asp-action="Index" asp-route-courseId="@c.CourseId" class="btn-lh btn-lh-primary">
+                                <i class="bi bi-box-arrow-in-right"></i> Go to Course
+                            </a>
+                            <button class="btn-bookmark-golden" onclick="removeBm(@c.Id, this, 'course', @c.CourseId)" title="Remove bookmark">
+                                <i class="bi bi-bookmark-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Books -->
+    @if (books.Any())
+    {
+        <div class="bm-type-section" data-section-type="book">
+            <div class="bm-section-title fade-up">
+                <i class="bi bi-book-fill" style="color:var(--accent);"></i> Saved Books
+                <span class="lh-badge lh-badge-primary ms-2" id="bookCount">@books.Count</span>
+            </div>
+            <div class="bm-grid" id="bookGrid">
+                @foreach (var b in books)
+                {
+                    <div class="bm-card fade-up bm-item" data-type="book" data-category="@(b.Category?.ToLower() ?? "")">
+                        <div class="bm-card-header">
+                            <div style="flex:1; padding-right:1rem;">
+                                <div class="bm-card-title" title="@b.BookTitle">@b.BookTitle</div>
+                                <div class="bm-card-meta">
+                                    <span><i class="bi bi-person-fill"></i> @(string.IsNullOrEmpty(b.BookAuthor) ? "Unknown" : b.BookAuthor)</span>
+                                    <span class="lh-badge lh-badge-primary">@b.Category</span>
+                                </div>
+                            </div>
+                            <div style="width:40px;height:40px;border-radius:10px;background:rgba(20,184,166,0.1);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
+                                <i class="bi bi-book-half"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bm-note-area" style="background:rgba(20,184,166,0.05); border-color:rgba(20,184,166,0.3);">
+                            <label class="bm-note-label" style="color:var(--accent);"><i class="bi bi-pencil-square"></i> Personal Note</label>
+                            <textarea class="bm-note-input" placeholder="Add a note about this book..."
+                                      data-id="@b.Id" onchange="saveNote(@b.Id, this)">@b.PersonalNote</textarea>
+                        </div>
+                        
+                        <div class="bm-actions">
+                            @{
+                                var readUrl = !string.IsNullOrEmpty(b.BookKey) ? $"https://openlibrary.org{b.BookKey}" : $"https://openlibrary.org/search?q={Uri.EscapeDataString(b.BookTitle ?? "")}";
+                            }
+                            <a href="@readUrl" target="_blank" class="btn-lh" style="background:linear-gradient(135deg,var(--accent),var(--secondary)); color:white;">
+                                <i class="bi bi-box-arrow-up-right"></i> Read Book
+                            </a>
+                            <button class="btn-bookmark-golden" onclick="removeBm(@b.Id, this, 'book', '@b.BookKey')" title="Remove bookmark">
+                                <i class="bi bi-bookmark-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Pagination -->
+    @if (Model.TotalCount > Model.PageSize)
+    {
+        <div class="d-flex justify-content-center gap-2 mt-2 fade-up">
+            @if (Model.Page > 1)
+            {
+                <a href="?page=@(Model.Page - 1)" class="page-btn"><i class="bi bi-chevron-left"></i></a>
+            }
+            <span class="page-btn active">@Model.Page</span>
+            @if (Model.Page * Model.PageSize < Model.TotalCount)
+            {
+                <a href="?page=@(Model.Page + 1)" class="page-btn"><i class="bi bi-chevron-right"></i></a>
+            }
+        </div>
+    }
+}
+
+@section Scripts {
+<script>
+    async function saveNote(id, textarea) {
+        const note = textarea.value.trim();
+        try {
+            const r = await fetch(`/Bookmarks/UpdateNote/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ note })
+            });
+            if (r.ok) showToast('Note saved', 'success', 2000);
+            else showToast('Failed to save note', 'error');
+        } catch { showToast('Error saving note', 'error'); }
+    }
+
+    async function removeBm(id, btn, type, targetId) {
+        btn.disabled = true;
+        try {
+            const r = await fetch(`/Bookmarks/DeleteAjax/${id}`, { method: 'POST' });
+            if (r.ok) {
+                const card = btn.closest('.bm-card');
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    card.remove();
+                    BookmarkState.remove(type, targetId);
+                    applyFilter();
+                    showToast('Bookmark removed', 'info');
+                }, 300);
+            } else {
+                showToast('Failed to remove', 'error');
+                btn.disabled = false;
+            }
+        } catch {
+            showToast('Error removing', 'error');
+            btn.disabled = false;
+        }
+    }
+
+    function applyFilter() {
+        const text = document.getElementById('filterText').value.toLowerCase();
+        const type = document.getElementById('filterType').value;
+        const cat = document.getElementById('filterCategory').value;
+        
+        let cCount = 0; let bCount = 0;
+
+        document.querySelectorAll('.bm-item').forEach(el => {
+            const elType = el.dataset.type;
+            const elCat = el.dataset.category;
+            const elText = el.textContent.toLowerCase();
+
+            const matchType = (type === 'all' || elType === type);
+            const matchCat = (cat === 'all' || elCat.includes(cat));
+            const matchText = (text === '' || elText.includes(text));
+
+            if (matchType && matchCat && matchText) {
+                el.style.display = '';
+                if (elType === 'course') cCount++;
+                if (elType === 'book') bCount++;
+            } else {
+                el.style.display = 'none';
+            }
+        });
+
+        const totalItemsLeft = document.querySelectorAll('.bm-item').length;
+        if (totalItemsLeft === 0) {
+            location.reload();
+            return;
+        }
+
+        // Update counts and hide empty sections
+        const cSec = document.querySelector('[data-section-type="course"]');
+        if (cSec) {
+            cSec.style.display = cCount > 0 ? '' : 'none';
+            document.getElementById('courseCount').textContent = cCount;
+        }
+        const bSec = document.querySelector('[data-section-type="book"]');
+        if (bSec) {
+            bSec.style.display = bCount > 0 ? '' : 'none';
+            document.getElementById('bookCount').textContent = bCount;
+        }
+    }
+</script>
+}
