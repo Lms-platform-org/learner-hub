@@ -153,7 +153,18 @@ namespace LearningPlatform.StudentService
             app.UseAuthorization();
 
             app.MapControllers();
-
+            using (var scope = app.Services.CreateScope())
+            {
+                try
+                {
+                    var context = scope.ServiceProvider.GetRequiredService<StudentDbContext>();
+                    await context.Database.MigrateAsync();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "An error occurred while migrating the database.");
+                }
+            }
             app.Run();
         }
     }

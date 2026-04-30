@@ -62,7 +62,7 @@ namespace LearningPlatformFrontend.Controllers
                 {
                     return RedirectToAction("Dashboard", "Admin");
                 }
-                return Redirect($"{_configuration["AppUrls:StudentMvcBaseUrl"] ?? "https://localhost:7009/"}?name={Uri.EscapeDataString(result.Name ?? model.Email)}&token={Uri.EscapeDataString(result.Token ?? "")}");
+                return Redirect($"{_configuration["AppUrls:StudentMvcBaseUrl"] ?? "https://localhost:7009/"}?name={Uri.EscapeDataString(result.Name ?? model.Email)}&email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(result.Token ?? "")}");
             }
 
             ModelState.AddModelError("", result.Message ?? "Invalid login attempt");

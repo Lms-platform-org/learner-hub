@@ -46,7 +46,8 @@ namespace LearningPlatform.StudentService.Middleware
                 _logger.LogError(ex, "Unhandled exception on {Method} {Path}", context.Request.Method, context.Request.Path);
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsJsonAsync(ApiResponseDto<object>.Fail("Something went wrong"));
+                var message = ex.InnerException != null ? $"{ex.Message} -> {ex.InnerException.Message}" : ex.Message;
+                await context.Response.WriteAsJsonAsync(ApiResponseDto<object>.Fail(message));
             }
         }
     }
