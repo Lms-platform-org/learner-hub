@@ -1,10 +1,4 @@
 <Solution>
-  <Folder Name="/frontend/">
-    <Project Path="frontend/LearningPlatformFrontend/LearningPlatformFrontend.csproj" />
-  </Folder>
-  <Folder Name="/frontend/Student.MVC/">
-    <Project Path="frontend/Student.MVC/LearningPlatform.StudentService.WebApp.csproj" />
-  </Folder>
   <Folder Name="/services/" />
   <Folder Name="/services/identity-service/">
     <Project Path="services/identity-service/LearningPlatformAuth.csproj" />
