@@ -9,10 +9,17 @@ namespace WebApplication1.Validators
         {
             RuleFor(x => x.Content)
                 .NotEmpty()
-                .MinimumLength(5);
+                .Must(content => (content ?? string.Empty)
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Length >= 3)
+                .WithMessage("Message must contain at least 3 words.");
 
             RuleFor(x => x.ChatSessionId)
                 .GreaterThan(0);
+
+            RuleFor(x => x.SenderRole)
+                .NotEmpty()
+                .MaximumLength(50);
         }
     }
 }
