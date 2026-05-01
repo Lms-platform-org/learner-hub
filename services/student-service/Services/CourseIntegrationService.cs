@@ -1,4 +1,5 @@
-﻿using LearningPlatform.StudentService.DTOs;
+﻿using LearningPlatform.StudentService.Common;
+using LearningPlatform.StudentService.DTOs;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace LearningPlatform.StudentService.Services
@@ -24,7 +25,7 @@ namespace LearningPlatform.StudentService.Services
 
         public async Task<CourseDto?> GetCourseByIdAsync(int courseId)
         {
-            string cacheKey = $"course_{courseId}";
+            var cacheKey = $"course_{courseId}";
 
             if (_cache.TryGetValue(cacheKey, out CourseDto? cached))
                 return cached;
@@ -32,12 +33,14 @@ namespace LearningPlatform.StudentService.Services
             try
             {
                 var client = _factory.CreateClient("CourseService");
-                var response = await client.GetFromJsonAsync<CourseDto>($"api/courses/{courseId}");
+                // Use correct route: api/coursesapi instead of api/courses
+                var response = await client.GetFromJsonAsync<ApiResponseDto<CourseDto>>($"api/coursesapi/{courseId}");
 
-                if (response != null)
-                    _cache.Set(cacheKey, response, TimeSpan.FromMinutes(30));
+                var course = response?.Data;
+                if (course != null)
+                    _cache.Set(cacheKey, course, TimeSpan.FromMinutes(30));
 
-                return response;
+                return course;
             }
             catch (Exception ex)
             {
@@ -51,10 +54,11 @@ namespace LearningPlatform.StudentService.Services
             try
             {
                 var client = _factory.CreateClient("CourseService");
-                var response = await client.GetFromJsonAsync<PagedResponseDto<CourseDto>>(
-                    $"api/courses?page={page}&pageSize={pageSize}");
+                // Use correct route: api/coursesapi instead of api/courses
+                var response = await client.GetFromJsonAsync<ApiResponseDto<PagedResponseDto<CourseDto>>>(
+                    $"api/coursesapi?page={page}&pageSize={pageSize}");
 
-                return response ?? EmptyPaged<CourseDto>(page, pageSize);
+                return response?.Data ?? EmptyPaged<CourseDto>(page, pageSize);
             }
             catch (Exception ex)
             {
@@ -68,10 +72,11 @@ namespace LearningPlatform.StudentService.Services
             try
             {
                 var client = _factory.CreateClient("CourseService");
-                var response = await client.GetFromJsonAsync<PagedResponseDto<CourseDto>>(
-                    $"api/courses/search?query={Uri.EscapeDataString(query)}&page={page}&pageSize={pageSize}");
+                // Use correct route: api/coursesapi/search instead of api/courses/search
+                var response = await client.GetFromJsonAsync<ApiResponseDto<PagedResponseDto<CourseDto>>>(
+                    $"api/coursesapi/search?query={Uri.EscapeDataString(query)}&page={page}&pageSize={pageSize}");
 
-                return response ?? EmptyPaged<CourseDto>(page, pageSize);
+                return response?.Data ?? EmptyPaged<CourseDto>(page, pageSize);
             }
             catch (Exception ex)
             {
@@ -89,7 +94,8 @@ namespace LearningPlatform.StudentService.Services
             {
                 var client = _factory.CreateClient("CourseService");
                 var payload = new { studentId, courseId };
-                await client.PostAsJsonAsync("api/courses/enroll", payload);
+                // Use correct route: api/coursesapi/enroll instead of api/courses/enroll
+                await client.PostAsJsonAsync("api/coursesapi/enroll", payload);
             }
             catch (Exception ex)
             {
@@ -103,7 +109,8 @@ namespace LearningPlatform.StudentService.Services
             {
                 var client = _factory.CreateClient("CourseService");
                 var payload = new { studentId, courseId, percentage };
-                await client.PostAsJsonAsync("api/courses/progress", payload);
+                // Use correct route: api/coursesapi/progress instead of api/courses/progress
+                await client.PostAsJsonAsync("api/coursesapi/progress", payload);
             }
             catch (Exception ex)
             {

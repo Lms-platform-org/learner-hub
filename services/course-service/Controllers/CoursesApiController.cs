@@ -22,7 +22,7 @@ namespace Courses.Api.Controllers
             _userContext = userContext;
         }
 
-        // GET: api/Courses
+        // GET: api/coursesapi
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<CourseReadDTO>>> GetCourses()
@@ -42,7 +42,7 @@ namespace Courses.Api.Controllers
             return Ok(_mapper.Map<IEnumerable<CourseReadDTO>>(courses));
         }
 
-        // GET: api/Courses/5
+        // GET: api/coursesapi/5
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<ActionResult<CourseReadDTO>> GetCourse(int id)
@@ -52,7 +52,7 @@ namespace Courses.Api.Controllers
             return Ok(_mapper.Map<CourseReadDTO>(course));
         }
 
-        // POST: api/Courses
+        // POST: api/coursesapi
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<CourseReadDTO>> PostCourse([FromBody] CourseWriteDTO courseDto)
@@ -78,7 +78,7 @@ namespace Courses.Api.Controllers
             return CreatedAtAction(nameof(GetCourse), new { id = createdCourse.Id }, resultDto);
         }
 
-        // PUT: api/Courses/5
+        // PUT: api/coursesapi/5
         [HttpPut("{id}")]
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> PutCourse(int id, [FromBody] CourseWriteDTO courseDto)
@@ -105,7 +105,7 @@ namespace Courses.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Courses/5/publish
+        // POST: api/coursesapi/5/publish
         [HttpPost("{id}/publish")]
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> PublishCourse(int id)
@@ -118,7 +118,7 @@ namespace Courses.Api.Controllers
             return Ok(course);
         }
 
-        // POST: api/Courses/5/videos
+        // POST: api/coursesapi/5/videos
         [HttpPost("{id}/videos")]
         [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<CourseVideo>> PostCourseVideo(int id, [FromBody] string videoUrl)
@@ -146,6 +146,66 @@ namespace Courses.Api.Controllers
             if (video == null) return NotFound();
 
             return CreatedAtAction(nameof(GetCourse), new { id = id }, video);
+        }
+
+        // NEW: Student Discovery Endpoints
+        // GET: api/coursesapi/search?query=math&page=1&pageSize=10
+        [HttpGet("search")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SearchCourses([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest(new { Message = "Search query is required" });
+
+            var courses = await _courseService.GetPublishedCoursesAsync();
+
+            var filtered = courses.Where(c =>
+                c.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                c.Description.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                c.Category.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+            var totalCount = filtered.Count();
+
+            var data = filtered
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Title,
+                    c.Description,
+                    c.Category,
+                    Level = string.Empty,
+                    TotalLessons = c.Videos?.Count ?? 0,
+                    ThumbnailUrl = c.ThumbnailUrl,
+                    InstructorName = c.InstructorId,
+                    VideoUrl = c.Videos?.FirstOrDefault()?.VideoUrl
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                Data = data,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            });
+        }
+
+        // POST: api/coursesapi/enroll
+        [HttpPost("enroll")]
+        [AllowAnonymous]
+        public IActionResult NotifyEnrollment([FromBody] object payload)
+        {
+            return Ok(new { Message = "Enrollment received" });
+        }
+
+        // POST: api/coursesapi/progress
+        [HttpPost("progress")]
+        [AllowAnonymous]
+        public IActionResult NotifyProgress([FromBody] object payload)
+        {
+            return Ok(new { Message = "Progress received" });
         }
     }
 }
