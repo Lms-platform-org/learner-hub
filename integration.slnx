@@ -1,5 +1,8 @@
 <Solution>
   <Folder Name="/services/" />
+  <Folder Name="/services/course-service/">
+    <Project Path="services/course-service/Course.csproj" />
+  </Folder>
   <Folder Name="/services/identity-service/">
     <Project Path="services/identity-service/LearningPlatformAuth.csproj" />
   </Folder>
