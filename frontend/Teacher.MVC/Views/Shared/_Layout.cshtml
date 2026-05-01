@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Scholarly Instructor</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#101411",
+                        "on-secondary": "#003549",
+                        "on-surface": "#dfe4de",
+                        "inverse-on-surface": "#2d322e",
+                        "surface-container-lowest": "#0a0f0c",
+                        "surface-container-highest": "#313632",
+                        "surface-container": "#1c211d",
+                        "on-secondary-fixed-variant": "#004c68",
+                        "surface-tint": "#7dd9ab",
+                        "surface": "#101411",
+                        "secondary": "#88cff7",
+                        "outline-variant": "#3e4942",
+                        "on-secondary-fixed": "#001e2c",
+                        "outline": "#88938b",
+                        "on-error": "#690005",
+                        "primary-fixed": "#99f5c6",
+                        "on-primary": "#003824",
+                        "inverse-primary": "#006c49",
+                        "on-tertiary-container": "#531017",
+                        "secondary-container": "#006386",
+                        "on-surface-variant": "#bec9c0",
+                        "on-tertiary-fixed-variant": "#7a2d32",
+                        "tertiary-container": "#d57578",
+                        "error-container": "#93000a",
+                        "surface-bright": "#353a37",
+                        "on-primary-container": "#00311f",
+                        "primary-container": "#45a178",
+                        "primary": "#7dd9ab",
+                        "on-tertiary": "#5c171d",
+                        "on-primary-fixed-variant": "#005236",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed": "#ffdad9",
+                        "primary-fixed-dim": "#7dd9ab",
+                        "on-secondary-container": "#a2dcff",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#3f020b",
+                        "tertiary-fixed-dim": "#ffb3b3",
+                        "on-background": "#dfe4de",
+                        "secondary-fixed": "#c3e8ff",
+                        "surface-variant": "#313632",
+                        "tertiary": "#ffb3b3",
+                        "background": "#101411",
+                        "on-primary-fixed": "#002113",
+                        "secondary-fixed-dim": "#88cff7",
+                        "surface-container-high": "#262b28",
+                        "surface-container-low": "#181d1a",
+                        "inverse-surface": "#dfe4de"
+                    },
+                    "fontFamily": {
+                        "serif": ["Newsreader", "serif"],
+                        "sans": ["Manrope", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #101411;
+            color: #dfe4de;
+            font-family: 'Manrope', sans-serif;
+        }
+        .sidebar-item-active {
+            background-color: #313632;
+            color: #7dd9ab;
+            border-left: 4px solid #7dd9ab;
+        }
+        .glass-card {
+            background: rgba(28, 33, 29, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(62, 73, 66, 0.5);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-background text-on-surface">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar (Teacher Specific) -->
+        <aside class="w-64 bg-surface-container-low border-r border-outline-variant flex flex-col fixed h-full z-50">
+            <div class="p-6 border-b border-outline-variant">
+                <h2 class="text-2xl font-serif font-bold text-primary tracking-tight">Scholarly</h2>
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mt-1">Instructor Division</p>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto mt-4">
+                <a href="@Url.Action("Index", "Home")" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "sidebar-item-active" : "text-on-surface-variant hover:bg-surface-container hover:text-primary")">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all duration-200">
+                    <span class="material-symbols-outlined">menu_book</span>
+                    <span class="font-medium">My Courses</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all duration-200">
+                    <span class="material-symbols-outlined">chat</span>
+                    <span class="font-medium">Chat</span>
+                </a>
+                <a href="@Url.Action("Profile", "Home")" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 @(ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "sidebar-item-active" : "text-on-surface-variant hover:bg-surface-container hover:text-primary")">
+                    <span class="material-symbols-outlined">person_pin</span>
+                    <span class="font-medium">Teacher Profile</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all duration-200">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="font-medium">Settings</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-outline-variant">
+                <div class="flex items-center gap-3 px-4 py-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/30">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60" class="w-10 h-10 rounded-full border border-primary/20" alt="Avatar">
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold truncate">Dr. Sarah Jenkins</p>
+                        <p class="text-[10px] text-on-surface-variant truncate">Professor</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 ml-64 flex flex-col min-h-screen">
+            <!-- Header (StudentMVC Style) -->
+            <header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant sticky top-0 z-40 px-8 py-4 flex justify-between items-center transition-all duration-300">
+                <div class="flex items-center gap-4 bg-surface-container p-1 rounded-full px-4 border border-outline-variant/30 w-96">
+                    <span class="material-symbols-outlined text-on-surface-variant">search</span>
+                    <input type="text" placeholder="Search courses, students, analytics..." class="bg-transparent border-none text-sm w-full focus:ring-0 text-on-surface">
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button id="themeToggle" class="p-2.5 rounded-full bg-surface-container border border-outline-variant hover:bg-surface-container-high text-on-surface-variant transition-colors">
+                        <span class="material-symbols-outlined">light_mode</span>
+                    </button>
+                    <div class="relative">
+                        <button class="p-2.5 rounded-full bg-surface-container border border-outline-variant hover:bg-surface-container-high text-on-surface-variant transition-colors relative">
+                            <span class="material-symbols-outlined">notifications</span>
+                            <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-primary rounded-full border-2 border-surface"></span>
+                        </button>
+                    </div>
+                    <a href="@Url.Action("Profile", "Home")" class="h-10 w-10 rounded-full overflow-hidden border-2 border-primary/30 hover:border-primary transition-colors">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60" alt="User">
+                    </a>
+                </div>
+            </header>
+
+            <div class="p-8 max-w-[1600px] mx-auto w-full">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        // Theme toggle logic (similar to StudentMVC)
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('lh-theme', isDark ? 'dark' : 'light');
+            document.querySelector('#themeToggle span').textContent = isDark ? 'light_mode' : 'dark_mode';
+        });
+
+        // Initialize theme
+        (function () {
+            const savedTheme = localStorage.getItem('lh-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                document.querySelector('#themeToggle span').textContent = 'light_mode';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.querySelector('#themeToggle span').textContent = 'dark_mode';
+            }
+        })();
+    </script>
+</body>
+</html>
