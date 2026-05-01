@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/gateway/">
+    <Project Path="gateway/GatewayAPI/GatewayAPI.csproj" />
+  </Folder>
   <Folder Name="/services/" />
   <Folder Name="/services/course-service/">
     <Project Path="services/course-service/Course.csproj" />

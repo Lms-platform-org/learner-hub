@@ -13,10 +13,6 @@
       {
         "Path": "services\\student-service\\LearningPlatform.StudentService.csproj",
         "Action": "Start"
-      },
-      {
-        "Path": "Horizon.MVC\\Horizon.MVC.csproj",
-        "Action": "Start"
       }
     ]
   }

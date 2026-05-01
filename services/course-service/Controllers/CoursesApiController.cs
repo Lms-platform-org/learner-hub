@@ -32,6 +32,9 @@ namespace Courses.Api.Controllers
         {
             try
             {
+                if (page < 1) page = 1;
+                if (pageSize < 1 || pageSize > 50) pageSize = 10;
+
                 var courses = await _courseService.GetPublishedCoursesAsync();
                 var totalCount = courses.Count();
 
@@ -44,10 +47,10 @@ namespace Courses.Api.Controllers
                         c.Title,
                         c.Description,
                         c.Category,
-                        Level = string.Empty,
-                        TotalLessons = c.Videos?.Count ?? 0,
-                        ThumbnailUrl = c.ThumbnailUrl,
+                        c.Price,
+                        c.ThumbnailUrl,
                         InstructorName = c.InstructorId,
+                        TotalLessons = c.Videos?.Count ?? 0,
                         VideoUrl = c.Videos?.FirstOrDefault()?.VideoUrl
                     })
                     .ToList();
@@ -133,27 +136,18 @@ namespace Courses.Api.Controllers
         // GET: api/coursesapi/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult> GetCourse(int id)
+        public async Task<ActionResult<CourseReadDTO>> GetCourse(int id)
         {
+            if (id <= 0)
+                return BadRequest(new { Message = "Invalid course id" });
+
             try
             {
                 var course = await _courseService.GetCourseByIdAsync(id);
                 if (course == null)
                     return NotFound(new { Message = "Course not found" });
 
-                var result = new
-                {
-                    course.Id,
-                    course.Title,
-                    course.Description,
-                    course.Category,
-                    Level = string.Empty,
-                    TotalLessons = course.Videos?.Count ?? 0,
-                    ThumbnailUrl = course.ThumbnailUrl,
-                    InstructorName = course.InstructorId,
-                    VideoUrl = course.Videos?.FirstOrDefault()?.VideoUrl
-                };
-
+                var result = _mapper.Map<CourseReadDTO>(course);
                 return Ok(result);
             }
             catch (Exception ex)
