@@ -6,4 +6,7 @@
   <Folder Name="/services/student-service/">
     <Project Path="services/student-service/LearningPlatform.StudentService.csproj" />
   </Folder>
+  <Folder Name="/services/teacher-service/">
+    <Project Path="services/teacher-service/TeacherDashboardApi.csproj" />
+  </Folder>
 </Solution>
