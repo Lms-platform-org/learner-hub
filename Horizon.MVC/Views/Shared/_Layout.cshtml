@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>@ViewData["Title"] - The Horizon</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6-72,400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #F7F9F6; }
+        .dark body { background-color: #0F1714; color: #dfe4de; }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffdad2",
+                        "outline-variant": "#bec9c1",
+                        "on-background": "#121d21",
+                        "tertiary-container": "#ba4d32",
+                        "outline": "#6f7a72",
+                        "on-surface-variant": "#3f4943",
+                        "inverse-surface": "#273236",
+                        "on-primary-container": "#d0ffe3",
+                        "surface": "#f2fbff",
+                        "primary-fixed-dim": "#88d6af",
+                        "primary-container": "#2e7d5b",
+                        "on-primary-fixed-variant": "#005236",
+                        "on-secondary-container": "#045a81",
+                        "primary-fixed": "#a4f3ca",
+                        "secondary": "#1a648c",
+                        "on-primary": "#ffffff",
+                        "primary": "#096444",
+                        "surface-tint": "#176b4b",
+                        "secondary-container": "#92d0fd",
+                        "surface-container": "#e4f0f5",
+                        "on-surface": "#121d21",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "tertiary": "#99361d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "16px",
+                        "xl": "64px",
+                        "lg": "40px",
+                        "md": "24px",
+                        "base": "4px",
+                        "gutter": "24px",
+                        "xs": "8px",
+                        "margin-container": "32px"
+                    },
+                    "fontFamily": {
+                        "button": ["Inter"],
+                        "display-lg": ["Newsreader"],
+                        "headline-sm": ["Newsreader"],
+                        "headline-md": ["Newsreader"],
+                        "label-uppercase": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "button": ["14px", {"lineHeight": "1.0", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "label-uppercase": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body-md text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+
+<!-- TopNavBar Shell -->
+<nav class="flex justify-between items-center h-16 px-8 w-full z-50 fixed top-0 bg-[#F7F9F6] dark:bg-[#0F1714] border-b border-[#E3E8E5] dark:border-[#23332D] font-sans tracking-tight antialiased shadow-[0_4px_12px_rgba(46,125,91,0.05)]">
+    <div class="flex items-center gap-xl">
+        <a href="/" class="text-xl font-serif font-bold text-[#2E7D5B] dark:text-[#7DD9AB] hover:opacity-90 transition-opacity">The Horizon</a>
+        <div class="hidden md:flex gap-md">
+            <a class="text-[#2E7D5B] dark:text-[#7DD9AB] font-semibold border-b-2 border-[#2E7D5B] text-body-md font-body-md py-5" asp-controller="Discovery" asp-action="Index">Catalog</a>
+            <a class="text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] transition-colors duration-200 font-medium text-body-md font-body-md py-5 px-xs" asp-controller="Progress" asp-action="Index">Progress</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-md">
+        <div class="relative hidden sm:flex items-center bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-lg px-xs py-1.5 w-64">
+            <span class="material-symbols-outlined text-outline mr-xs">search</span>
+            <input class="bg-transparent border-none focus:ring-0 text-sm w-full text-on-surface dark:text-[#dfe4de]" placeholder="Search resources..." type="text"/>
+        </div>
+        <button id="themeToggle" class="material-symbols-outlined text-[#2E7D5B] dark:text-[#7DD9AB] p-xs rounded-full hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] transition-colors">
+            <span id="themeIcon">light_mode</span>
+        </button>
+        <button class="material-symbols-outlined text-[#2E7D5B] dark:text-[#7DD9AB] p-xs rounded-full hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24]">notifications</button>
+        <div class="w-8 h-8 rounded-full overflow-hidden border border-[#E3E8E5] dark:border-[#23332D]">
+            <img alt="User profile" src="https://ui-avatars.com/api/?name=@(User.Identity?.Name ?? "User")&background=2E7D5B&color=fff"/>
+        </div>
+    </div>
+</nav>
+
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-64 border-r fixed left-0 top-0 z-40 bg-white dark:bg-[#101411] border-[#E3E8E5] dark:border-[#23332D] flex flex-col pt-20 py-6 hidden lg:flex">
+    <div class="px-6 mb-8">
+        <h2 class="text-lg font-bold text-[#2E7D5B] dark:text-[#7DD9AB] font-headline-sm">The Horizon</h2>
+        <p class="text-xs text-slate-500 dark:text-[#A7B8B0] font-body-md">Elevate Your Learning</p>
+    </div>
+    <nav class="flex-1 px-2 space-y-1">
+        <a asp-controller="Dashboard" asp-action="Index"
+           class="flex items-center gap-sm px-4 py-3 font-sans text-sm transition-all duration-100 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-r-4 border-[#2E7D5B] font-semibold" : "text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] hover:text-[#2E7D5B] font-medium rounded-lg")">
+            <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+        <a asp-controller="Enrollment" asp-action="MyCourses"
+           class="flex items-center gap-sm px-4 py-3 font-sans text-sm transition-all duration-100 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Enrollment" ? "bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-r-4 border-[#2E7D5B] font-semibold" : "text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] hover:text-[#2E7D5B] font-medium rounded-lg")">
+            <span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+            <span>My Courses</span>
+        </a>
+        <a asp-controller="Discovery" asp-action="Index"
+           class="flex items-center gap-sm px-4 py-3 font-sans text-sm transition-all duration-100 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Discovery" ? "bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-r-4 border-[#2E7D5B] font-semibold" : "text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] hover:text-[#2E7D5B] font-medium rounded-lg")">
+            <span class="material-symbols-outlined" data-icon="school">school</span>
+            <span>Learning</span>
+        </a>
+        <a asp-controller="ChatMvc" asp-action="Index"
+           class="flex items-center gap-sm px-4 py-3 font-sans text-sm transition-all duration-100 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ChatMvc" ? "bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-r-4 border-[#2E7D5B] font-semibold" : "text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] hover:text-[#2E7D5B] font-medium rounded-lg")">
+            <span class="material-symbols-outlined" data-icon="forum">forum</span>
+            <span>Chat</span>
+        </a>
+        <a asp-controller="Profile" asp-action="Index"
+           class="flex items-center gap-sm px-4 py-3 font-sans text-sm transition-all duration-100 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Profile" ? "bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-r-4 border-[#2E7D5B] font-semibold" : "text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] hover:text-[#2E7D5B] font-medium rounded-lg")">
+            <span class="material-symbols-outlined" data-icon="person">person</span>
+            <span>Profile</span>
+        </a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="px-4 pt-6 pb-2 text-label-uppercase font-label-uppercase text-slate-400 dark:text-[#88938b] tracking-widest uppercase">Management</div>
+            <a asp-area="Admin" asp-controller="Admin" asp-action="Dashboard"
+               class="flex items-center gap-sm px-4 py-3 font-sans text-sm transition-all duration-100 @(ViewContext.RouteData.Values["Area"]?.ToString() == "Admin" ? "bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-r-4 border-[#2E7D5B] font-semibold" : "text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] hover:text-[#2E7D5B] font-medium rounded-lg")">
+                <span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+                <span>Admin Panel</span>
+            </a>
+        }
+    </nav>
+
+    <!-- Bottom Card -->
+    <div class="px-6 py-4 border-t border-[#E3E8E5] dark:border-[#23332D]">
+        <a asp-page="/Scholarship" class="block">
+            <div class="bg-primary-container p-sm rounded-xl text-white">
+                <p class="text-xs font-bold mb-1">SCHOLARSHIP</p>
+                <p class="text-[10px] leading-tight opacity-90 mb-2">Apply for merit-based and need-based scholarships.</p>
+                <span class="w-full bg-white text-primary text-[10px] font-bold py-1.5 rounded uppercase text-center block">Apply Now</span>
+            </div>
+        </a>
+        <a asp-controller="Auth" asp-action="Logout" class="flex items-center gap-sm px-2 py-3 mt-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Sign Out</span>
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content Canvas -->
+<main class="lg:pl-64 pt-16 min-h-screen">
+    <div class="max-w-7xl mx-auto px-8 py-10">
+        @RenderBody()
+    </div>
+</main>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+
+<script>
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    const savedTheme = localStorage.getItem('horizon-theme') || 'light';
+    html.className = savedTheme;
+    updateThemeUI(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const next = html.classList.contains('dark') ? 'light' : 'dark';
+        html.className = next;
+        localStorage.setItem('horizon-theme', next);
+        updateThemeUI(next);
+    });
+
+    function updateThemeUI(theme) {
+        themeIcon.textContent = theme === 'dark' ? 'dark_mode' : 'light_mode';
+        document.body.style.backgroundColor = theme === 'dark' ? '#0F1714' : '#F7F9F6';
+        document.body.style.color = theme === 'dark' ? '#dfe4de' : '';
+    }
+</script>
+</body>
+</html>

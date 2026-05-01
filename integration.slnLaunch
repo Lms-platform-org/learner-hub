@@ -1,0 +1,23 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "services\\course-service\\Course.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "services\\identity-service\\LearningPlatformAuth.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "services\\student-service\\LearningPlatform.StudentService.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Horizon.MVC\\Horizon.MVC.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

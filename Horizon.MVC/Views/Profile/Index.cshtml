@@ -1,0 +1,166 @@
+@using Horizon.MVC.DTOs
+@model ProfileDto
+@{
+    ViewData["Title"] = "My Profile";
+    var skillsString = Model.Skills != null ? string.Join(", ", Model.Skills) : "";
+}
+
+<!-- Profile Hero -->
+<div class="mb-12 animate-[fadeUp_0.5s_ease_forwards]">
+    <div class="h-48 rounded-3xl bg-gradient-to-br from-[#2E7D5B] to-[#096444] dark:from-[#1B2A24] dark:to-[#0A140F] relative overflow-hidden shadow-sm">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row items-start sm:items-end gap-6 -mt-16 px-8 relative z-10">
+        <div class="w-32 h-32 rounded-full bg-white dark:bg-[#16211D] border-4 border-[#F7F9F6] dark:border-[#0F1714] flex items-center justify-center text-5xl text-[#2E7D5B] dark:text-[#7DD9AB] shadow-lg relative shrink-0">
+            <span class="material-symbols-outlined text-[64px] filled">account_circle</span>
+            <div class="absolute bottom-1 right-1 w-8 h-8 bg-emerald-500 border-2 border-[#F7F9F6] dark:border-[#0F1714] rounded-full flex items-center justify-center text-white" title="Verified Student">
+                <span class="material-symbols-outlined text-[16px] font-bold">check</span>
+            </div>
+        </div>
+        
+        <div class="flex-1 pb-2">
+            <h1 id="display-name" class="font-serif text-3xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-1">
+                @(string.IsNullOrEmpty(Model.FullName) ? "Student" : Model.FullName)
+            </h1>
+            <p class="text-slate-500 dark:text-[#A7B8B0] font-medium flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">mail</span> 
+                <span id="display-email">@(Context.Session.GetString("email") ?? "student@horizon.edu")</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-[fadeUp_0.6s_ease_forwards]">
+    <!-- Left Col: Form -->
+    <div class="lg:col-span-2 space-y-8">
+        <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm">
+            <div class="flex items-center gap-2 mb-8">
+                <span class="material-symbols-outlined text-[#2E7D5B] dark:text-[#7DD9AB] text-[24px]">badge</span>
+                <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC]">Personal Information</h2>
+            </div>
+            
+            <form method="post" asp-action="Save" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="FullName" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Full Name</label>
+                        <input type="text" id="FullName" name="FullName" value="@Model.FullName" required
+                               class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400">
+                    </div>
+                    <div>
+                        <label for="PreferredLevel" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Learning Level</label>
+                        <select id="PreferredLevel" name="PreferredLevel" 
+                                class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors cursor-pointer">
+                            @if (Model.PreferredLevel == "Beginner") { <option value="Beginner" selected>Beginner</option> } else { <option value="Beginner">Beginner</option> }
+                            @if (Model.PreferredLevel == "Intermediate") { <option value="Intermediate" selected>Intermediate</option> } else { <option value="Intermediate">Intermediate</option> }
+                            @if (Model.PreferredLevel == "Advanced") { <option value="Advanced" selected>Advanced</option> } else { <option value="Advanced">Advanced</option> }
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="Bio" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Bio / About Me</label>
+                    <textarea id="Bio" name="Bio" rows="4" placeholder="Tell us a little bit about yourself and your learning goals..."
+                              class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400 resize-y min-h-[120px]">@Model.Bio</textarea>
+                </div>
+                
+                <div>
+                    <label for="SkillsInput" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Skills (comma separated)</label>
+                    <input type="text" id="SkillsInput" name="SkillsInput" value="@skillsString" placeholder="e.g. History, Mathematics, Critical Thinking"
+                           class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400 mb-3">
+                    
+                    @if (Model.Skills?.Any() == true)
+                    {
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            @foreach (var s in Model.Skills)
+                            {
+                                <span class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] px-3 py-1.5 rounded-lg text-xs font-bold border border-[#E3E8E5] dark:border-[#23332D] flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-[14px]">psychology</span> @s
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+                
+                <div class="pt-4 border-t border-[#E3E8E5] dark:border-[#23332D]">
+                    <button type="submit" class="w-full bg-[#2E7D5B] hover:bg-[#096444] dark:bg-[#7DD9AB] dark:hover:bg-[#45a178] dark:text-[#003824] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined">save</span> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right Col: Stats -->
+    <div class="space-y-8 animate-[fadeUp_0.7s_ease_forwards]">
+        <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm">
+            <div class="flex items-center gap-2 mb-6 border-b border-[#E3E8E5] dark:border-[#23332D] pb-4">
+                <span class="material-symbols-outlined text-amber-500 text-[24px]">monitoring</span>
+                <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC]">Account Stats</h2>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">event</span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider mb-0.5">Joined Date</div>
+                        <div class="font-bold text-gray-900 dark:text-[#E6F1EC]">@Model.JoinedDate.ToString("MMM dd, yyyy")</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">school</span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider mb-0.5">Role</div>
+                        <div class="font-bold text-gray-900 dark:text-[#E6F1EC]">Student</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined filled">bolt</span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider mb-0.5">Status</div>
+                        <div class="font-bold text-gray-900 dark:text-[#E6F1EC]">Active Learner</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 p-5 rounded-2xl bg-[#F0F5F2] dark:bg-[#1B2A24] border border-[#E3E8E5] dark:border-[#23332D]">
+                <div class="flex items-center gap-2 font-bold text-[#2E7D5B] dark:text-[#7DD9AB] mb-2 text-sm">
+                    <span class="material-symbols-outlined text-[18px]">verified_user</span> Privacy & Security
+                </div>
+                <div class="text-xs text-slate-600 dark:text-[#A7B8B0] leading-relaxed">
+                    Your profile information is private by default. Only you and authorized faculty can view your learning progress.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Clean autofill styles for dark mode compatibility */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+    .dark input:-webkit-autofill {
+        -webkit-text-fill-color: #E6F1EC !important;
+    }
+</style>
+
+@section Scripts {
+<script>
+    // Load email from session if available
+    const email = sessionStorage.getItem('lh-email');
+    if (email) document.getElementById('display-email').textContent = email;
+</script>
+}

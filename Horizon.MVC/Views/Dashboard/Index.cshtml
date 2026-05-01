@@ -1,0 +1,234 @@
+@using Horizon.MVC.DTOs
+@model Horizon.MVC.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var name = Context.Session.GetString("name") ?? "Student";
+}
+
+<!-- Hero Section -->
+<div class="mb-10 animate-[fadeUp_0.5s_ease_forwards]">
+    <h1 class="font-serif text-4xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-2 tracking-tight flex items-center gap-3">
+        Hi, <span class="text-[#2E7D5B] dark:text-[#7DD9AB]" id="hero-name">@name</span> 
+        <span class="text-4xl">👋</span>
+    </h1>
+    <p class="font-sans text-lg text-slate-500 dark:text-[#A7B8B0]">Here's your academic overview for today</p>
+</div>
+
+<!-- XP Bar -->
+@if (Model.TotalXP > 0)
+{
+    var level = Model.TotalXP < 500 ? "Beginner" : Model.TotalXP < 1500 ? "Intermediate" : "Advanced";
+    var nextXp = Model.TotalXP < 500 ? 500 : Model.TotalXP < 1500 ? 1500 : 5000;
+    var pct = Math.Min((int)((double)Model.TotalXP / nextXp * 100), 100);
+
+    <div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 rounded-3xl p-6 mb-10 flex items-center gap-6 animate-[fadeUp_0.6s_ease_forwards] shadow-sm">
+        <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-500/20">
+            <span class="material-symbols-outlined text-[36px] filled">bolt</span>
+        </div>
+        <div class="flex-1">
+            <div class="flex items-baseline gap-2">
+                <span class="text-4xl font-bold text-amber-600 dark:text-amber-500 font-serif" id="xp-number">@Model.TotalXP</span>
+                <span class="text-amber-700/70 dark:text-amber-500/70 font-bold text-sm tracking-wider">XP</span>
+            </div>
+            <div class="text-sm font-medium text-amber-800/80 dark:text-amber-200/60 mt-1">Total Experience Points earned</div>
+            <div class="text-xs text-amber-700/60 dark:text-amber-400/50 mt-1.5 flex items-center gap-1.5">
+                <span class="bg-amber-200/50 dark:bg-amber-800/40 px-2 py-0.5 rounded font-bold text-amber-800 dark:text-amber-300">Level: @level</span> 
+                <span>· @(nextXp - Model.TotalXP) XP to next level</span>
+            </div>
+        </div>
+        <div class="w-48 shrink-0 hidden sm:block">
+            <div class="text-xs font-bold text-amber-800 dark:text-amber-400 text-right mb-2">@pct%</div>
+            <div class="h-3 bg-amber-200/50 dark:bg-amber-900/40 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-1000 ease-out" style="width: @pct%"></div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Stats Grid -->
+@if (Model.EnrolledCount > 0 || Model.CompletedCount > 0 || Model.InProgressCount > 0 || Model.TotalBookmarks > 0)
+{
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-[fadeUp_0.7s_ease_forwards]">
+        <div class="bg-[#F0F5F2] dark:bg-[#1B2A24] p-8 rounded-2xl border border-[#E3E8E5] dark:border-[#23332D] shadow-sm flex flex-col items-center justify-center text-center">
+            <span class="block text-4xl font-serif text-[#2E7D5B] dark:text-[#7DD9AB] font-bold mb-2">@Model.EnrolledCount</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#A7B8B0]">Courses Enrolled</span>
+        </div>
+        
+        <div class="bg-[#F0F5F2] dark:bg-[#1B2A24] p-8 rounded-2xl border border-[#E3E8E5] dark:border-[#23332D] shadow-sm flex flex-col items-center justify-center text-center">
+            <span class="block text-4xl font-serif text-emerald-600 dark:text-emerald-400 font-bold mb-2">@Model.CompletedCount</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#A7B8B0]">Completed</span>
+        </div>
+
+        <div class="bg-[#F0F5F2] dark:bg-[#1B2A24] p-8 rounded-2xl border border-[#E3E8E5] dark:border-[#23332D] shadow-sm flex flex-col items-center justify-center text-center">
+            <span class="block text-4xl font-serif text-amber-600 dark:text-amber-500 font-bold mb-2">@Model.InProgressCount</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#A7B8B0]">In Progress</span>
+        </div>
+
+        <div class="bg-[#F0F5F2] dark:bg-[#1B2A24] p-8 rounded-2xl border border-[#E3E8E5] dark:border-[#23332D] shadow-sm flex flex-col items-center justify-center text-center">
+            <span class="block text-4xl font-serif text-blue-600 dark:text-blue-400 font-bold mb-2">@Model.TotalBookmarks</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#A7B8B0]">Bookmarks</span>
+        </div>
+    </div>
+}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-[fadeUp_0.8s_ease_forwards]">
+    <!-- Left Column: Continue Watching -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC] flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#2E7D5B] dark:text-[#7DD9AB] filled">play_circle</span>
+                    Continue Watching
+                </h2>
+                @if (Model.ContinueWatching?.Any() == true)
+                {
+                    <span class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border border-[#E3E8E5] dark:border-[#23332D] text-xs font-bold px-3 py-1 rounded-lg">@Model.ContinueWatching.Count courses</span>
+                }
+            </div>
+
+            @if (Model.ContinueWatching?.Any() == true)
+            {
+                <div class="space-y-4">
+                    @foreach (var p in Model.ContinueWatching)
+                    {
+                        <a href="/Enrollment/MyCourses" class="flex items-center gap-5 p-5 rounded-2xl border border-[#E3E8E5] dark:border-[#23332D] bg-white dark:bg-[#16211D] hover:border-[#2E7D5B] dark:hover:border-[#7DD9AB] hover:shadow-md transition-all group">
+                            <div class="w-16 h-16 rounded-xl bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] flex items-center justify-center shrink-0 group-hover:bg-[#2E7D5B] group-hover:text-white transition-colors">
+                                <span class="material-symbols-outlined text-[32px]">play_arrow</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-lg text-gray-900 dark:text-[#E6F1EC] truncate font-serif group-hover:text-[#2E7D5B] dark:group-hover:text-[#7DD9AB] transition-colors">Course #@p.LastLessonId</h3>
+                                <div class="flex items-center gap-3 mt-1.5">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded">In Progress</span>
+                                    <span class="text-xs text-slate-500 dark:text-[#A7B8B0] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> Lesson @p.LastLessonId · @(TimeSpan.FromSeconds(p.LastVideoTimestampSeconds).ToString(@"mm\:ss"))</span>
+                                </div>
+                                <div class="h-2 w-full bg-[#E3E8E5] dark:bg-[#23332D] rounded-full mt-3.5 overflow-hidden">
+                                    <div class="h-full bg-[#2E7D5B] dark:bg-[#7DD9AB] rounded-full transition-all duration-1000" style="width: @p.Percentage%"></div>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold font-serif text-[#2E7D5B] dark:text-[#7DD9AB] shrink-0 ml-4">@p.Percentage%</div>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-16 px-4 border-2 border-dashed border-[#E3E8E5] dark:border-[#23332D] rounded-2xl bg-slate-50 dark:bg-[#101411]">
+                    <span class="material-symbols-outlined text-5xl text-slate-300 dark:text-[#313632] mb-4">play_circle</span>
+                    <p class="text-slate-500 dark:text-[#A7B8B0] text-sm mb-6">No courses currently in progress.</p>
+                    <a asp-controller="Discovery" asp-action="Index" class="inline-flex items-center gap-2 bg-white dark:bg-[#16211D] text-gray-800 dark:text-[#E6F1EC] border border-[#E3E8E5] dark:border-[#23332D] px-6 py-3 rounded-xl font-bold text-sm hover:border-[#2E7D5B] hover:text-[#2E7D5B] transition-colors shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">explore</span> Explore Courses
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Milestones -->
+        @if (Model.Milestones?.Any() == true)
+        {
+            <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm">
+                <h2 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC] flex items-center gap-2 mb-6">
+                    <span class="material-symbols-outlined text-amber-500 filled">emoji_events</span>
+                    Earned Milestones
+                </h2>
+                <div class="flex flex-wrap gap-3">
+                    @foreach (var m in Model.Milestones)
+                    {
+                        <div class="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm">
+                            <span class="material-symbols-outlined text-[18px] filled">star</span>
+                            @m
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Right Column: Quick Actions + Recommendations -->
+    <div class="space-y-8">
+        
+        <!-- Quick Actions -->
+        <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm">
+            <h2 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC] flex items-center gap-2 mb-6">
+                <span class="material-symbols-outlined text-amber-500 filled">bolt</span>
+                Quick Actions
+            </h2>
+            <div class="space-y-3">
+                <a asp-controller="Discovery" asp-action="Index" class="flex items-center gap-4 p-4 rounded-2xl border border-transparent hover:border-[#E3E8E5] dark:hover:border-[#23332D] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border border-[#E3E8E5] dark:border-[#23332D] flex items-center justify-center shrink-0 group-hover:bg-[#2E7D5B] group-hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">explore</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-bold text-sm text-gray-900 dark:text-[#E6F1EC]">Discover Courses</div>
+                        <div class="text-xs text-slate-500 dark:text-[#A7B8B0]">Browse & search catalog</div>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 dark:text-[#313632] group-hover:text-[#2E7D5B] transition-colors">chevron_right</span>
+                </a>
+                
+                <a asp-controller="Discovery" asp-action="Books" class="flex items-center gap-4 p-4 rounded-2xl border border-transparent hover:border-[#E3E8E5] dark:hover:border-[#23332D] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border border-[#E3E8E5] dark:border-[#23332D] flex items-center justify-center shrink-0 group-hover:bg-[#2E7D5B] group-hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">menu_book</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-bold text-sm text-gray-900 dark:text-[#E6F1EC]">Browse Books</div>
+                        <div class="text-xs text-slate-500 dark:text-[#A7B8B0]">Open Library integration</div>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 dark:text-[#313632] group-hover:text-[#2E7D5B] transition-colors">chevron_right</span>
+                </a>
+
+                <a asp-controller="Bookmarks" asp-action="Index" class="flex items-center gap-4 p-4 rounded-2xl border border-transparent hover:border-[#E3E8E5] dark:hover:border-[#23332D] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border border-[#E3E8E5] dark:border-[#23332D] flex items-center justify-center shrink-0 group-hover:bg-[#2E7D5B] group-hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">bookmark</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-bold text-sm text-gray-900 dark:text-[#E6F1EC]">My Bookmarks</div>
+                        <div class="text-xs text-slate-500 dark:text-[#A7B8B0]">@Model.TotalBookmarks saved items</div>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 dark:text-[#313632] group-hover:text-[#2E7D5B] transition-colors">chevron_right</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm">
+            <h2 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC] flex items-center gap-2 mb-6">
+                <span class="material-symbols-outlined text-blue-500 filled">auto_awesome</span>
+                Recommended
+            </h2>
+            
+            @if (Model.RecommendedCourseIds?.Any() == true)
+            {
+                <div class="flex flex-wrap gap-2 mb-6">
+                    @foreach (var id in Model.RecommendedCourseIds.Take(6))
+                    {
+                        <a asp-controller="Discovery" asp-action="Index" class="flex items-center gap-2 bg-[#F0F5F2] dark:bg-[#1B2A24] border border-[#E3E8E5] dark:border-[#23332D] hover:border-[#2E7D5B] dark:hover:border-[#7DD9AB] text-[#2E7D5B] dark:text-[#7DD9AB] px-3 py-2 rounded-xl text-xs font-bold transition-colors">
+                            <span class="material-symbols-outlined text-[16px] filled">play_circle</span>
+                            Course #@id
+                        </a>
+                    }
+                </div>
+                <a asp-controller="Discovery" asp-action="Index" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] font-bold text-sm hover:border-[#2E7D5B] hover:text-[#2E7D5B] dark:hover:border-[#7DD9AB] dark:hover:text-[#7DD9AB] transition-colors">
+                    See All Courses <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </a>
+            }
+            else
+            {
+                <div class="text-center py-10 px-4">
+                    <span class="material-symbols-outlined text-5xl text-slate-300 dark:text-[#313632] mb-3">auto_awesome</span>
+                    <p class="text-slate-500 dark:text-[#A7B8B0] text-sm">Complete courses to unlock personalized picks.</p>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const storedName = sessionStorage.getItem('lh-name');
+    if (storedName) {
+        const el = document.getElementById('hero-name');
+        if (el) el.textContent = storedName;
+    }
+</script>
+}

@@ -1,0 +1,219 @@
+@using Horizon.MVC.DTOs
+@model PagedResponseDto<BookDto>
+@{
+    ViewData["Title"] = "Discover Books";
+    var topic = ViewBag.Topic as string ?? "";
+    var totalPages = Model.TotalCount > 0 ? (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize) : 1;
+    var currentPage = Model.Page;
+}
+
+<div class="mb-10 animate-[fadeUp_0.5s_ease_forwards]">
+    <h1 class="font-serif text-4xl font-bold text-[#2E7D5B] dark:text-[#7DD9AB] mb-2 tracking-tight">
+        Discover <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#1a648c] to-blue-400">Books</span>
+    </h1>
+    <p class="font-sans text-slate-500 dark:text-[#A7B8B0]">Explore millions of books via the Open Library API.</p>
+</div>
+
+<!-- Search Bar -->
+<form method="get" asp-controller="Discovery" asp-action="Books" id="searchForm" class="mb-8 animate-[fadeUp_0.6s_ease_forwards]">
+    <div class="flex flex-col sm:flex-row gap-3 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] p-2 rounded-2xl shadow-sm focus-within:border-[#1a648c] focus-within:ring-1 focus-within:ring-[#1a648c] transition-all">
+        <div class="flex-1 flex items-center px-4">
+            <span class="material-symbols-outlined text-slate-400 mr-3">search</span>
+            <input type="text" name="topic" id="searchInput" value="@topic" placeholder="Search books by title, author, or topic..." autocomplete="off" 
+                   class="w-full bg-transparent border-none focus:ring-0 text-gray-900 dark:text-[#E6F1EC] placeholder-slate-400 text-lg" />
+        </div>
+        <div class="flex gap-2 px-2 pb-2 sm:px-0 sm:pb-0">
+            @if (!string.IsNullOrEmpty(topic))
+            {
+                <a asp-controller="Discovery" asp-action="Books" class="flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-[#1B2A24] dark:hover:bg-[#23332D] text-slate-600 dark:text-[#A7B8B0] px-4 py-3 rounded-xl font-bold transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">close</span> <span class="hidden sm:inline">Clear</span>
+                </a>
+            }
+            <button type="submit" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#1a648c] hover:bg-[#104b6b] dark:bg-[#004c6e] dark:hover:bg-[#003549] text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">
+                Search
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- Tabs -->
+<div class="flex gap-2 mb-8 animate-[fadeUp_0.7s_ease_forwards]">
+    <a asp-controller="Discovery" asp-action="Index" class="px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">play_circle</span>
+        Courses
+    </a>
+    <button class="px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors border-2 border-transparent bg-blue-50 dark:bg-blue-900/20 text-[#1a648c] dark:text-[#88cff7] border-[#1a648c] dark:border-[#88cff7] flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px] filled">menu_book</span>
+        Books (@Model.TotalCount)
+    </button>
+</div>
+
+@if (!string.IsNullOrEmpty(topic))
+{
+    <div class="mb-6 text-sm text-slate-500 dark:text-[#A7B8B0] animate-[fadeUp_0.7s_ease_forwards]">
+        Showing results for: <strong class="text-gray-900 dark:text-[#E6F1EC]">"@topic"</strong>
+        · @Model.TotalCount result(s)
+    </div>
+}
+else if (Model.Data?.Any() != true)
+{
+    <div class="text-center py-20 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl shadow-sm animate-[fadeUp_0.8s_ease_forwards]">
+        <div class="w-20 h-20 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="material-symbols-outlined text-4xl text-[#1a648c] dark:text-[#88cff7]">search</span>
+        </div>
+        <h2 class="font-serif text-2xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-2">Search for books</h2>
+        <p class="text-slate-500 dark:text-[#A7B8B0] max-w-md mx-auto mb-8">Type a topic above to explore millions of free books.</p>
+        <div class="flex flex-wrap justify-center gap-2">
+            <a href="?topic=python" class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] hover:bg-[#E3E8E5] dark:hover:bg-[#23332D] px-3 py-1.5 rounded-lg text-sm font-bold transition-colors">#python</a>
+            <a href="?topic=javascript" class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] hover:bg-[#E3E8E5] dark:hover:bg-[#23332D] px-3 py-1.5 rounded-lg text-sm font-bold transition-colors">#javascript</a>
+            <a href="?topic=architecture" class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] hover:bg-[#E3E8E5] dark:hover:bg-[#23332D] px-3 py-1.5 rounded-lg text-sm font-bold transition-colors">#architecture</a>
+        </div>
+    </div>
+}
+
+<!-- Book Grid -->
+@if (Model.Data?.Any() == true)
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-[fadeUp_0.8s_ease_forwards]" id="bookGrid">
+        @foreach (var b in Model.Data)
+        {
+            <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-[#1a648c] dark:hover:border-[#88cff7] transition-all duration-300 flex flex-col group">
+                
+                <!-- Thumbnail -->
+                <div class="h-44 bg-gradient-to-br from-[#1a648c] to-[#004c6e] dark:from-[#004c6e] dark:to-[#001e2f] relative flex items-center justify-center overflow-hidden">
+                    <span class="material-symbols-outlined text-white/30 text-6xl group-hover:scale-110 transition-transform duration-500">auto_stories</span>
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <a href="@($"https://openlibrary.org{b.Key}")" target="_blank" class="flex items-center gap-1.5 bg-white/90 text-[#1a648c] px-4 py-2 rounded-xl font-bold shadow-md hover:bg-white transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">menu_book</span> Read Now
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Book</span>
+                        @if (b.FirstPublishYear.HasValue)
+                        {
+                            <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                                @b.FirstPublishYear.Value
+                            </span>
+                        }
+                    </div>
+
+                    <h3 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] mb-2 line-clamp-2 leading-tight group-hover:text-[#1a648c] dark:group-hover:text-[#88cff7] transition-colors" title="@b.Title">
+                        @b.Title
+                    </h3>
+                    
+                    <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-600 dark:text-[#A7B8B0] mb-5 mt-auto pt-2">
+                        <span class="material-symbols-outlined text-[16px]">person</span> @b.Authors
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex gap-2 pt-4 border-t border-[#E3E8E5] dark:border-[#23332D]">
+                        <a href="@($"https://openlibrary.org{b.Key}")" target="_blank" class="flex-1 flex justify-center items-center gap-1.5 bg-[#1a648c] hover:bg-[#104b6b] dark:bg-[#004c6e] dark:hover:bg-[#003549] text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm">
+                            <span class="material-symbols-outlined text-[18px]">open_in_new</span> Details
+                        </a>
+                        
+                        <button class="w-11 h-11 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-400 hover:border-amber-500 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all shrink-0"
+                                onclick="toggleBookBm(this, '@b.Key', '@Uri.EscapeDataString(b.Title ?? "")', '@Uri.EscapeDataString(b.Authors)')"
+                                title="Bookmark">
+                            <span class="material-symbols-outlined text-[20px]">bookmark</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <div class="flex justify-center gap-2 mt-12 mb-8 animate-[fadeUp_0.8s_ease_forwards]">
+            @if (currentPage > 1)
+            {
+                <a href="?@(string.IsNullOrEmpty(topic) ? "" : $"topic={Uri.EscapeDataString(topic)}&")page=@(currentPage - 1)" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#1a648c] hover:text-[#1a648c] transition-colors">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </a>
+            }
+            @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+            {
+                if (i == currentPage)
+                {
+                    <span class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/20 text-[#1a648c] dark:text-[#88cff7] border-2 border-[#1a648c] dark:border-[#88cff7] font-bold">@i</span>
+                }
+                else
+                {
+                    <a href="?@(string.IsNullOrEmpty(topic) ? "" : $"topic={Uri.EscapeDataString(topic)}&")page=@i" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#1a648c] hover:text-[#1a648c] font-semibold transition-colors">@i</a>
+                }
+            }
+            @if (currentPage < totalPages)
+            {
+                <a href="?@(string.IsNullOrEmpty(topic) ? "" : $"topic={Uri.EscapeDataString(topic)}&")page=@(currentPage + 1)" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#1a648c] hover:text-[#1a648c] transition-colors">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </a>
+            }
+        </div>
+    }
+}
+else if (!string.IsNullOrEmpty(topic))
+{
+    <div class="text-center py-20 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl shadow-sm animate-[fadeUp_0.8s_ease_forwards]">
+        <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">search_off</span>
+        </div>
+        <h2 class="font-serif text-2xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-2">No books found</h2>
+        <p class="text-slate-500 dark:text-[#A7B8B0] max-w-md mx-auto mb-8">Try searching with different keywords or authors.</p>
+        <a asp-controller="Discovery" asp-action="Books" class="inline-flex items-center gap-2 bg-[#1a648c] hover:bg-[#104b6b] text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span> Clear Search
+        </a>
+    </div>
+}
+
+@section Scripts {
+<script>
+    async function toggleBookBm(btn, bookKey, encodedTitle, encodedAuthor) {
+        btn.disabled = true;
+        try {
+            const r = await fetch('/Discovery/BookmarkAjax', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    bookKey: bookKey, 
+                    bookTitle: decodeURIComponent(encodedTitle), 
+                    bookAuthor: decodeURIComponent(encodedAuthor),
+                    type: 'book' 
+                })
+            });
+            const data = await r.json();
+            
+            const icon = btn.querySelector('.material-symbols-outlined');
+            if (data.isBookmarked) {
+                btn.classList.add('border-amber-500', 'text-amber-500', 'bg-amber-50', 'dark:bg-amber-900/20');
+                btn.classList.remove('border-[#E3E8E5]', 'dark:border-[#23332D]', 'text-slate-400');
+                icon.classList.add('filled');
+                if(typeof showToast === 'function') showToast('Book added to library!', 'success');
+            } else {
+                btn.classList.remove('border-amber-500', 'text-amber-500', 'bg-amber-50', 'dark:bg-amber-900/20');
+                btn.classList.add('border-[#E3E8E5]', 'dark:border-[#23332D]', 'text-slate-400');
+                icon.classList.remove('filled');
+                if(typeof showToast === 'function') showToast('Book removed', 'info');
+            }
+        } catch {
+            if(typeof showToast === 'function') showToast('Could not update bookmark', 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    // Live search debounce
+    let searchTimer;
+    document.getElementById('searchInput').addEventListener('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            const q = this.value.trim();
+            if (q.length > 2 || q.length === 0) document.getElementById('searchForm').submit();
+        }, 800);
+    });
+</script>
+}

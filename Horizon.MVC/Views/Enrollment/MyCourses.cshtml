@@ -1,0 +1,228 @@
+@using Horizon.MVC.DTOs
+@model List<EnrolledCourseViewModel>
+@{
+    ViewData["Title"] = "My Courses";
+    var courseFrontend = ViewBag.CourseFrontendUrl as string ?? "https://localhost:7081";
+    var completed = Model?.Count(c => c.IsCompleted) ?? 0;
+    var inProgress = Model?.Count(c => c.IsStarted && !c.IsCompleted) ?? 0;
+    var notStarted = Model?.Count(c => !c.IsStarted) ?? 0;
+    var totalXP = Model?.Sum(c => c.XP) ?? 0;
+}
+
+<div class="mb-10 animate-[fadeUp_0.5s_ease_forwards]">
+    <h1 class="font-serif text-4xl font-bold text-[#2E7D5B] dark:text-[#7DD9AB] mb-2 tracking-tight">
+        My Courses
+    </h1>
+    <p class="font-sans text-slate-500 dark:text-[#A7B8B0]">Track your learning progress and resume your studies.</p>
+</div>
+
+<!-- Summary Stats -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10 animate-[fadeUp_0.6s_ease_forwards]">
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-6 text-center shadow-sm">
+        <div class="text-3xl font-bold text-[#2E7D5B] dark:text-[#7DD9AB] font-serif">@(Model?.Count ?? 0)</div>
+        <div class="text-xs text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider font-semibold mt-1">Total Enrolled</div>
+    </div>
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-6 text-center shadow-sm">
+        <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 font-serif">@completed</div>
+        <div class="text-xs text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider font-semibold mt-1">Completed</div>
+    </div>
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-6 text-center shadow-sm">
+        <div class="text-3xl font-bold text-amber-600 dark:text-amber-400 font-serif">@inProgress</div>
+        <div class="text-xs text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider font-semibold mt-1">In Progress</div>
+    </div>
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-6 text-center shadow-sm">
+        <div class="text-3xl font-bold text-slate-400 dark:text-slate-500 font-serif">@notStarted</div>
+        <div class="text-xs text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider font-semibold mt-1">Not Started</div>
+    </div>
+    <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-6 text-center shadow-md text-white">
+        <div class="text-3xl font-bold font-serif flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined filled text-amber-200">bolt</span>
+            @totalXP
+        </div>
+        <div class="text-xs text-amber-100 uppercase tracking-wider font-semibold mt-1">Total XP</div>
+    </div>
+</div>
+
+@if (Model?.Any() == true)
+{
+    <!-- Filter Tabs -->
+    <div class="flex flex-wrap gap-2 mb-8 animate-[fadeUp_0.7s_ease_forwards]">
+        <button class="filter-btn active px-4 py-2 rounded-lg font-semibold text-sm transition-colors border-2 border-transparent bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-[#2E7D5B] dark:border-[#7DD9AB]" data-status="all">
+            All (@Model.Count)
+        </button>
+        <button class="filter-btn px-4 py-2 rounded-lg font-semibold text-sm transition-colors border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24]" data-status="in-progress">
+            In Progress (@inProgress)
+        </button>
+        <button class="filter-btn px-4 py-2 rounded-lg font-semibold text-sm transition-colors border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24]" data-status="completed">
+            Completed (@completed)
+        </button>
+        <button class="filter-btn px-4 py-2 rounded-lg font-semibold text-sm transition-colors border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24]" data-status="not-started">
+            Not Started (@notStarted)
+        </button>
+    </div>
+
+    <!-- Course Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-[fadeUp_0.8s_ease_forwards]" id="courseGrid">
+        @foreach (var c in Model)
+        {
+            var statusClass = c.IsCompleted ? "completed" : c.IsStarted ? "in-progress" : "not-started";
+            var statusLabel = c.IsCompleted ? "Completed" : c.IsStarted ? "In Progress" : "Not Started";
+            var statusColor = c.IsCompleted ? "bg-emerald-500" : c.IsStarted ? "bg-[#2E7D5B]" : "bg-slate-400";
+            var borderTopColor = c.IsCompleted ? "border-emerald-500" : c.IsStarted ? "border-[#2E7D5B]" : "border-slate-300 dark:border-slate-600";
+
+            <div class="course-card @statusClass bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border-t-4 @borderTopColor" data-status="@statusClass">
+                
+                <!-- Thumbnail -->
+                <div class="h-32 bg-gradient-to-br from-[#2E7D5B] to-[#096444] dark:from-[#1B2A24] dark:to-[#0A140F] relative flex items-center justify-center">
+                    @if (!string.IsNullOrEmpty(c.ThumbnailUrl))
+                    {
+                        <img src="@c.ThumbnailUrl" alt="@c.Title" class="w-full h-full object-cover opacity-80" loading="lazy" />
+                    }
+                    else
+                    {
+                        <span class="material-symbols-outlined text-white/50 text-5xl">menu_book</span>
+                    }
+                    <span class="absolute top-3 right-3 @statusColor text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider uppercase shadow-sm">
+                        @statusLabel
+                    </span>
+                </div>
+
+                <!-- Content -->
+                <div class="p-5 flex-1 flex flex-col">
+                    <h3 class="font-serif font-bold text-lg text-gray-900 dark:text-[#E6F1EC] mb-2 line-clamp-2 leading-tight">
+                        @(string.IsNullOrEmpty(c.Title) ? $"Course #{c.CourseId}" : c.Title)
+                    </h3>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        @if (!string.IsNullOrEmpty(c.Category))
+                        {
+                            <span class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">@c.Category</span>
+                        }
+                        @if (!string.IsNullOrEmpty(c.Level))
+                        {
+                            <span class="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">@c.Level</span>
+                        }
+                        @if (c.XP > 0)
+                        {
+                            <span class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px] filled">bolt</span> @c.XP XP
+                            </span>
+                        }
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider">Progress</span>
+                            <span class="text-xs font-bold text-[#2E7D5B] dark:text-[#7DD9AB]">@c.Percentage%</span>
+                        </div>
+                        <div class="h-2 w-full bg-[#E3E8E5] dark:bg-[#23332D] rounded-full overflow-hidden">
+                            <div class="h-full @(c.IsCompleted ? "bg-emerald-500" : "bg-[#2E7D5B]") rounded-full transition-all duration-1000 ease-out" style="width: @c.Percentage%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Meta details -->
+                    <div class="mt-auto space-y-1.5">
+                        @if (c.IsStarted && !c.IsCompleted && c.LastVideoTimestampSeconds > 0)
+                        {
+                            <div class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-[#A7B8B0]">
+                                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                                Resume at <strong class="text-gray-700 dark:text-[#E6F1EC]">@c.ResumeTime</strong> · Lesson @c.LastLessonId
+                            </div>
+                        }
+                        @if (c.LastAccessed.HasValue)
+                        {
+                            <div class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-[#A7B8B0]">
+                                <span class="material-symbols-outlined text-[14px]">history</span>
+                                Last studied: @c.LastAccessed.Value.ToString("MMM dd, yyyy")
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex gap-2 mt-5 pt-4 border-t border-[#E3E8E5] dark:border-[#23332D]">
+                        @{
+                            var courseUrl = !string.IsNullOrEmpty(c.VideoUrl) ? c.VideoUrl : $"{courseFrontend}/courses/{c.CourseId}";
+                        }
+                        <a href="@courseUrl" target="_blank" class="flex-1 flex justify-center items-center gap-1.5 py-2 px-3 rounded-lg text-sm font-bold transition-colors @(c.IsCompleted ? "bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B]" : "bg-[#2E7D5B] hover:bg-[#096444] text-white")">
+                            <span class="material-symbols-outlined text-[18px]">@(c.IsCompleted ? "replay" : "play_arrow")</span>
+                            @(c.IsCompleted ? "Rewatch" : c.IsStarted ? "Resume" : "Start")
+                        </a>
+                        
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border-2 transition-colors @(c.IsCompleted ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 cursor-default" : "border-[#E3E8E5] dark:border-[#23332D] text-slate-400 hover:border-emerald-500 hover:text-emerald-500 dark:hover:bg-[#1B2A24]")"
+                                onclick="@(!c.IsCompleted ? $"markComplete({c.CourseId}, {c.LastLessonId + 1}, this)" : "return false;")"
+                                @(c.IsCompleted ? "disabled" : "")
+                                title="Mark next lesson complete">
+                            <span class="material-symbols-outlined text-[20px] @(c.IsCompleted ? "filled" : "")">check_circle</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center py-20 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl shadow-sm animate-[fadeUp_0.7s_ease_forwards]">
+        <div class="w-20 h-20 bg-[#F0F5F2] dark:bg-[#1B2A24] rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-4xl text-[#2E7D5B] dark:text-[#7DD9AB]">menu_book</span>
+        </div>
+        <h2 class="font-serif text-2xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-2">No enrolled courses yet</h2>
+        <p class="text-slate-500 dark:text-[#A7B8B0] max-w-md mx-auto mb-6">Start your learning journey by discovering courses in our academic catalog.</p>
+        <a asp-controller="Discovery" asp-action="Index" class="inline-flex items-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">explore</span> Discover Courses
+        </a>
+    </div>
+}
+
+@section Scripts {
+<script>
+    // Tab filtering
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Reset styles
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active', 'bg-[#F0F5F2]', 'dark:bg-[#1B2A24]', 'text-[#2E7D5B]', 'dark:text-[#7DD9AB]', 'border-[#2E7D5B]', 'dark:border-[#7DD9AB]');
+                b.classList.add('border-[#E3E8E5]', 'dark:border-[#23332D]', 'text-slate-500', 'dark:text-[#A7B8B0]');
+            });
+            
+            // Apply active styles
+            const target = e.currentTarget;
+            target.classList.add('active', 'bg-[#F0F5F2]', 'dark:bg-[#1B2A24]', 'text-[#2E7D5B]', 'dark:text-[#7DD9AB]', 'border-[#2E7D5B]', 'dark:border-[#7DD9AB]');
+            target.classList.remove('border-[#E3E8E5]', 'dark:border-[#23332D]', 'text-slate-500', 'dark:text-[#A7B8B0]');
+
+            const status = target.getAttribute('data-status');
+            
+            // Filter cards
+            document.querySelectorAll('.course-card').forEach(card => {
+                if (status === 'all' || card.getAttribute('data-status') === status) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    async function markComplete(courseId, lessonId, btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin">hourglass_empty</span>';
+        try {
+            const r = await fetch(`/api/progress/complete/${courseId}/${lessonId}`, { method: 'POST' });
+            if (r.ok) {
+                // Assuming you have a toast function in site.js
+                if(typeof showToast === 'function') showToast('Lesson marked complete! +10 XP', 'success');
+                setTimeout(() => location.reload(), 1200);
+            } else {
+                if(typeof showToast === 'function') showToast('Could not mark complete', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span>';
+            }
+        } catch {
+            if(typeof showToast === 'function') showToast('Network error', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span>';
+        }
+    }
+</script>
+}

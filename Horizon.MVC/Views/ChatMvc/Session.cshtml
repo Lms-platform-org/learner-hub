@@ -1,0 +1,154 @@
+@{
+    ViewData["Title"] = "Chat Session";
+    ViewData["HideSidebar"] = true; // Full width for chat
+}
+
+<div class="h-[calc(100vh-100px)] flex bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl overflow-hidden shadow-sm animate-[fadeUp_0.5s_ease_forwards] mt-4">
+    
+    <!-- Sidebar / Chat List -->
+    <div class="w-80 flex-shrink-0 border-r border-[#E3E8E5] dark:border-[#23332D] flex flex-col bg-[#F7F9F6] dark:bg-[#101411]">
+        <div class="p-4 border-b border-[#E3E8E5] dark:border-[#23332D] flex justify-between items-center bg-white dark:bg-[#16211D]">
+            <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC]">Messages</h2>
+            <button class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-[#1a648c] hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[20px]">edit_square</span>
+            </button>
+        </div>
+        
+        <div class="p-4">
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+                <input type="text" placeholder="Search chats..." class="w-full bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-xl pl-10 pr-4 py-2 text-sm text-gray-900 dark:text-[#E6F1EC] focus:border-[#1a648c] focus:ring-0" />
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+            <!-- Active Chat Item -->
+            <div class="p-4 border-b border-[#E3E8E5] dark:border-[#23332D] bg-white dark:bg-[#1B2A24] cursor-pointer border-l-4 border-l-[#1a648c]">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-[#1a648c] dark:text-[#88cff7] font-bold text-lg border-2 border-white dark:border-[#16211D]">
+                            DR
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#1B2A24] rounded-full"></div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-baseline mb-0.5">
+                            <h4 class="font-bold text-gray-900 dark:text-[#E6F1EC] truncate">Dr. Robert Chen</h4>
+                            <span class="text-xs font-bold text-[#1a648c] dark:text-[#88cff7]">10:42 AM</span>
+                        </div>
+                        <p class="text-sm text-slate-500 dark:text-[#A7B8B0] truncate">I will review your assignment today.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Inactive Chat Item -->
+            <div class="p-4 border-b border-[#E3E8E5] dark:border-[#23332D] cursor-pointer hover:bg-white dark:hover:bg-[#16211D] transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 font-bold text-lg">
+                        SJ
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-baseline mb-0.5">
+                            <h4 class="font-bold text-gray-900 dark:text-[#E6F1EC] truncate">Prof. Sarah Jenkins</h4>
+                            <span class="text-xs font-bold text-slate-400">Yesterday</span>
+                        </div>
+                        <p class="text-sm text-slate-500 dark:text-[#A7B8B0] truncate flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px] text-slate-400">done_all</span> Thanks for the update!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="flex-1 flex flex-col bg-[#F7F9F6] dark:bg-[#101411] relative">
+        <!-- Chat Header -->
+        <div class="p-4 border-b border-[#E3E8E5] dark:border-[#23332D] bg-white dark:bg-[#16211D] flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-[#1a648c] dark:text-[#88cff7] font-bold">
+                    DR
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900 dark:text-[#E6F1EC] leading-tight">Dr. Robert Chen</h3>
+                    <p class="text-xs font-bold text-emerald-500">Online</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1B2A24] transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                </button>
+                <button class="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1B2A24] transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- Timestamp -->
+            <div class="flex justify-center">
+                <span class="bg-[#E3E8E5] dark:bg-[#23332D] text-slate-600 dark:text-slate-300 text-xs font-bold px-3 py-1 rounded-full">Today</span>
+            </div>
+
+            <!-- Received Message -->
+            <div class="flex justify-start">
+                <div class="max-w-[70%]">
+                    <div class="bg-white dark:bg-[#1B2A24] border border-[#E3E8E5] dark:border-[#23332D] text-gray-900 dark:text-[#E6F1EC] p-3 rounded-2xl rounded-tl-sm shadow-sm">
+                        Hello! I received your inquiry about the Advanced Machine Learning module. How can I help you?
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 mt-1 ml-1 block">10:30 AM</span>
+                </div>
+            </div>
+
+            <!-- Sent Message -->
+            <div class="flex justify-end">
+                <div class="max-w-[70%]">
+                    <div class="bg-[#1a648c] dark:bg-[#004c6e] text-white p-3 rounded-2xl rounded-tr-sm shadow-sm">
+                        Hi Professor! Yes, I was wondering if we need to complete the prerequisite dataset normalization before tomorrow's lab?
+                    </div>
+                    <div class="flex justify-end items-center gap-1 mt-1 mr-1">
+                        <span class="text-[10px] font-bold text-slate-400">10:35 AM</span>
+                        <span class="material-symbols-outlined text-[12px] text-[#1a648c] dark:text-[#88cff7]">done_all</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Received Message -->
+            <div class="flex justify-start">
+                <div class="max-w-[70%]">
+                    <div class="bg-white dark:bg-[#1B2A24] border border-[#E3E8E5] dark:border-[#23332D] text-gray-900 dark:text-[#E6F1EC] p-3 rounded-2xl rounded-tl-sm shadow-sm">
+                        Yes, please do. I will review your assignment today to give you some early feedback as well.
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 mt-1 ml-1 block">10:42 AM</span>
+                </div>
+            </div>
+            
+            <!-- System Notice (Spam Prevention Example) -->
+            <div class="flex justify-center mt-8">
+                <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 text-amber-700 dark:text-amber-400 px-4 py-2 rounded-xl text-xs font-bold text-center flex items-center gap-2 max-w-sm">
+                    <span class="material-symbols-outlined text-[16px]">security</span>
+                    Dr. Chen has accepted your chat request. You may now message freely.
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-4 border-t border-[#E3E8E5] dark:border-[#23332D] bg-white dark:bg-[#16211D] shrink-0">
+            <form class="flex items-end gap-3">
+                <button type="button" class="w-12 h-12 shrink-0 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1B2A24] transition-colors">
+                    <span class="material-symbols-outlined text-[24px]">attach_file</span>
+                </button>
+                <div class="flex-1 relative">
+                    <textarea rows="1" class="w-full bg-[#F7F9F6] dark:bg-[#101411] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl pl-5 pr-12 py-3.5 text-gray-900 dark:text-[#E6F1EC] focus:border-[#1a648c] focus:ring-0 resize-none max-h-32" placeholder="Type a message..."></textarea>
+                    <button type="button" class="absolute right-3 bottom-2 w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-[#1a648c] transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">mood</span>
+                    </button>
+                </div>
+                <button type="submit" class="w-12 h-12 shrink-0 rounded-full bg-[#1a648c] hover:bg-[#104b6b] dark:bg-[#004c6e] dark:hover:bg-[#003549] text-white flex items-center justify-center shadow-md transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">send</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

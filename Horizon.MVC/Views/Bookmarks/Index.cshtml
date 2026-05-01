@@ -1,0 +1,283 @@
+@using Horizon.MVC.DTOs
+@model PagedResponseDto<BookmarkDto>
+
+@{
+    ViewData["Title"] = "My Bookmarks";
+    var courses = Model.Data?.Where(b => b.Type == "course").ToList() ?? new List<BookmarkDto>();
+    var books = Model.Data?.Where(b => b.Type == "book").ToList() ?? new List<BookmarkDto>();
+}
+
+<div class="mb-10 animate-[fadeUp_0.5s_ease_forwards]">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="font-serif text-4xl font-bold text-[#2E7D5B] dark:text-[#7DD9AB] mb-2 tracking-tight">
+                My Bookmarks
+            </h1>
+            <p class="font-sans text-slate-500 dark:text-[#A7B8B0]">Saved courses and books for later</p>
+        </div>
+        <a asp-controller="Discovery" asp-action="Index" class="inline-flex items-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white px-5 py-2.5 rounded-xl font-bold transition-colors shadow-sm self-start sm:self-auto">
+            <span class="material-symbols-outlined text-[18px]">explore</span> Discover
+        </a>
+    </div>
+</div>
+
+@if (Model.Data?.Any() != true)
+{
+    <div class="text-center py-20 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl shadow-sm animate-[fadeUp_0.6s_ease_forwards]">
+        <div class="w-20 h-20 bg-amber-50 dark:bg-amber-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-4xl text-amber-500">bookmark_add</span>
+        </div>
+        <h2 class="font-serif text-2xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-2">No bookmarks yet</h2>
+        <p class="text-slate-500 dark:text-[#A7B8B0] max-w-md mx-auto mb-6">Start exploring our catalog and bookmark items to save them here for quick access.</p>
+        <a asp-controller="Discovery" asp-action="Index" class="inline-flex items-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-sm">
+            Explore Now
+        </a>
+    </div>
+}
+else
+{
+    <!-- Filter Bar -->
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-4 mb-10 flex flex-wrap gap-4 items-center shadow-sm animate-[fadeUp_0.6s_ease_forwards]">
+        <span class="material-symbols-outlined text-slate-400 ml-2 hidden sm:block">filter_list</span>
+        
+        <input type="text" id="filterText" placeholder="Search saved items..." onkeyup="applyFilter()"
+               class="flex-1 min-w-[200px] bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-2.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400">
+        
+        <select id="filterType" onchange="applyFilter()"
+                class="bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-2.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors cursor-pointer">
+            <option value="all">All Types</option>
+            <option value="course">Courses Only</option>
+            <option value="book">Books Only</option>
+        </select>
+        
+        <select id="filterCategory" onchange="applyFilter()"
+                class="bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-2.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors cursor-pointer">
+            <option value="all">All Categories</option>
+            <option value="python">Python</option>
+            <option value="web">Web</option>
+            <option value="ml">Machine Learning</option>
+            <option value="general">General</option>
+        </select>
+    </div>
+
+    <!-- Courses -->
+    @if (courses.Any())
+    {
+        <div class="mb-12 bm-type-section" data-section-type="course">
+            <div class="flex items-center gap-2 mb-6 animate-[fadeUp_0.7s_ease_forwards]">
+                <span class="material-symbols-outlined text-[#2E7D5B] dark:text-[#7DD9AB] text-[24px]">play_circle</span>
+                <h2 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC]">Saved Courses</h2>
+                <span id="courseCount" class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] text-xs font-bold px-2.5 py-1 rounded-full ml-2">@courses.Count</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-[fadeUp_0.8s_ease_forwards]" id="courseGrid">
+                @foreach (var c in courses)
+                {
+                    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-[#2E7D5B] dark:hover:border-[#7DD9AB] transition-all duration-300 flex flex-col bm-item group" data-type="course" data-category="@(c.Category?.ToLower() ?? "")">
+                        
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-serif font-bold text-lg text-gray-900 dark:text-[#E6F1EC] mb-1.5 group-hover:text-[#2E7D5B] dark:group-hover:text-[#7DD9AB] transition-colors">Course #@c.CourseId</h3>
+                                @if (!string.IsNullOrEmpty(c.Category))
+                                {
+                                    <span class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">@c.Category</span>
+                                }
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[24px]">play_arrow</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 rounded-xl p-4 mb-5 flex-1 transition-colors focus-within:border-amber-400 dark:focus-within:border-amber-600">
+                            <label class="flex items-center gap-1.5 text-[10px] font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider mb-2">
+                                <span class="material-symbols-outlined text-[14px]">edit_note</span> Personal Note
+                            </label>
+                            <textarea class="w-full bg-transparent border-none focus:ring-0 text-sm text-gray-800 dark:text-[#E6F1EC] placeholder-amber-700/40 dark:placeholder-amber-500/40 resize-none min-h-[60px] p-0" 
+                                      placeholder="Add a note about why you saved this..."
+                                      data-id="@c.Id" onchange="saveNote(@c.Id, this)">@c.PersonalNote</textarea>
+                        </div>
+                        
+                        <div class="flex gap-2 pt-4 border-t border-[#E3E8E5] dark:border-[#23332D]">
+                            <a asp-controller="Progress" asp-action="Index" asp-route-courseId="@c.CourseId" class="flex-1 flex justify-center items-center gap-1.5 bg-[#2E7D5B] hover:bg-[#096444] text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[18px]">login</span> Go to Course
+                            </a>
+                            <button class="w-11 h-11 flex items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-400 text-amber-500 hover:bg-transparent hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-400 transition-all shrink-0" 
+                                    onclick="removeBm(@c.Id, this, 'course', @c.CourseId)" title="Remove bookmark">
+                                <span class="material-symbols-outlined text-[20px] filled">bookmark</span>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Books -->
+    @if (books.Any())
+    {
+        <div class="mb-12 bm-type-section" data-section-type="book">
+            <div class="flex items-center gap-2 mb-6 animate-[fadeUp_0.7s_ease_forwards]">
+                <span class="material-symbols-outlined text-[#1a648c] dark:text-[#88cff7] text-[24px]">menu_book</span>
+                <h2 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC]">Saved Books</h2>
+                <span id="bookCount" class="bg-blue-50 dark:bg-blue-900/20 text-[#1a648c] dark:text-[#88cff7] text-xs font-bold px-2.5 py-1 rounded-full ml-2">@books.Count</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-[fadeUp_0.8s_ease_forwards]" id="bookGrid">
+                @foreach (var b in books)
+                {
+                    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-[#1a648c] dark:hover:border-[#88cff7] transition-all duration-300 flex flex-col bm-item group" data-type="book" data-category="@(b.Category?.ToLower() ?? "")">
+                        
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1 pr-4">
+                                <h3 class="font-serif font-bold text-lg text-gray-900 dark:text-[#E6F1EC] mb-1.5 line-clamp-2 group-hover:text-[#1a648c] dark:group-hover:text-[#88cff7] transition-colors" title="@b.BookTitle">@b.BookTitle</h3>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-xs text-slate-500 dark:text-[#A7B8B0] flex items-center gap-1 font-medium"><span class="material-symbols-outlined text-[14px]">person</span> @(string.IsNullOrEmpty(b.BookAuthor) ? "Unknown" : b.BookAuthor)</span>
+                                    @if (!string.IsNullOrEmpty(b.Category))
+                                    {
+                                        <span class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">@b.Category</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-[#1a648c] dark:text-[#88cff7] flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[24px]">auto_stories</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-900/30 rounded-xl p-4 mb-5 flex-1 transition-colors focus-within:border-[#1a648c] dark:focus-within:border-[#88cff7]">
+                            <label class="flex items-center gap-1.5 text-[10px] font-bold text-[#1a648c] dark:text-[#88cff7] uppercase tracking-wider mb-2">
+                                <span class="material-symbols-outlined text-[14px]">edit_note</span> Personal Note
+                            </label>
+                            <textarea class="w-full bg-transparent border-none focus:ring-0 text-sm text-gray-800 dark:text-[#E6F1EC] placeholder-[#1a648c]/40 dark:placeholder-[#88cff7]/40 resize-none min-h-[60px] p-0" 
+                                      placeholder="Add a note about this book..."
+                                      data-id="@b.Id" onchange="saveNote(@b.Id, this)">@b.PersonalNote</textarea>
+                        </div>
+                        
+                        <div class="flex gap-2 pt-4 border-t border-[#E3E8E5] dark:border-[#23332D]">
+                            @{
+                                var readUrl = !string.IsNullOrEmpty(b.BookKey) ? $"https://openlibrary.org{b.BookKey}" : $"https://openlibrary.org/search?q={Uri.EscapeDataString(b.BookTitle ?? "")}";
+                            }
+                            <a href="@readUrl" target="_blank" class="flex-1 flex justify-center items-center gap-1.5 bg-[#1a648c] hover:bg-[#104b6b] dark:bg-[#004c6e] dark:hover:bg-[#003549] text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[18px]">open_in_new</span> Read Book
+                            </a>
+                            <button class="w-11 h-11 flex items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-400 text-amber-500 hover:bg-transparent hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-400 transition-all shrink-0" 
+                                    onclick="removeBm(@b.Id, this, 'book', '@b.BookKey')" title="Remove bookmark">
+                                <span class="material-symbols-outlined text-[20px] filled">bookmark</span>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Pagination -->
+    @if (Model.TotalCount > Model.PageSize)
+    {
+        <div class="flex justify-center gap-2 mt-8 mb-8 animate-[fadeUp_0.8s_ease_forwards]">
+            @if (Model.Page > 1)
+            {
+                <a href="?page=@(Model.Page - 1)" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B] transition-colors">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </a>
+            }
+            <span class="w-10 h-10 flex items-center justify-center rounded-xl bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-2 border-[#2E7D5B] dark:border-[#7DD9AB] font-bold">@Model.Page</span>
+            @if (Model.Page * Model.PageSize < Model.TotalCount)
+            {
+                <a href="?page=@(Model.Page + 1)" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B] transition-colors">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </a>
+            }
+        </div>
+    }
+}
+
+@section Scripts {
+<script>
+    async function saveNote(id, textarea) {
+        const note = textarea.value.trim();
+        try {
+            const r = await fetch(`/Bookmarks/UpdateNote/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ note })
+            });
+            if (r.ok) {
+                if(typeof showToast === 'function') showToast('Note saved', 'success', 2000);
+            }
+            else {
+                if(typeof showToast === 'function') showToast('Failed to save note', 'error');
+            }
+        } catch { 
+            if(typeof showToast === 'function') showToast('Error saving note', 'error'); 
+        }
+    }
+
+    async function removeBm(id, btn, type, targetId) {
+        btn.disabled = true;
+        try {
+            const r = await fetch(`/Bookmarks/DeleteAjax/${id}`, { method: 'POST' });
+            if (r.ok) {
+                const card = btn.closest('.bm-item');
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95)';
+                card.style.transition = 'all 0.3s ease';
+                setTimeout(() => {
+                    card.remove();
+                    BookmarkState.remove(type, targetId);
+                    applyFilter();
+                    if(typeof showToast === 'function') showToast('Bookmark removed', 'info');
+                }, 300);
+            } else {
+                if(typeof showToast === 'function') showToast('Failed to remove', 'error');
+                btn.disabled = false;
+            }
+        } catch {
+            if(typeof showToast === 'function') showToast('Error removing', 'error');
+            btn.disabled = false;
+        }
+    }
+
+    function applyFilter() {
+        const text = document.getElementById('filterText').value.toLowerCase();
+        const type = document.getElementById('filterType').value;
+        const cat = document.getElementById('filterCategory').value;
+        
+        let cCount = 0; let bCount = 0;
+
+        document.querySelectorAll('.bm-item').forEach(el => {
+            const elType = el.dataset.type;
+            const elCat = el.dataset.category;
+            const elText = el.textContent.toLowerCase();
+
+            const matchType = (type === 'all' || elType === type);
+            const matchCat = (cat === 'all' || elCat.includes(cat));
+            const matchText = (text === '' || elText.includes(text));
+
+            if (matchType && matchCat && matchText) {
+                el.style.display = 'flex';
+                if (elType === 'course') cCount++;
+                if (elType === 'book') bCount++;
+            } else {
+                el.style.display = 'none';
+            }
+        });
+
+        const totalItemsLeft = document.querySelectorAll('.bm-item').length;
+        if (totalItemsLeft === 0) {
+            // Optional: Show empty state
+        }
+
+        // Update counts and hide empty sections
+        const cSec = document.querySelector('[data-section-type="course"]');
+        if (cSec) {
+            cSec.style.display = cCount > 0 ? 'block' : 'none';
+            document.getElementById('courseCount').textContent = cCount;
+        }
+        const bSec = document.querySelector('[data-section-type="book"]');
+        if (bSec) {
+            bSec.style.display = bCount > 0 ? 'block' : 'none';
+            document.getElementById('bookCount').textContent = bCount;
+        }
+    }
+</script>
+}

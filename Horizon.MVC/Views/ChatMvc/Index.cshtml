@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Academic Chat";
+}
+
+<div class="max-w-3xl mx-auto py-10 animate-[fadeUp_0.5s_ease_forwards]">
+    
+    <div class="text-center mb-10">
+        <div class="w-20 h-20 bg-[#F0F5F2] dark:bg-[#1B2A24] rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <span class="material-symbols-outlined text-4xl text-[#2E7D5B] dark:text-[#7DD9AB]">forum</span>
+        </div>
+        <h1 class="font-serif text-4xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-4">Academic Communication</h1>
+        <p class="text-slate-500 dark:text-[#A7B8B0] max-w-lg mx-auto leading-relaxed">
+            A secure gateway for structured teacher-student collaboration, peer discussions, and institutional messaging.
+        </p>
+    </div>
+
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 sm:p-12 shadow-sm">
+        
+        <div class="flex items-center gap-3 mb-8 pb-6 border-b border-[#E3E8E5] dark:border-[#23332D]">
+            <span class="material-symbols-outlined text-[#2E7D5B] dark:text-[#7DD9AB] text-[24px]">add_comment</span>
+            <h2 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC]">Create New Session</h2>
+        </div>
+
+        <form method="post" action="/chat/start-session" class="space-y-6">
+            <div>
+                <label class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Student ID</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">person</span>
+                    <input type="text" name="studentId" placeholder="e.g. S-10023" required 
+                           class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl pl-12 pr-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400" />
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Teacher ID</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">school</span>
+                    <input type="text" name="teacherId" placeholder="e.g. T-88214" required 
+                           class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl pl-12 pr-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400" />
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full flex items-center justify-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-sm group">
+                    Start Session
+                    <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+                </button>
+            </div>
+        </form>
+        
+        <div class="mt-8 p-5 rounded-2xl bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 flex gap-4">
+            <span class="material-symbols-outlined text-amber-500 shrink-0">info</span>
+            <div class="text-sm text-amber-800 dark:text-amber-400/90 leading-relaxed">
+                All communications are recorded for institutional review and must adhere to The Horizon's code of conduct.
+            </div>
+        </div>
+        
+    </div>
+</div>

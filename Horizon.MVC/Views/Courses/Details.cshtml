@@ -1,0 +1,317 @@
+@model Horizon.MVC.DTOs.CourseReadDTO
+
+@{
+    ViewData["Title"] = Model.Title;
+    var comments = ViewBag.Comments as IEnumerable<Horizon.MVC.DTOs.CommentResponseDto>;
+    bool isEnrolled = ViewBag.IsEnrolled ?? false;
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var currentUserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+
+    if (!isEnrolled && (currentUserId == "jayraj" || currentUserEmail == "jayraj"))
+    {
+        isEnrolled = true;
+    }
+    
+    bool isInstructor = User.IsInRole("Teacher") && 
+                       (Model.InstructorId == currentUserId || Model.InstructorId == currentUserEmail || Model.InstructorId == "jayraj");
+}
+
+<div class="max-w-7xl mx-auto mb-16 animate-[fadeUp_0.5s_ease_forwards]">
+    @if (TempData["Success"] != null)
+    {
+        <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 text-emerald-600 dark:text-emerald-400 p-4 rounded-xl text-sm font-bold mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined filled">check_circle</span> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 p-4 rounded-xl text-sm font-bold mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined filled">error</span> @TempData["Error"]
+        </div>
+    }
+
+    <!-- Hero Section -->
+    <div class="bg-[#1a648c] dark:bg-[#004c6e] rounded-3xl p-8 sm:p-12 mb-8 text-white shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+        <div class="relative z-10 flex flex-col md:flex-row gap-8 justify-between items-start md:items-center">
+            <div class="flex-1">
+                <div class="inline-flex items-center gap-2 bg-white/20 px-3 py-1.5 rounded-lg text-sm font-bold mb-4 backdrop-blur-sm">
+                    <span class="material-symbols-outlined text-[18px]">library_books</span> Module Overview
+                </div>
+                <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">@Model.Title</h1>
+                <div class="flex flex-wrap gap-4 text-sm font-bold text-white/80 uppercase tracking-wider">
+                    <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px] text-[#7DD9AB]">person</span> @Model.InstructorId</span>
+                    <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px] text-[#7DD9AB]">folder</span> @Model.Category</span>
+                    <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px] text-[#7DD9AB]">schedule</span> @Model.Duration</span>
+                </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl text-center min-w-[200px]">
+                <span class="block text-sm font-bold text-white/80 uppercase tracking-widest mb-1">Tuition</span>
+                <span class="font-serif text-4xl font-bold">@Model.Price.ToString("C")</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-8">
+            <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] p-8 rounded-3xl shadow-sm">
+                <h4 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC] mb-4">Course Specification</h4>
+                <p class="text-slate-600 dark:text-[#A7B8B0] text-lg leading-relaxed whitespace-pre-line">@Model.Description</p>
+            </div>
+
+            <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] p-8 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC]">Curriculum Content</h4>
+                    <span class="bg-blue-50 dark:bg-blue-900/20 text-[#1a648c] dark:text-[#88cff7] px-4 py-1.5 rounded-full text-sm font-bold border border-[#1a648c]/20">@Model.Videos.Count() Sessions</span>
+                </div>
+
+                @if (isEnrolled || isInstructor)
+                {
+                    @if (Model.Videos.Any())
+                    {
+                        <div class="space-y-4">
+                            @foreach (var video in Model.Videos)
+                            {
+                                <div class="flex items-center gap-4 p-4 rounded-2xl bg-[#F7F9F6] dark:bg-[#101411] border border-[#E3E8E5] dark:border-[#23332D] group hover:border-[#1a648c] dark:hover:border-[#88cff7] transition-colors">
+                                    <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-[#1a648c] dark:text-[#88cff7] flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined filled">play_circle</span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h6 class="font-bold text-gray-900 dark:text-[#E6F1EC] mb-1">Academic Session Clip</h6>
+                                        <p class="text-sm text-slate-500 dark:text-[#A7B8B0] truncate">@video.VideoUrl</p>
+                                    </div>
+                                    <button type="button" onclick="playVideo('@video.VideoUrl', '@Model.Title.Replace("'", "\\'")')" class="bg-white dark:bg-[#1B2A24] text-[#1a648c] dark:text-[#88cff7] border border-[#E3E8E5] dark:border-[#23332D] hover:border-[#1a648c] px-4 py-2 rounded-xl text-sm font-bold transition-colors whitespace-nowrap shadow-sm">
+                                        Watch
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-12 bg-[#F7F9F6] dark:bg-[#101411] rounded-2xl border border-[#E3E8E5] dark:border-[#23332D]">
+                            <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3">videocam_off</span>
+                            <p class="text-slate-500 dark:text-[#A7B8B0] font-medium">No active sessions have been uploaded for this repository.</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-16 bg-[#F7F9F6] dark:bg-[#101411] rounded-2xl border-2 border-dashed border-[#E3E8E5] dark:border-[#23332D]">
+                        <span class="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-600 mb-4">lock</span>
+                        <h5 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] mb-2">Module Credentials Required</h5>
+                        <p class="text-slate-500 dark:text-[#A7B8B0] mb-6">Please complete the enrollment process to access scholarly materials.</p>
+                        <button class="bg-[#1a648c] hover:bg-[#104b6b] text-white px-8 py-3.5 rounded-xl font-bold transition-colors shadow-sm" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                            ACQUIRE ACCESS
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <!-- Discussion Section -->
+            <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] p-8 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="font-serif font-bold text-2xl text-gray-900 dark:text-[#E6F1EC]">Academic Discussion</h4>
+                    <span class="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 px-4 py-1.5 rounded-full text-sm font-bold border border-amber-200 dark:border-amber-900/30">@(comments?.Count() ?? 0) Responses</span>
+                </div>
+                
+                <div class="mb-8">
+                    <form asp-action="AddComment" method="post" class="relative">
+                        <input type="hidden" name="courseId" value="@Model.Id" />
+                        <textarea name="content" rows="3" class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-4 text-gray-900 dark:text-[#E6F1EC] focus:border-[#2E7D5B] focus:ring-0 resize-none transition-colors" placeholder="Contribute to the scholarly discourse..."></textarea>
+                        <div class="absolute bottom-3 right-3">
+                            <button type="submit" class="bg-[#2E7D5B] hover:bg-[#096444] text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-1.5">
+                                Post <span class="material-symbols-outlined text-[16px]">send</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="space-y-6 max-h-[600px] overflow-y-auto pr-2">
+                    @if (comments != null && comments.Any())
+                    {
+                        @foreach (var comment in comments)
+                        {
+                            bool isStudent = comment.UserRole == "Student";
+                            <div class="flex @(isStudent ? "justify-end" : "justify-start")">
+                                <div class="max-w-[80%]">
+                                    <div class="flex items-center gap-2 mb-1 @(isStudent ? "flex-row-reverse" : "")">
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">@comment.UserName</span>
+                                        <span class="text-[10px] font-bold text-slate-400">@comment.CreatedAt.ToString("h:mm tt")</span>
+                                    </div>
+                                    <div class="p-4 rounded-2xl @(isStudent ? "bg-[#2E7D5B] text-white rounded-tr-sm" : "bg-[#F7F9F6] dark:bg-[#101411] text-gray-900 dark:text-[#E6F1EC] border border-[#E3E8E5] dark:border-[#23332D] rounded-tl-sm") shadow-sm">
+                                        @comment.Content
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <p class="text-slate-500 dark:text-[#A7B8B0] italic">Communication channel empty. Be the first to initialize discourse.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="sticky top-24 space-y-6">
+                @if (isEnrolled)
+                {
+                    <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-6 rounded-3xl text-center shadow-sm">
+                        <span class="material-symbols-outlined text-4xl text-emerald-500 mb-2 filled">check_circle</span>
+                        <h6 class="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0">Access Authorized</h6>
+                    </div>
+                }
+                else if (isInstructor)
+                {
+                    <div class="bg-[#1a648c] text-white p-6 rounded-3xl text-center shadow-md">
+                        <span class="material-symbols-outlined text-4xl mb-2">admin_panel_settings</span>
+                        <h6 class="font-bold uppercase tracking-wider mb-6">Faculty Access</h6>
+                        <div class="flex flex-col gap-3">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-white/20 hover:bg-white/30 px-4 py-3 rounded-xl font-bold transition-colors text-sm flex justify-center items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">edit</span> Modify Module
+                            </a>
+                            <button type="button" class="bg-white text-[#1a648c] hover:bg-slate-100 px-4 py-3 rounded-xl font-bold transition-colors text-sm shadow-sm flex justify-center items-center gap-2" data-bs-toggle="modal" data-bs-target="#addVideoModal">
+                                <span class="material-symbols-outlined text-[18px]">add_circle</span> Add Session
+                            </button>
+                        </div>
+                    </div>
+                }
+                else if (!User.Identity.IsAuthenticated || User.IsInRole("Student"))
+                {
+                    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] p-6 rounded-3xl text-center shadow-sm">
+                        <button type="button" class="w-full bg-[#1a648c] hover:bg-[#104b6b] text-white py-4 rounded-xl font-bold text-lg mb-3 shadow-sm transition-colors flex justify-center items-center gap-2" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                            <span class="material-symbols-outlined">shopping_cart_checkout</span> Enroll Now
+                        </button>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Lifetime Repository Persistence</p>
+                    </div>
+                }
+
+                <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] p-6 rounded-3xl shadow-sm">
+                    <h6 class="font-serif font-bold text-lg text-gray-900 dark:text-[#E6F1EC] mb-4">Module Distribution</h6>
+                    <div class="flex flex-col gap-3">
+                        <button class="flex items-center gap-3 bg-[#F7F9F6] dark:bg-[#101411] hover:bg-slate-100 dark:hover:bg-[#1B2A24] text-slate-600 dark:text-[#A7B8B0] border border-[#E3E8E5] dark:border-[#23332D] p-3 rounded-xl transition-colors text-sm font-bold">
+                            <span class="material-symbols-outlined text-blue-400">share</span> Broadcast on Twitter
+                        </button>
+                        <button class="flex items-center gap-3 bg-[#F7F9F6] dark:bg-[#101411] hover:bg-slate-100 dark:hover:bg-[#1B2A24] text-slate-600 dark:text-[#A7B8B0] border border-[#E3E8E5] dark:border-[#23332D] p-3 rounded-xl transition-colors text-sm font-bold">
+                            <span class="material-symbols-outlined text-blue-600">group</span> Share on Network
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Player Modal -->
+<div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-[#16211D] border-0 rounded-2xl overflow-hidden shadow-2xl">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-white font-serif font-bold" id="videoModalLabel">Session Stream</h5>
+                <button type="button" class="btn-close btn-close-white opacity-50 hover:opacity-100" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 mt-3">
+                <div class="ratio ratio-16x9">
+                    <iframe id="videoPlayerFrame" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Video Modal -->
+<div class="modal fade" id="addVideoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl shadow-xl p-2">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC]">Initialize New Session</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form asp-action="AddVideo" method="post">
+          <div class="modal-body py-4">
+              <input type="hidden" name="courseId" value="@Model.Id" />
+              <div>
+                  <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Session URL Address</label>
+                  <input type="url" name="videoUrl" class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] focus:ring-0" placeholder="https://repository.stream/..." required />
+              </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+              <button type="submit" class="w-full bg-[#1a648c] hover:bg-[#104b6b] text-white py-3.5 rounded-xl font-bold shadow-sm transition-colors">Save Session</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl shadow-xl p-2">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC]">Access Acquisition</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4">
+          <div class="text-center mb-6 bg-[#F7F9F6] dark:bg-[#101411] py-6 rounded-2xl border border-[#E3E8E5] dark:border-[#23332D]">
+              <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Authorized Amount</span>
+              <h1 class="font-serif text-4xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-0">@Model.Price.ToString("C")</h1>
+          </div>
+          
+          <form id="enrollmentForm" asp-action="Enroll" method="post">
+              <input type="hidden" name="courseId" value="@Model.Id" />
+              <div class="space-y-4">
+                  <div>
+                      <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Payment Credential</label>
+                      <input type="text" class="w-full bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] focus:ring-0" placeholder="XXXX XXXX XXXX XXXX" required>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                      <div>
+                          <input type="text" class="w-full bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] focus:ring-0" placeholder="MM/YY" required>
+                      </div>
+                      <div>
+                          <input type="text" class="w-full bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] focus:ring-0" placeholder="CVV" required>
+                      </div>
+                  </div>
+              </div>
+              <button type="submit" class="w-full mt-6 bg-[#2E7D5B] hover:bg-[#096444] text-white py-3.5 rounded-xl font-bold shadow-sm transition-colors">Confirm Authorization</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function getYouTubeEmbedUrl(url) {
+        let videoId = '';
+        if (url.includes('youtube.com/watch?v=')) {
+            videoId = url.split('v=')[1].split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0];
+        } else if (url.includes('youtube.com/embed/')) {
+            return url;
+        }
+        if (videoId) {
+            return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        }
+        return url;
+    }
+
+    function playVideo(url, title) {
+        const embedUrl = getYouTubeEmbedUrl(url);
+        const modal = new bootstrap.Modal(document.getElementById('videoPlayerModal'));
+        const frame = document.getElementById('videoPlayerFrame');
+        const label = document.getElementById('videoModalLabel');
+        label.innerText = title;
+        frame.src = embedUrl;
+        document.getElementById('videoPlayerModal').addEventListener('hidden.bs.modal', function () {
+            frame.src = "";
+        }, { once: true });
+        modal.show();
+    }
+</script>

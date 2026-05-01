@@ -1,0 +1,279 @@
+@using Horizon.MVC.DTOs
+@model PagedResponseDto<CourseDto>
+@{
+    ViewData["Title"] = "Discover Courses";
+    var query = ViewBag.Query as string ?? "";
+    var courseFrontend = ViewBag.CourseFrontendUrl as string ?? "https://localhost:7081";
+    var totalPages = Model.TotalCount > 0 ? (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize) : 1;
+    var currentPage = Model.Page;
+}
+
+<div class="mb-10 animate-[fadeUp_0.5s_ease_forwards]">
+    <h1 class="font-serif text-4xl font-bold text-[#2E7D5B] dark:text-[#7DD9AB] mb-2 tracking-tight">
+        Discover <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2E7D5B] to-emerald-400">Courses & Books</span>
+    </h1>
+    <p class="font-sans text-slate-500 dark:text-[#A7B8B0]">Find your next learning adventure in our curated catalog.</p>
+</div>
+
+<!-- Search Bar -->
+<form method="get" asp-controller="Discovery" asp-action="Search" id="searchForm" class="mb-8 animate-[fadeUp_0.6s_ease_forwards]">
+    <div class="flex flex-col sm:flex-row gap-3 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] p-2 rounded-2xl shadow-sm focus-within:border-[#2E7D5B] focus-within:ring-1 focus-within:ring-[#2E7D5B] transition-all">
+        <div class="flex-1 flex items-center px-4">
+            <span class="material-symbols-outlined text-slate-400 mr-3">search</span>
+            <input type="text" name="query" id="searchInput" value="@query" placeholder="Search courses, topics, instructors..." autocomplete="off" 
+                   class="w-full bg-transparent border-none focus:ring-0 text-gray-900 dark:text-[#E6F1EC] placeholder-slate-400 text-lg" />
+        </div>
+        <div class="flex gap-2 px-2 pb-2 sm:px-0 sm:pb-0">
+            @if (!string.IsNullOrEmpty(query))
+            {
+                <a asp-controller="Discovery" asp-action="Index" class="flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-[#1B2A24] dark:hover:bg-[#23332D] text-slate-600 dark:text-[#A7B8B0] px-4 py-3 rounded-xl font-bold transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">close</span> <span class="hidden sm:inline">Clear</span>
+                </a>
+            }
+            <button type="submit" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">
+                Search
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- Tabs -->
+<div class="flex gap-2 mb-8 animate-[fadeUp_0.7s_ease_forwards]">
+    <button class="px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors border-2 border-transparent bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-[#2E7D5B] dark:border-[#7DD9AB] flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px] filled">play_circle</span>
+        Courses (@Model.TotalCount)
+    </button>
+    <a asp-controller="Discovery" asp-action="Books" class="px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-500 dark:text-[#A7B8B0] hover:bg-[#F0F5F2] dark:hover:bg-[#1B2A24] flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">menu_book</span>
+        Books
+    </a>
+</div>
+
+@if (!string.IsNullOrEmpty(query))
+{
+    <div class="mb-6 text-sm text-slate-500 dark:text-[#A7B8B0] animate-[fadeUp_0.7s_ease_forwards]">
+        Showing results for: <strong class="text-gray-900 dark:text-[#E6F1EC]">"@query"</strong>
+        · @Model.TotalCount result(s)
+    </div>
+}
+
+<!-- Course Grid -->
+@if (Model.Data?.Any() == true)
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-[fadeUp_0.8s_ease_forwards]" id="courseGrid">
+        @foreach (var c in Model.Data)
+        {
+            <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-[#2E7D5B] dark:hover:border-[#7DD9AB] transition-all duration-300 flex flex-col group">
+                
+                <!-- Thumbnail -->
+                <div class="h-40 bg-gradient-to-br from-[#2E7D5B] to-[#096444] dark:from-[#1B2A24] dark:to-[#0A140F] relative flex items-center justify-center overflow-hidden">
+                    @if (!string.IsNullOrEmpty(c.ThumbnailUrl))
+                    {
+                        <img src="@c.ThumbnailUrl" alt="@c.Title" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    }
+                    else
+                    {
+                        <span class="material-symbols-outlined text-white/50 text-6xl group-hover:scale-110 transition-transform duration-500">play_circle</span>
+                    }
+                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="material-symbols-outlined text-white text-5xl filled drop-shadow-md">play_circle</span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        @if (!string.IsNullOrEmpty(c.Category))
+                        {
+                            <span class="bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">@c.Category</span>
+                        }
+                        @if (!string.IsNullOrEmpty(c.Level))
+                        {
+                            <span class="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">@c.Level</span>
+                        }
+                        @if (c.TotalLessons > 0)
+                        {
+                            <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">video_library</span> @c.TotalLessons lessons
+                            </span>
+                        }
+                    </div>
+
+                    <h3 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] mb-2 line-clamp-2 leading-tight group-hover:text-[#2E7D5B] dark:group-hover:text-[#7DD9AB] transition-colors">
+                        @(string.IsNullOrEmpty(c.Title) ? $"Course #{c.Id}" : c.Title)
+                    </h3>
+                    
+                    @if (!string.IsNullOrEmpty(c.Description))
+                    {
+                        <p class="text-sm text-slate-500 dark:text-[#A7B8B0] line-clamp-2 mb-4 flex-1">@c.Description</p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(c.InstructorName))
+                    {
+                        <div class="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-[#A7B8B0] mb-5">
+                            <span class="material-symbols-outlined text-[16px]">person</span> @c.InstructorName
+                        </div>
+                    }
+
+                    <!-- Actions -->
+                    <div class="flex gap-2 mt-auto pt-4 border-t border-[#E3E8E5] dark:border-[#23332D]">
+                        <button class="enroll-btn flex-1 flex justify-center items-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white py-2.5 px-4 rounded-xl text-sm font-bold transition-all shadow-sm"
+                                onclick="enrollCourse(this, @c.Id)"
+                                data-course-id="@c.Id">
+                            <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                            Enroll
+                        </button>
+                        
+                        <a href="@courseFrontend/courses/@c.Id" target="_blank" class="w-11 h-11 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-500 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B] dark:hover:border-[#7DD9AB] dark:hover:text-[#7DD9AB] transition-colors" title="View details">
+                            <span class="material-symbols-outlined text-[20px]">open_in_new</span>
+                        </a>
+                        
+                        <button class="w-11 h-11 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-400 hover:border-amber-500 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all"
+                                onclick="toggleBookmark(this, @c.Id, 'course')"
+                                title="Bookmark">
+                            <span class="material-symbols-outlined text-[20px]">bookmark</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <div class="flex justify-center gap-2 mt-12 mb-8 animate-[fadeUp_0.8s_ease_forwards]">
+            @if (currentPage > 1)
+            {
+                <a href="?@(string.IsNullOrEmpty(query) ? "" : $"query={Uri.EscapeDataString(query)}&")page=@(currentPage - 1)" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B] transition-colors">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </a>
+            }
+            @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+            {
+                if (i == currentPage)
+                {
+                    <span class="w-10 h-10 flex items-center justify-center rounded-xl bg-[#F0F5F2] dark:bg-[#1B2A24] text-[#2E7D5B] dark:text-[#7DD9AB] border-2 border-[#2E7D5B] dark:border-[#7DD9AB] font-bold">@i</span>
+                }
+                else
+                {
+                    <a href="?@(string.IsNullOrEmpty(query) ? "" : $"query={Uri.EscapeDataString(query)}&")page=@i" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B] font-semibold transition-colors">@i</a>
+                }
+            }
+            @if (currentPage < totalPages)
+            {
+                <a href="?@(string.IsNullOrEmpty(query) ? "" : $"query={Uri.EscapeDataString(query)}&")page=@(currentPage + 1)" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B] transition-colors">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </a>
+            }
+        </div>
+    }
+}
+else
+{
+    <div class="text-center py-24 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl shadow-sm animate-[fadeUp_0.8s_ease_forwards]">
+        <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-600">search_off</span>
+        </div>
+        <h2 class="font-serif text-2xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-2">No courses found</h2>
+        <p class="text-slate-500 dark:text-[#A7B8B0] max-w-md mx-auto mb-8">
+            @(string.IsNullOrEmpty(query) ? "The course service may be offline or the catalog is empty. Please check back later." : $"We couldn't find anything matching \"{query}\". Try adjusting your search terms.")
+        </p>
+        @if (!string.IsNullOrEmpty(query))
+        {
+            <a asp-controller="Discovery" asp-action="Index" class="inline-flex items-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm">
+                <span class="material-symbols-outlined text-[20px]">arrow_back</span> Clear Search
+            </a>
+        }
+    </div>
+}
+
+<style>
+    .enroll-btn.enrolling {
+        position: relative;
+        color: transparent !important;
+    }
+    .enroll-btn.enrolling::after {
+        content: "hourglass_empty";
+        font-family: "Material Symbols Outlined";
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        animation: spin 1s linear infinite;
+    }
+    @@keyframes spin { 100% { transform: rotate(360deg); } }
+</style>
+
+@section Scripts {
+<script>
+    async function toggleBookmark(btn, courseId, type) {
+        btn.disabled = true;
+        try {
+            const r = await fetch('/Discovery/BookmarkAjax', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId: parseInt(courseId), type: type })
+            });
+            if (!r.ok) throw new Error();
+            const data = await r.json();
+            
+            const icon = btn.querySelector('.material-symbols-outlined');
+            if (data.isBookmarked) {
+                btn.classList.add('border-amber-500', 'text-amber-500', 'bg-amber-50', 'dark:bg-amber-900/20');
+                btn.classList.remove('border-[#E3E8E5]', 'dark:border-[#23332D]', 'text-slate-400');
+                icon.classList.add('filled');
+                if(typeof showToast === 'function') showToast('Bookmarked!', 'success');
+            } else {
+                btn.classList.remove('border-amber-500', 'text-amber-500', 'bg-amber-50', 'dark:bg-amber-900/20');
+                btn.classList.add('border-[#E3E8E5]', 'dark:border-[#23332D]', 'text-slate-400');
+                icon.classList.remove('filled');
+                if(typeof showToast === 'function') showToast('Bookmark removed', 'info');
+            }
+        } catch {
+            if(typeof showToast === 'function') showToast('Could not update bookmark', 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function enrollCourse(btn, courseId) {
+        btn.classList.add('enrolling');
+        btn.disabled = true;
+        try {
+            const r = await fetch('/Enrollment/EnrollAjax', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId })
+            });
+            const data = await r.json();
+            if (data.success) {
+                btn.classList.remove('enrolling', 'bg-[#2E7D5B]', 'hover:bg-[#096444]');
+                btn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+                btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> Enrolled';
+                if(typeof showToast === 'function') showToast('Successfully enrolled!', 'success');
+            } else {
+                btn.classList.remove('enrolling');
+                btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> Enrolled';
+                if(typeof showToast === 'function') showToast(data.message || 'Already enrolled', 'info');
+            }
+        } catch {
+            btn.classList.remove('enrolling');
+            btn.disabled = false;
+            if(typeof showToast === 'function') showToast('Enrollment failed. Try again.', 'error');
+        }
+    }
+
+    // Live search debounce
+    let searchTimer;
+    document.getElementById('searchInput').addEventListener('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            const q = this.value.trim();
+            if (q.length > 2) document.getElementById('searchForm').submit();
+        }, 600);
+    });
+</script>
+}

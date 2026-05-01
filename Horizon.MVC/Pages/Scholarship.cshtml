@@ -1,0 +1,105 @@
+@page
+@model Horizon.MVC.Pages.ScholarshipModel
+@{
+    ViewData["Title"] = "Scholarship Portal";
+}
+
+<div class="mb-10 animate-[fadeUp_0.5s_ease_forwards]">
+    <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-sm">
+            <span class="material-symbols-outlined text-[24px]">workspace_premium</span>
+        </div>
+        <div>
+            <h1 class="font-serif text-3xl font-bold text-gray-900 dark:text-[#E6F1EC] tracking-tight">
+                Scholarship Portal
+            </h1>
+            <p class="font-sans text-slate-500 dark:text-[#A7B8B0]">Empowering dedicated learners through financial support.</p>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl shadow-sm animate-[fadeUp_0.6s_ease_forwards] overflow-hidden">
+    @if (Model.IsSubmitted)
+    {
+        <div class="p-12 text-center">
+            <div class="w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-5xl text-emerald-500 filled">verified</span>
+            </div>
+            <h2 class="font-serif text-3xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-4">Application Received!</h2>
+            <p class="text-slate-500 dark:text-[#A7B8B0] max-w-lg mx-auto mb-8 leading-relaxed text-lg">
+                Thank you, <strong class="text-gray-900 dark:text-white">@Model.FullName</strong>. Your application for the <strong class="text-gray-900 dark:text-white">@Model.ScholarshipType</strong> has been successfully submitted. Our committee will review your profile and academic progress and get back to you within 14 business days.
+            </p>
+            <a href="/Dashboard" class="inline-flex items-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-sm">
+                <span class="material-symbols-outlined">dashboard</span> Back to Dashboard
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="p-8 sm:p-10">
+            <form method="post" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="space-y-6">
+                    <div class="flex items-center gap-2 pb-4 border-b border-[#E3E8E5] dark:border-[#23332D]">
+                        <span class="material-symbols-outlined text-[#2E7D5B] dark:text-[#7DD9AB]">person</span>
+                        <h3 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC]">Personal Information</h3>
+                    </div>
+                    
+                    <div>
+                        <label for="FullName" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Full Legal Name</label>
+                        <input type="text" id="FullName" name="FullName" required 
+                               class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400" 
+                               placeholder="Enter your full name">
+                    </div>
+
+                    <div>
+                        <label for="AcademicLevel" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Current Academic Level</label>
+                        <select id="AcademicLevel" name="AcademicLevel" 
+                                class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors cursor-pointer">
+                            <option value="Undergraduate">Undergraduate</option>
+                            <option value="Graduate">Graduate</option>
+                            <option value="Professional">Professional Certification</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="ScholarshipType" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Scholarship Type</label>
+                        <select id="ScholarshipType" name="ScholarshipType" 
+                                class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors cursor-pointer">
+                            <option value="Merit-Based">Merit-Based (Excellence in Study)</option>
+                            <option value="Need-Based">Financial Assistance</option>
+                            <option value="Diversity">Diversity in Tech & Arts</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex items-center gap-2 pb-4 border-b border-[#E3E8E5] dark:border-[#23332D]">
+                        <span class="material-symbols-outlined text-amber-500">article</span>
+                        <h3 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC]">Application Details</h3>
+                    </div>
+
+                    <div>
+                        <label for="Gpa" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Current GPA / Score</label>
+                        <input type="text" id="Gpa" name="Gpa" required 
+                               class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400" 
+                               placeholder="e.g., 3.8 or 92%">
+                    </div>
+
+                    <div>
+                        <label for="Statement" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Statement of Purpose</label>
+                        <textarea id="Statement" name="Statement" rows="5" required 
+                                  class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#2E7D5B] dark:focus:border-[#7DD9AB] focus:ring-0 transition-colors placeholder-slate-400 resize-none" 
+                                  placeholder="Tell us why you deserve this scholarship..."></textarea>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-sm">
+                            <span class="material-symbols-outlined">send</span> Submit Application
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    }
+</div>

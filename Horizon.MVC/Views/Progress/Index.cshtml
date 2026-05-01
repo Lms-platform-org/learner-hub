@@ -1,0 +1,110 @@
+@using Horizon.MVC.DTOs
+@model StudentProgress
+
+@{
+    ViewData["Title"] = "Course Progress";
+}
+
+<div class="mb-10 animate-[fadeUp_0.5s_ease_forwards]">
+    <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-sm">
+            <span class="material-symbols-outlined text-[24px]">trending_up</span>
+        </div>
+        <div>
+            <h1 class="font-serif text-3xl font-bold text-gray-900 dark:text-[#E6F1EC] tracking-tight">
+                Course Progress
+            </h1>
+            <p class="font-sans text-slate-500 dark:text-[#A7B8B0]">Track your advancement and milestones for Course #@ViewBag.CourseId</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 animate-[fadeUp_0.6s_ease_forwards]">
+    
+    <!-- Progress Stats -->
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm flex flex-col">
+        <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#2E7D5B] dark:text-[#7DD9AB] filled">analytics</span>
+            Overall Progress
+        </h2>
+        
+        <div class="mb-8">
+            <div class="flex justify-between items-end mb-2">
+                <span class="text-sm font-bold text-slate-500 dark:text-[#A7B8B0] uppercase tracking-wider">Completion</span>
+                <span class="text-3xl font-bold font-serif text-[#2E7D5B] dark:text-[#7DD9AB]">@Model.Percentage%</span>
+            </div>
+            <div class="h-3 w-full bg-[#E3E8E5] dark:bg-[#23332D] rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-[#2E7D5B] to-emerald-400 rounded-full transition-all duration-1000 ease-out" style="width: @Model.Percentage%"></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mt-auto">
+            <div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 rounded-2xl p-4 text-center">
+                <span class="material-symbols-outlined text-amber-500 mb-1 filled">bolt</span>
+                <div class="text-2xl font-bold font-serif text-amber-600 dark:text-amber-500">@Model.XP</div>
+                <div class="text-[10px] font-bold text-amber-700/60 dark:text-amber-400/60 uppercase tracking-wider mt-1">XP Earned</div>
+            </div>
+            <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-900/30 rounded-2xl p-4 text-center">
+                <span class="material-symbols-outlined text-blue-500 mb-1">play_lesson</span>
+                <div class="text-2xl font-bold font-serif text-blue-600 dark:text-blue-500">@Model.LastLessonId</div>
+                <div class="text-[10px] font-bold text-blue-700/60 dark:text-blue-400/60 uppercase tracking-wider mt-1">Last Lesson</div>
+            </div>
+            <div class="bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/30 rounded-2xl p-4 text-center">
+                <span class="material-symbols-outlined text-rose-500 mb-1">schedule</span>
+                <div class="text-xl font-bold font-serif text-rose-600 dark:text-rose-500 mt-1">@TimeSpan.FromSeconds(Model.LastVideoTimestampSeconds).ToString(@"mm\:ss")</div>
+                <div class="text-[10px] font-bold text-rose-700/60 dark:text-rose-400/60 uppercase tracking-wider mt-1">Resume At</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm flex flex-col">
+        <h2 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-500 filled">emoji_events</span>
+            Earned Badges
+        </h2>
+        
+        <div class="flex-1 bg-[#F7F9F6] dark:bg-[#101411] border border-[#E3E8E5] dark:border-[#23332D] rounded-2xl p-6 flex flex-col justify-center">
+            @if (!Model.EarnedMilestones.Any())
+            {
+                <div class="text-center">
+                    <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-2">military_tech</span>
+                    <p class="text-sm font-medium text-slate-500 dark:text-[#A7B8B0]">No badges yet. Complete lessons to earn XP and unlock milestones!</p>
+                </div>
+            }
+            else
+            {
+                <div class="flex flex-wrap gap-3">
+                    @foreach (var badge in Model.EarnedMilestones)
+                    {
+                        <div class="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-amber-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-amber-500/20">
+                            <span class="material-symbols-outlined text-[18px] filled">military_tech</span>
+                            @badge
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="lg:col-span-2 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 shadow-sm">
+        <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div>
+                <h3 class="font-bold text-gray-900 dark:text-[#E6F1EC] mb-1">Ready to continue?</h3>
+                <p class="text-sm text-slate-500 dark:text-[#A7B8B0]">Jump right back into your studies or return to your dashboard.</p>
+            </div>
+            <div class="flex gap-3 w-full sm:w-auto">
+                <a asp-controller="Dashboard" asp-action="Index" class="flex-1 sm:flex-none flex justify-center items-center gap-2 bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B] px-6 py-3 rounded-xl font-bold transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span> Dashboard
+                </a>
+                <a asp-action="Complete"
+                   asp-route-courseId="@ViewBag.CourseId"
+                   asp-route-lessonId="@(Model.LastLessonId + 1)"
+                   class="flex-1 sm:flex-none flex justify-center items-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white px-6 py-3 rounded-xl font-bold transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[20px] filled">check_circle</span> Next Lesson
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

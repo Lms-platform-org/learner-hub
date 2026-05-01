@@ -4,6 +4,7 @@ using Courses.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Courses.Models.DTOs;
+using Microsoft.Extensions.Logging;
 
 namespace Courses.Api.Controllers
 {
@@ -14,21 +15,56 @@ namespace Courses.Api.Controllers
         private readonly ICourseService _courseService;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly ILogger<CoursesApiController> _logger;
 
-        public CoursesApiController(ICourseService courseService, IMapper mapper, IUserContext userContext)
+        public CoursesApiController(ICourseService courseService, IMapper mapper, IUserContext userContext, ILogger<CoursesApiController> logger)
         {
             _courseService = courseService;
             _mapper = mapper;
             _userContext = userContext;
+            _logger = logger;
         }
 
-        // GET: api/coursesapi
+        // GET: api/coursesapi (with pagination for student discovery)
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<CourseReadDTO>>> GetCourses()
+        public async Task<ActionResult> GetCourses([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var courses = await _courseService.GetAllCoursesAsync();
-            return Ok(_mapper.Map<IEnumerable<CourseReadDTO>>(courses));
+            try
+            {
+                var courses = await _courseService.GetPublishedCoursesAsync();
+                var totalCount = courses.Count();
+
+                var data = courses
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        c.Title,
+                        c.Description,
+                        c.Category,
+                        Level = string.Empty,
+                        TotalLessons = c.Videos?.Count ?? 0,
+                        ThumbnailUrl = c.ThumbnailUrl,
+                        InstructorName = c.InstructorId,
+                        VideoUrl = c.Videos?.FirstOrDefault()?.VideoUrl
+                    })
+                    .ToList();
+
+                return Ok(new
+                {
+                    Data = data,
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching all courses");
+                return StatusCode(500, new { Message = "Error fetching courses" });
+            }
         }
 
         [HttpGet("TeacherIndex")]
@@ -42,14 +78,89 @@ namespace Courses.Api.Controllers
             return Ok(_mapper.Map<IEnumerable<CourseReadDTO>>(courses));
         }
 
+        // NEW: Search courses endpoint
+        [HttpGet("search")]
+        [AllowAnonymous]
+        public async Task<ActionResult> SearchCourses([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest(new { Message = "Search query is required" });
+
+            try
+            {
+                var courses = await _courseService.GetPublishedCoursesAsync();
+
+                var filtered = courses.Where(c =>
+                    c.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    c.Description.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    c.Category.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                var totalCount = filtered.Count();
+
+                var data = filtered
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        c.Title,
+                        c.Description,
+                        c.Category,
+                        Level = string.Empty,
+                        TotalLessons = c.Videos?.Count ?? 0,
+                        ThumbnailUrl = c.ThumbnailUrl,
+                        InstructorName = c.InstructorId,
+                        VideoUrl = c.Videos?.FirstOrDefault()?.VideoUrl
+                    })
+                    .ToList();
+
+                return Ok(new
+                {
+                    Data = data,
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching courses");
+                return StatusCode(500, new { Message = "Error searching courses" });
+            }
+        }
+
         // GET: api/coursesapi/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<CourseReadDTO>> GetCourse(int id)
+        public async Task<ActionResult> GetCourse(int id)
         {
-            var course = await _courseService.GetCourseByIdAsync(id);
-            if (course == null) return NotFound();
-            return Ok(_mapper.Map<CourseReadDTO>(course));
+            try
+            {
+                var course = await _courseService.GetCourseByIdAsync(id);
+                if (course == null)
+                    return NotFound(new { Message = "Course not found" });
+
+                var result = new
+                {
+                    course.Id,
+                    course.Title,
+                    course.Description,
+                    course.Category,
+                    Level = string.Empty,
+                    TotalLessons = course.Videos?.Count ?? 0,
+                    ThumbnailUrl = course.ThumbnailUrl,
+                    InstructorName = course.InstructorId,
+                    VideoUrl = course.Videos?.FirstOrDefault()?.VideoUrl
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching course {CourseId}", id);
+                return StatusCode(500, new { Message = "Error fetching course" });
+            }
         }
 
         // POST: api/coursesapi
@@ -123,14 +234,12 @@ namespace Courses.Api.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<CourseVideo>> PostCourseVideo(int id, [FromBody] string videoUrl)
         {
-            // 1. Basic URL Validation
             if (!Uri.TryCreate(videoUrl, UriKind.Absolute, out var uriResult) || 
                 (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
             {
                 return BadRequest("Invalid URL format. Please provide a valid http/https link.");
             }
 
-            // 2. Video Platform Check
             var url = videoUrl.ToLower();
             if (!(url.Contains("youtube.com") || url.Contains("youtu.be") || 
                   url.Contains("vimeo.com") || url.Contains("drive.google.com") || 
@@ -148,63 +257,21 @@ namespace Courses.Api.Controllers
             return CreatedAtAction(nameof(GetCourse), new { id = id }, video);
         }
 
-        // NEW: Student Discovery Endpoints
-        // GET: api/coursesapi/search?query=math&page=1&pageSize=10
-        [HttpGet("search")]
-        [AllowAnonymous]
-        public async Task<IActionResult> SearchCourses([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
-        {
-            if (string.IsNullOrWhiteSpace(query))
-                return BadRequest(new { Message = "Search query is required" });
-
-            var courses = await _courseService.GetPublishedCoursesAsync();
-
-            var filtered = courses.Where(c =>
-                c.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                c.Description.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                c.Category.Contains(query, StringComparison.OrdinalIgnoreCase));
-
-            var totalCount = filtered.Count();
-
-            var data = filtered
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Select(c => new
-                {
-                    c.Id,
-                    c.Title,
-                    c.Description,
-                    c.Category,
-                    Level = string.Empty,
-                    TotalLessons = c.Videos?.Count ?? 0,
-                    ThumbnailUrl = c.ThumbnailUrl,
-                    InstructorName = c.InstructorId,
-                    VideoUrl = c.Videos?.FirstOrDefault()?.VideoUrl
-                })
-                .ToList();
-
-            return Ok(new
-            {
-                Data = data,
-                Page = page,
-                PageSize = pageSize,
-                TotalCount = totalCount
-            });
-        }
-
-        // POST: api/coursesapi/enroll
+        // POST: api/coursesapi/enroll (for notifications from student-service)
         [HttpPost("enroll")]
         [AllowAnonymous]
         public IActionResult NotifyEnrollment([FromBody] object payload)
         {
+            _logger.LogInformation("Enrollment notification received: {Payload}", payload);
             return Ok(new { Message = "Enrollment received" });
         }
 
-        // POST: api/coursesapi/progress
+        // POST: api/coursesapi/progress (for notifications from student-service)
         [HttpPost("progress")]
         [AllowAnonymous]
         public IActionResult NotifyProgress([FromBody] object payload)
         {
+            _logger.LogInformation("Progress notification received: {Payload}", payload);
             return Ok(new { Message = "Progress received" });
         }
     }

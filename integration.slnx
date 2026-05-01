@@ -9,4 +9,5 @@
   <Folder Name="/services/student-service/">
     <Project Path="services/student-service/LearningPlatform.StudentService.csproj" />
   </Folder>
+  <Project Path="Horizon.MVC/Horizon.MVC.csproj" />
 </Solution>

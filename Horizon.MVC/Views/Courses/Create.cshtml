@@ -1,0 +1,109 @@
+@model Horizon.MVC.DTOs.CourseWriteDTO
+
+@{
+    ViewData["Title"] = "Create New Course";
+}
+
+<div class="max-w-4xl mx-auto py-10 animate-[fadeUp_0.5s_ease_forwards]">
+    
+    <div class="mb-10 text-center">
+        <div class="w-20 h-20 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <span class="material-symbols-outlined text-4xl text-[#1a648c] dark:text-[#88cff7]">add_box</span>
+        </div>
+        <h1 class="font-serif text-4xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-4">Share Your Knowledge</h1>
+        <p class="text-slate-500 dark:text-[#A7B8B0] max-w-lg mx-auto leading-relaxed">
+            Fill in the details to launch your new course. You can add videos and content after creating the base course structure.
+        </p>
+    </div>
+
+    <div class="bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] rounded-3xl p-8 sm:p-12 shadow-sm">
+        
+        <form asp-action="Create" method="post" class="space-y-8">
+            <div asp-validation-summary="ModelOnly" class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 p-4 rounded-xl text-sm font-bold"></div>
+            
+            <div class="space-y-6">
+                <div>
+                    <label asp-for="Title" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Course Title</label>
+                    <input asp-for="Title" required 
+                           class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] dark:focus:border-[#88cff7] focus:ring-0 transition-colors placeholder-slate-400" 
+                           placeholder="e.g. Modern Web Development with React" />
+                    <span asp-validation-for="Title" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="Description" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Description</label>
+                    <textarea asp-for="Description" rows="5" required 
+                              class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] dark:focus:border-[#88cff7] focus:ring-0 transition-colors placeholder-slate-400 resize-none" 
+                              placeholder="Describe what students will learn..."></textarea>
+                    <span asp-validation-for="Description" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="Category" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Category</label>
+                        <select asp-for="Category" required 
+                                class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] dark:focus:border-[#88cff7] focus:ring-0 transition-colors cursor-pointer">
+                            <option value="">Select Category</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Design">Design</option>
+                            <option value="Business">Business</option>
+                            <option value="Marketing">Marketing</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Price" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Price ($)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                            <input asp-for="Price" type="number" step="0.01" required 
+                                   class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl pl-8 pr-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] dark:focus:border-[#88cff7] focus:ring-0 transition-colors placeholder-slate-400" 
+                                   placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="Price" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Duration" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Duration</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">schedule</span>
+                            <input asp-for="Duration" required 
+                                   class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl pl-12 pr-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] dark:focus:border-[#88cff7] focus:ring-0 transition-colors placeholder-slate-400" 
+                                   placeholder="e.g. 10 hours" />
+                        </div>
+                        <span asp-validation-for="Duration" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="StartDate" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Start Date</label>
+                        <input asp-for="StartDate" type="date" required value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                               class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] dark:focus:border-[#88cff7] focus:ring-0 transition-colors cursor-pointer" />
+                        <span asp-validation-for="StartDate" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label asp-for="ThumbnailUrl" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Thumbnail URL</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">image</span>
+                        <input asp-for="ThumbnailUrl" 
+                               class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl pl-12 pr-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] dark:focus:border-[#88cff7] focus:ring-0 transition-colors placeholder-slate-400" 
+                               placeholder="https://example.com/image.jpg" />
+                    </div>
+                    <span asp-validation-for="ThumbnailUrl" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                </div>
+            </div>
+            
+            <div class="pt-4 flex flex-col gap-3">
+                <button type="submit" class="w-full flex items-center justify-center gap-2 bg-[#1a648c] hover:bg-[#104b6b] dark:bg-[#004c6e] dark:hover:bg-[#003549] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-sm">
+                    <span class="material-symbols-outlined">publish</span> Create Course
+                </button>
+                <a asp-action="TeacherDashboard" class="w-full flex items-center justify-center gap-2 bg-transparent text-slate-500 dark:text-[#A7B8B0] hover:text-[#1a648c] dark:hover:text-[#88cff7] py-3 rounded-xl font-bold transition-colors">
+                    Cancel
+                </a>
+            </div>
+        </form>
+        
+    </div>
+</div>

@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "System Notification";
+    ViewData["HideSidebar"] = true;
+}
+
+<div class="min-h-[80vh] flex flex-col items-center justify-center text-center px-6 animate-[fadeUp_0.5s_ease_forwards]">
+    <div class="w-24 h-24 bg-rose-50 dark:bg-rose-900/20 border-2 border-rose-100 dark:border-rose-900/30 rounded-full flex items-center justify-center mb-8 shadow-sm">
+        <span class="material-symbols-outlined text-rose-500 text-5xl filled">warning</span>
+    </div>
+    
+    <h1 class="font-serif text-4xl font-bold text-gray-900 dark:text-[#E6F1EC] mb-4">Something went wrong</h1>
+    <p class="font-sans text-slate-500 dark:text-[#A7B8B0] max-w-md mx-auto mb-10 text-lg leading-relaxed">
+        The system encountered an unexpected interruption. Our academic technicians have been notified and are working on a resolution.
+    </p>
+
+    <div class="flex flex-col sm:flex-row justify-center gap-4 w-full sm:w-auto">
+        <button onclick="window.history.back()" class="flex-1 sm:flex-none flex justify-center items-center gap-2 bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:border-[#2E7D5B] hover:text-[#2E7D5B] px-8 py-3.5 rounded-xl font-bold transition-colors">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            Go Back
+        </button>
+        <a href="/" class="flex-1 sm:flex-none flex justify-center items-center gap-2 bg-[#2E7D5B] hover:bg-[#096444] text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">home</span>
+            Return to Dashboard
+        </a>
+    </div>
+
+    <div class="mt-16 pt-8 border-t border-[#E3E8E5] dark:border-[#23332D] w-full max-w-2xl text-left">
+        <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[14px]">bug_report</span> Error Reference
+        </p>
+        <div class="bg-[#F7F9F6] dark:bg-[#101411] border border-[#E3E8E5] dark:border-[#23332D] p-5 rounded-xl overflow-x-auto">
+            <code class="text-sm text-slate-600 dark:text-[#A7B8B0] font-mono whitespace-pre block">
+System.ApplicationException: An interruption occurred in the secure gateway tunnel.
+Route: @Context.Request.Path
+Timestamp: @DateTime.UtcNow.ToString("O")
+            </code>
+        </div>
+    </div>
+</div>

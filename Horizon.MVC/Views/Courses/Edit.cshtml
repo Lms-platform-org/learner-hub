@@ -1,0 +1,113 @@
+@model Horizon.MVC.DTOs.CourseWriteDTO
+
+@{
+    ViewData["Title"] = "Update Course";
+}
+
+<div class="max-w-6xl mx-auto py-10 animate-[fadeUp_0.5s_ease_forwards]">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <h1 class="font-serif text-3xl font-bold text-gray-900 dark:text-[#E6F1EC] tracking-tight">
+                Update Course
+            </h1>
+            <p class="font-sans text-slate-500 dark:text-[#A7B8B0]">ID: #@ViewBag.Id | Created: @(ViewBag.CreatedAt is DateTime dt ? dt.ToShortDateString() : "N/A")</p>
+        </div>
+        <div>
+            <span class="inline-flex items-center gap-2 @(ViewBag.Status == "Published" ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200" : "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200") border px-4 py-2 rounded-xl text-sm font-bold">
+                <span class="material-symbols-outlined text-[18px]">@(ViewBag.Status == "Published" ? "check_circle" : "edit_document")</span>
+                @ViewBag.Status
+            </span>
+        </div>
+    </div>
+    
+    <form asp-action="Edit" asp-route-id="@ViewBag.Id" method="post">
+        <div asp-validation-summary="ModelOnly" class="bg-rose-50 border border-rose-200 text-rose-600 p-4 rounded-xl text-sm font-bold mb-8"></div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-6 bg-white dark:bg-[#16211D] border border-[#E3E8E5] dark:border-[#23332D] p-8 rounded-3xl shadow-sm">
+                <div>
+                    <label asp-for="Title" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Course Title</label>
+                    <input asp-for="Title" required class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] focus:ring-0 transition-colors" />
+                    <span asp-validation-for="Title" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="Description" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Description</label>
+                    <textarea asp-for="Description" rows="8" required class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] focus:ring-0 transition-colors resize-none"></textarea>
+                    <span asp-validation-for="Description" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label asp-for="ThumbnailUrl" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] uppercase tracking-wider mb-2">Thumbnail URL</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">image</span>
+                        <input asp-for="ThumbnailUrl" class="w-full bg-[#F7F9F6] dark:bg-[#101411] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl pl-12 pr-4 py-3.5 text-gray-900 dark:text-[#E6F1EC] font-medium focus:border-[#1a648c] focus:ring-0 transition-colors" placeholder="https://example.com/image.jpg" />
+                    </div>
+                    <span asp-validation-for="ThumbnailUrl" class="text-rose-500 text-xs font-bold mt-1 block"></span>
+                    
+                    @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+                    {
+                        <div class="mt-4 p-4 bg-[#F7F9F6] dark:bg-[#101411] border border-[#E3E8E5] dark:border-[#23332D] rounded-xl text-center">
+                            <p class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Preview</p>
+                            <img src="@Model.ThumbnailUrl" class="max-h-40 mx-auto rounded-lg shadow-sm" alt="Thumbnail Preview" onerror="this.src='/images/placeholder.jpg'" />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-6">
+                <div class="bg-[#F0F5F2] dark:bg-[#1B2A24] border border-[#E3E8E5] dark:border-[#23332D] p-8 rounded-3xl shadow-sm">
+                    <h5 class="font-serif font-bold text-xl text-gray-900 dark:text-[#E6F1EC] mb-6 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[#1a648c] dark:text-[#88cff7]">settings</span> Course Details
+                    </h5>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label asp-for="Category" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] mb-2">Category</label>
+                            <select asp-for="Category" required class="w-full bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] focus:border-[#1a648c] focus:ring-0">
+                                <option value="Web Development">Web Development</option>
+                                <option value="Data Science">Data Science</option>
+                                <option value="Design">Design</option>
+                                <option value="Business">Business</option>
+                                <option value="Marketing">Marketing</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label asp-for="Price" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] mb-2">Price ($)</label>
+                            <input asp-for="Price" type="number" step="0.01" required class="w-full bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] focus:border-[#1a648c] focus:ring-0" />
+                        </div>
+
+                        <div>
+                            <label asp-for="Duration" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] mb-2">Duration</label>
+                            <input asp-for="Duration" required class="w-full bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] focus:border-[#1a648c] focus:ring-0" />
+                        </div>
+
+                        <div>
+                            <label asp-for="StartDate" class="block text-sm font-bold text-slate-600 dark:text-[#A7B8B0] mb-2">Start Date</label>
+                            <input asp-for="StartDate" type="date" required value="@Model.StartDate.ToString("yyyy-MM-dd")" class="w-full bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] rounded-xl px-4 py-3 text-gray-900 dark:text-[#E6F1EC] focus:border-[#1a648c] focus:ring-0" />
+                        </div>
+
+                        <div class="pt-4 mt-4 border-t border-[#E3E8E5] dark:border-[#23332D]">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" asp-for="IsPublished" class="w-5 h-5 rounded text-[#1a648c] border-[#E3E8E5] dark:border-[#23332D] dark:bg-[#16211D] focus:ring-[#1a648c]" />
+                                <span class="text-sm font-bold text-gray-900 dark:text-[#E6F1EC]">Published to Catalog</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-[#1a648c] hover:bg-[#104b6b] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-sm">
+                        <span class="material-symbols-outlined">save</span> Save Changes
+                    </button>
+                    <a asp-action="TeacherDashboard" class="w-full flex items-center justify-center gap-2 bg-white dark:bg-[#16211D] border-2 border-[#E3E8E5] dark:border-[#23332D] text-slate-600 dark:text-[#A7B8B0] hover:text-[#1a648c] hover:border-[#1a648c] py-3.5 rounded-xl font-bold transition-colors">
+                        Discard Changes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

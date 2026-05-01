@@ -1,0 +1,254 @@
+@model Horizon.MVC.Models.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="dashboard-content">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h1 class="auth-title" style="text-align: left; margin-bottom: 0; color: var(--text-color);">Admin Panel</h1>
+            <p style="color: var(--text-muted);">Manage teacher approvals and user accounts.</p>
+        </div>
+        <a asp-controller="Auth" asp-action="Logout" class="btn-primary d-flex align-items-center gap-2" style="width: auto; padding: 0.5rem 1rem; text-decoration: none; background: rgba(220, 38, 38, 0.1); color: #dc2626; border: 1px solid #dc2626;">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+    @if (TempData["Message"] != null)
+
+    {
+        <div class="alert alert-success"
+            style="background: rgba(5, 150, 105, 0.1); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+
+    {
+        <div class="alert alert-danger"
+            style="background: rgba(220, 38, 38, 0.1); color: #dc2626; border: 1px solid #dc2626; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Pending Teachers Section -->
+        <div class="col-12">
+            <div class="curriculum-card">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <i class="bi bi-person-badge-fill" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                    <h3 style="margin: 0; font-weight: 600; color: var(--text-color);">Pending Approvals</h3>
+                </div>
+
+                @if (!Model.PendingTeachers.Any())
+
+                {
+                    <p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">No pending teacher
+                        applications.</p>
+                }
+
+                else
+
+                {
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                        <table class="table" style="color: var(--text-color); margin-bottom: 0;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+                                    <th class="py-3">Name</th>
+                                    <th class="py-3">Email</th>
+                                    <th class="py-3 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var teacher in Model.PendingTeachers)
+
+                                {
+                                    <tr style="border-bottom: 1px solid var(--border-color); vertical-align: middle;">
+                                        <td class="py-3" style="color: var(--text-color);">@teacher.DisplayName</td>
+                                        <td class="py-3" style="color: var(--text-muted);">@teacher.Email</td>
+                                        <td class="py-3 text-end">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <button class="btn-primary"
+                                                    style="width: auto; padding: 0.4rem 1rem; font-size: 0.8rem;"
+                                                    onclick="showApprovalModal('@teacher.Id', '@teacher.DisplayName', 'Approve')">
+                                                    Approve
+                                                </button>
+                                                <button class="btn-primary"
+                                                    style="width: auto; padding: 0.4rem 1rem; font-size: 0.8rem; background-color: #dc2626;"
+                                                    onclick="showApprovalModal('@teacher.Id', '@teacher.DisplayName', 'Reject')">
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Active Users Section -->
+        <div class="col-12">
+            <div class="curriculum-card">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <i class="bi bi-people-fill" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                    <h3 style="margin: 0; font-weight: 600; color: var(--text-color);">Registered Users</h3>
+                </div>
+
+                @if (!Model.ApprovedUsers.Any())
+
+                {
+                    <p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">No active users found.</p>
+                }
+
+                else
+
+                {
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                        <table class="table" style="color: var(--text-color); margin-bottom: 0;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+                                    <th class="py-3">User</th>
+                                    <th class="py-3">Role</th>
+                                    <th class="py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.ApprovedUsers)
+
+                                {
+                                    <tr style="border-bottom: 1px solid var(--border-color); vertical-align: middle;">
+                                        <td class="py-3">
+                                            <div class="d-flex flex-column">
+                                                <span
+                                                    style="color: var(--text-color); font-weight: 500;">@user.DisplayName</span>
+                                                <small style="color: var(--text-muted);">@user.Email</small>
+                                            </div>
+                                        </td>
+                                        <td class="py-3">
+                                            <span class="badge"
+                                                style="background: var(--input-bg); color: var(--accent-color); border: 1px solid var(--border-color);">
+                                                @(user.Roles?.FirstOrDefault() ?? user.Role ?? "Student")
+                                            </span>
+                                        </td>
+                                        <td class="py-3">
+                                            <span style="color: var(--accent-color);">Active</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Approval/Rejection Modal -->
+<div id="approvalModal" class="modal-backdrop"
+    style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1100; align-items: center; justify-content: center;">
+    <div class="auth-card" style="max-width: 500px;">
+        <h3 id="modalTitle" class="auth-title">Approve Teacher</h3>
+        <p id="modalSubtitle" class="auth-subtitle">Approving application for John Doe</p>
+
+        <form id="approvalForm" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="teacherId" />
+
+            <div class="form-group">
+                <label class="form-label">Notes (Optional)</label>
+                <textarea name="notes" class="form-control" rows="3" placeholder="Add any comments here..."></textarea>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <button type="button" class="form-control" onclick="closeModal()"
+                    style="cursor: pointer;">Cancel</button>
+                <button type="submit" id="submitBtn" class="btn-primary">Confirm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .table th {
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .modal-backdrop {
+        display: none;
+    }
+
+    .modal-backdrop.active {
+        display: flex;
+    }
+
+    /* Table Theme Fixes */
+    .table {
+        background: transparent !important;
+        color: var(--text-color) !important;
+        border-color: var(--border-color) !important;
+    }
+
+    .table td,
+    .table th {
+        background: transparent !important;
+        color: var(--text-color) !important;
+        border-bottom-color: var(--border-color) !important;
+    }
+
+    .table thead th {
+        color: var(--text-muted) !important;
+        border-bottom: 2px solid var(--border-color) !important;
+    }
+
+    /* Custom Scrollbar for theme support */
+    .table-responsive::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: var(--input-bg);
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+    }
+</style>
+
+<script>
+    function showApprovalModal(id, name, action) {
+        console.log("Opening modal for:", name, "Action:", action);
+        document.getElementById('teacherId').value = id;
+        document.getElementById('modalTitle').innerText = action + ' Teacher';
+        document.getElementById('modalSubtitle').innerText = action + 'ing application for ' + name;
+
+        const form = document.getElementById('approvalForm');
+        form.action = action === 'Approve' ? '@Url.Action("ApproveTeacher", "Admin")' : '@Url.Action("RejectTeacher", "Admin")';
+
+        const submitBtn = document.getElementById('submitBtn');
+        if (action === 'Reject') {
+            submitBtn.style.backgroundColor = '#dc2626';
+        } else {
+            submitBtn.style.backgroundColor = 'var(--accent-color)';
+        }
+
+        document.getElementById('approvalModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('approvalModal').classList.remove('active');
+    }
+</script>
+
