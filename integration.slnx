@@ -3,6 +3,9 @@
     <Project Path="gateway/GatewayAPI/GatewayAPI.csproj" />
   </Folder>
   <Folder Name="/services/" />
+  <Folder Name="/services/chat-service/">
+    <Project Path="services/chat-service/WebApplication1.csproj" />
+  </Folder>
   <Folder Name="/services/course-service/">
     <Project Path="services/course-service/Course.csproj" />
   </Folder>
@@ -11,6 +14,9 @@
   </Folder>
   <Folder Name="/services/student-service/">
     <Project Path="services/student-service/LearningPlatform.StudentService.csproj" />
+  </Folder>
+  <Folder Name="/services/teacher-service/">
+    <Project Path="services/teacher-service/teacherAPI.csproj" />
   </Folder>
   <Project Path="Horizon.MVC/Horizon.MVC.csproj" />
 </Solution>

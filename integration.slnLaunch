@@ -3,15 +3,15 @@
     "Name": "New Profile",
     "Projects": [
       {
-        "Path": "services\\course-service\\Course.csproj",
-        "Action": "Start"
-      },
-      {
         "Path": "services\\identity-service\\LearningPlatformAuth.csproj",
         "Action": "Start"
       },
       {
-        "Path": "services\\student-service\\LearningPlatform.StudentService.csproj",
+        "Path": "services\\teacher-service\\teacherAPI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "services\\course-service\\Course.csproj",
         "Action": "Start"
       }
     ]

@@ -1,11 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using Courses.Api.Data;
-using FluentValidation.AspNetCore;
-using FluentValidation;
-using Courses.Api.Middlewares;
-using Serilog;
 using AutoMapper;
-using Microsoft.OpenApi;
+using Courses.Api.Data;
+using Courses.Api.Middlewares;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +63,27 @@ builder.Services.AddScoped<Courses.Api.Services.IUserContext, Courses.Api.Servic
 // Authentication & Authorization (Mocked via middleware)
 builder.Services.AddAuthentication("MockScheme")
     .AddCookie("MockScheme"); // Add a dummy scheme to satisfy ASP.NET Core requirements
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+var jwtSection = builder.Configuration.GetSection("Jwt");
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSection["Issuer"],
+            ValidAudience = jwtSection["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSection["Key"]!))
+        };
+    });
+//builder.Services.AddAuthorization();
 builder.Services.AddAuthorization();
 
 
@@ -85,13 +109,11 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 
 // Use Mock Auth in development to skip login
-if (app.Environment.IsDevelopment())
-{
-    app.UseMiddleware<MockAuthMiddleware>();
-}
-
-app.UseAuthentication();
+app.UseAuthentication();   // ← real JWT runs first
 app.UseAuthorization();
+
+if (app.Environment.IsDevelopment())
+    app.UseMiddleware<MockAuthMiddleware>(); // ← only fires if JWT didn't authenticate
 
 app.MapControllers();
 
