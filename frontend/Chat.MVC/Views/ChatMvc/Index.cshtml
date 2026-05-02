@@ -1,0 +1,41 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Horizon Academic Portal</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    <button class="theme-toggle" onclick="toggleTheme()">☾</button>
+
+    <div class="start-page">
+        <div class="start-box">
+            <div class="brand-mini">The Horizon</div>
+            <p>Academic communication gateway for structured teacher-student collaboration and institutional messaging.</p>
+
+            <form method="post" action="/chat/start-session" class="start-chat-form">
+                <input type="text" name="studentId" placeholder="Enter Student ID" required />
+                <input type="text" name="teacherId" placeholder="Enter Teacher ID" required />
+                <button type="submit">Create Academic Session</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+            function toggleTheme() {
+                document.body.classList.toggle("dark-mode");
+                localStorage.setItem("academic_theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+            }
+
+            window.onload = function () {
+                if (localStorage.getItem("academic_theme") === "dark") {
+                    document.body.classList.add("dark-mode");
+                }
+            }
+    </script>
+
+</body>
+</html>
